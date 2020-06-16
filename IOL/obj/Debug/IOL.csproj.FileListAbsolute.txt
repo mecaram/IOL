@@ -46,3 +46,4 @@ C:\Sistemas\IOL\IOL\obj\Debug\IOL.ListadoDePaneles.resources
 C:\Sistemas\IOL\IOL\obj\Debug\IOL.ListadodeRuedas.resources
 C:\Sistemas\IOL\IOL\obj\Debug\IOL.Copia.resources
 C:\Sistemas\IOL\IOL\obj\Debug\IOL.InformeFinal.resources
+C:\Sistemas\IOL\IOL\obj\Debug\IOL.csprojAssemblyReference.cache

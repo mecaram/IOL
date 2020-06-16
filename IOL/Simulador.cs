@@ -1611,54 +1611,63 @@ namespace IOL
             {
                 return;
             }
-            using (MySqlConnection cone = new MySqlConnection(conexion))
+            try
             {
-                cone.Open();
-                sentencia = string.Format("Update Ruedas Set PorcCompra1 =  {0}," +
-                                                            "PorcVenta1 =  {1}," +
-                                                            "PorcCompra2 =  {2}," +
-                                                            "PorcVenta2 =  {3}," +
-                                                            "PorcCompra3 =  {4}," +
-                                                            "PorcVenta3 =  {5}," +
-                                                            "PorcCompra4 =  {6}," +
-                                                            "PorcVenta4 =  {7}," +
-                                                            "PorcCompra5 =  {8}," +
-                                                            "PorcVenta5 =  {9}," +
-                                                            "PorcCompra6 =  {10}," +
-                                                            "PorcVenta6 =  {11}," +
-                                                            "PorcCompra7 =  {12}," +
-                                                            "PorcVenta7 =  {13}," +
-                                                            "PorcCompra8 =  {14}," +
-                                                            "PorcVenta8 =  {15}," +
-                                                            "PorcCompra9 =  {16}," +
-                                                            "PorcVenta9 =  {17}," +
-                                                            "PorcCompra10 =  {18}," +
-                                                            "PorcVenta10 =  {19}" +
-                                                            " Where IdRueda = {20}",
-                                                            porccompra1,
-                                                            porcventa1,
-                                                            porccompra2,
-                                                            porcventa2,
-                                                            porccompra3,
-                                                            porcventa3,
-                                                            porccompra4,
-                                                            porcventa4,
-                                                            porccompra5,
-                                                            porcventa5,
-                                                            porccompra6,
-                                                            porcventa6,
-                                                            porccompra7,
-                                                            porcventa7,
-                                                            porccompra8,
-                                                            porcventa8,
-                                                            porccompra9,
-                                                            porcventa9,
-                                                            porccompra10,
-                                                            porcventa10,
-                                                            txtIdRueda.Text.Trim());
-                MySqlCommand comando = new MySqlCommand(sentencia, cone);
-                comando.ExecuteNonQuery();
-                cone.Close();
+                using (MySqlConnection cone = new MySqlConnection(conexion))
+                {
+                    cone.Open();
+                    sentencia = string.Format("Update Ruedas Set PorcCompra1 =  @PorcCompra1," +
+                                                                "PorcVenta1 =   @PorcVenta1," +
+                                                                "PorcCompra2 =  @PorcCompra2," +
+                                                                "PorcVenta2 =   @PorcVenta2," +
+                                                                "PorcCompra3 =  @PorcCompra3," +
+                                                                "PorcVenta3 =   @PorcVenta3," +
+                                                                "PorcCompra4 =  @PorcCompra4," +
+                                                                "PorcVenta4 =   @PorcVenta4," +
+                                                                "PorcCompra5 =  @PorcCompra5," +
+                                                                "PorcVenta5 =   @PorcVenta5," +
+                                                                "PorcCompra6 =  @PorcCompra6," +
+                                                                "PorcVenta6 =   @PorcVenta6, " +
+                                                                "PorcCompra7 =  @PorcCompra7," +
+                                                                "PorcVenta7 =   @PorcVenta7," +
+                                                                "PorcCompra8 =  @PorcCompra8," +
+                                                                "PorcVenta8 =   @PorcVenta8," +
+                                                                "PorcCompra9 =  @PorcCompra9," +
+                                                                "PorcVenta9 =   @PorcVenta9," +
+                                                                "PorcCompra10 = @PorcCompra10," +
+                                                                "PorcVenta10 =  @PorcVenta10 " +
+                                                                " Where IdRueda = @IdRueda");
+
+                    MySqlCommand comando = new MySqlCommand(sentencia, cone);
+                    comando.Parameters.AddWithValue("@PorcCompra1", porccompra1);
+                    comando.Parameters.AddWithValue("@PorcVenta1", porcventa1);
+                    comando.Parameters.AddWithValue("@PorcCompra2", porccompra2);
+                    comando.Parameters.AddWithValue("@PorcVenta2", porcventa2);
+                    comando.Parameters.AddWithValue("@PorcCompra3", porccompra3);
+                    comando.Parameters.AddWithValue("@PorcVenta3", porcventa3);
+                    comando.Parameters.AddWithValue("@PorcCompra4", porccompra4);
+                    comando.Parameters.AddWithValue("@PorcVenta4", porcventa4);
+                    comando.Parameters.AddWithValue("@PorcCompra5", porccompra5);
+                    comando.Parameters.AddWithValue("@PorcVenta5", porcventa5);
+                    comando.Parameters.AddWithValue("@PorcCompra6", porccompra6);
+                    comando.Parameters.AddWithValue("@PorcVenta6", porcventa6);
+                    comando.Parameters.AddWithValue("@PorcCompra7", porccompra7);
+                    comando.Parameters.AddWithValue("@PorcVenta7", porcventa7);
+                    comando.Parameters.AddWithValue("@PorcCompra8", porccompra8);
+                    comando.Parameters.AddWithValue("@PorcVenta8", porcventa8);
+                    comando.Parameters.AddWithValue("@PorcCompra9", porccompra9);
+                    comando.Parameters.AddWithValue("@PorcVenta9", porcventa9);
+                    comando.Parameters.AddWithValue("@PorcCompra10", porccompra10);
+                    comando.Parameters.AddWithValue("@PorcVenta10", porcventa10);
+                    comando.Parameters.AddWithValue("@IdRueda", txtIdRueda.Text.Trim());
+                    comando.ExecuteNonQuery();
+                    cone.Close();
+                    MessageBox.Show("Simulador Actualizado con Exito", "Información del Sistema",MessageBoxButtons.OK,MessageBoxIcon.Information);
+                }
+            }
+            catch (MySqlException ex )
+            {
+                MessageBox.Show(ex.Message + " - " + ex.ErrorCode.ToString(), "Informe de Errores", MessageBoxButtons.OK,MessageBoxIcon.Stop);
             }
             ActualizarSimuladores();
         }
