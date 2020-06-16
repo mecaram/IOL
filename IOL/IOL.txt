@@ -1,0 +1,18 @@
+Comitente: 114850
+Usuario: riazorII@live.com.ar
+Contraseña: Rb441168
+
+Comitente: 115378
+Usuario: mecaram
+Contraseña: Mec18047
+
+beto_Beto_2020
+
+var client = new RestClient("https://api.invertironline.com/token");
+client.Timeout = -1;
+var request = new RestRequest(Method.POST);
+request.AddHeader("username", "riazorII@live.com.ar");
+request.AddHeader("password", "Rb441168");
+request.AddHeader("grant_type", "password");
+IRestResponse response = client.Execute(request);
+Console.WriteLine(response.Content);
