@@ -750,7 +750,7 @@ namespace IOL
                     double precioventa = PrecioActualVenta + (PrecioActualVenta * porcincremento / 100);
 
                     // Calcular el importe total a vender
-                    Importe = precioventa * cantidadvendida;
+                    Importe = (PrecioActualVenta + (PrecioActualVenta * porcincremento / 100)) * cantidadvendida;
 
                     using (MySqlConnection cone = new MySqlConnection(conexion))
                     {
@@ -984,7 +984,7 @@ namespace IOL
                         double precioventa = PrecioActualVenta + (PrecioActualVenta * porcincremento / 100);
 
                         // Calcular el importe total a vender
-                        Importe = precioventa * CantidadVendida;
+                        Importe = (PrecioActualVenta + (PrecioActualVenta * porcincremento / 100)) * CantidadVendida;
 
                         using (MySqlConnection cone = new MySqlConnection(conexion))
                         {

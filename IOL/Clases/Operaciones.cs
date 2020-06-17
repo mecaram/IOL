@@ -34,19 +34,10 @@ namespace IOL
                 JavaScriptSerializer js = new JavaScriptSerializer();
                 PanelModel registros = js.Deserialize<PanelModel>(contenido.ToString());
                 return registros;
-
-                //foreach (var item in registros.titulos)
-                //{
-                //    item.contenido = contenido.ToString();
-                //    string registro = string.Format("Simbolo: {0} /n Ultimo Precio: {1}", item.simbolo.ToString(), item.ultimoprecio.ToString());
-                //    MessageBox.Show(registro, "Información del Sistema", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                //}
-                //return true;
             }
             catch (Exception ex)
             {
-                //MessageBox.Show(ex.Message, "Información del Sistema", MessageBoxButtons.OK, MessageBoxIcon.Stop);
-                //MessageBox.Show(ex.HResult.ToString(), "Información del Sistema", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                MessageBox.Show(ex.Message, "Información del Sistema", MessageBoxButtons.OK, MessageBoxIcon.Stop);
                 return null;
             }
         }
@@ -112,15 +103,11 @@ namespace IOL
                 registros.simbolo = simbolo;
                 registros.contenido = contenido.ToString();
 
-                //string registro = string.Format("Simbolo: {0} /r Descripción: {1} Tipo: {2}", registros.simbolo, registros.descripcion, registros.tipo);
-                //MessageBox.Show(registro, "Información del Sistema", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
                 return registros;
             }
             catch (Exception ex)
             {
-                //MessageBox.Show(ex.Message, "Información del Sistema", MessageBoxButtons.OK, MessageBoxIcon.Stop);
-                //MessageBox.Show(ex.HResult.ToString(), "Información del Sistema", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                MessageBox.Show(ex.Message, "Información del Sistema", MessageBoxButtons.OK, MessageBoxIcon.Stop);
                 return null;
             }
         }
@@ -151,7 +138,6 @@ namespace IOL
             }
             catch (Exception ex)            {
                 MessageBox.Show(ex.Message, "Información del Sistema", MessageBoxButtons.OK, MessageBoxIcon.Stop);
-                MessageBox.Show(ex.HResult.ToString(), "Información del Sistema", MessageBoxButtons.OK, MessageBoxIcon.Stop);
                 return false;
             }
         }
