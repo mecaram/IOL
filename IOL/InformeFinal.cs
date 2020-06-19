@@ -30,7 +30,7 @@ namespace IOL
             var wb = new XLWorkbook();
             using (var conexion = new MySqlConnection(cone))
             {
-                sentencia = string.Format("Select * From InformeFinal Where IdRuedaActual = {0} ", rueda);
+                sentencia = string.Format("Select * From InformeFinal Where IdRueda = {0} ", rueda);
 
                 MySqlDataAdapter da = new MySqlDataAdapter(sentencia, conexion);
                 DataTable ds = new DataTable();

@@ -138,7 +138,7 @@
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(132, 19);
             this.label9.TabIndex = 41;
-            this.label9.Text = "Fecha: 15/06/2020";
+            this.label9.Text = "Fecha: 19/06/2020";
             // 
             // label6
             // 
