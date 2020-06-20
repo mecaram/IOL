@@ -80,10 +80,10 @@ namespace IOL
 
             var wb = new XLWorkbook();
             MySqlConnection conexion = new MySqlConnection(cone);
-            if (IdSimulacion > 0)
-                sentencia = string.Format("Select * From RuedasDetalleSimulador Where IdRuedaActual = {0} And IdSimulacion = {1}", rueda, IdSimulacion);
-            else
+            if (chk00.Checked)
                 sentencia = string.Format("Select * From RuedasDetalleSimulador Where IdRuedaActual = {0}", rueda);
+            else
+                sentencia = string.Format("Select * From RuedasDetalleSimulador Where IdRuedaActual = {0} And IdSimulacion = {1}", rueda, IdSimulacion);
 
             MySqlDataAdapter da = new MySqlDataAdapter(sentencia, conexion);
             DataTable ds = new DataTable();
