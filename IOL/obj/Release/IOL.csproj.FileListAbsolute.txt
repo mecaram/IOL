@@ -46,3 +46,4 @@ C:\Sistemas\IOL\IOL\obj\Release\IOL.csproj.CopyComplete
 C:\Sistemas\IOL\IOL\obj\Release\IOL.exe
 C:\Sistemas\IOL\IOL\obj\Release\IOL.pdb
 C:\Sistemas\IOL\IOL\obj\Release\IOL.InformeFinal.resources
+C:\Sistemas\IOL\IOL\obj\Release\IOL.csprojAssemblyReference.cache
