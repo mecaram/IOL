@@ -19,7 +19,6 @@ namespace IOL
         public int comitente = 0;  // Nro. de Comitente
         bool estado = false;  // Estado de la Rueda: Abierta o Cerrada. 
         bool comprar = false;  // Comprar establece si se puede seguir comprando
-        const int columnas = 1000;
         const int simulaciones = 11;
 
         Token permisoIOL = null; // Token para acceder a IOL
