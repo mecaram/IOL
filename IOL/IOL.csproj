@@ -118,10 +118,14 @@
       <DependentUpon>Buscar.cs</DependentUpon>
     </Compile>
     <Compile Include="Clases\CotizacionModel.cs" />
+    <Compile Include="Clases\EAcciones.cs" />
+    <Compile Include="Clases\EComitentes.cs" />
+    <Compile Include="Clases\EFeriados.cs" />
+    <Compile Include="Clases\EInformeFinal.cs" />
     <Compile Include="Clases\Operaciones.cs" />
     <Compile Include="Clases\PanelModel.cs" />
     <Compile Include="Clases\PanelTituloModel.cs" />
-    <Compile Include="Clases\Simulador.cs" />
+    <Compile Include="Clases\ESimulador.cs" />
     <Compile Include="Clases\TituloModel.cs" />
     <Compile Include="Copia.cs">
       <SubType>Form</SubType>
