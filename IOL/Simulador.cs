@@ -845,7 +845,7 @@ namespace IOL
                                 catch { porcomisionIOL = 0; }
 
                                 // Calcular el Importe total para comprar acciones incluyendo Comision
-                                double importe = vSimuladores[Simulador, 2] * 1 / CantRestantes;
+                                double importe = vSimuladores[Simulador, 2] / CantRestantes;
 
                                 // Calcular la comision de Invertir Online
                                 double comisionIOL = importe * porcomisionIOL / 100;
@@ -1091,7 +1091,7 @@ namespace IOL
                                 catch { porcomisionIOL = 0; }
 
                                 // Calcular el Importe total para comprar acciones incluyendo Comision
-                                double importe = vSimuladores[Simulador, 2] * 1 / CantRestantes;
+                                double importe = vSimuladores[Simulador, 2] / CantRestantes;
 
                                 // Calcular la comision de Invertir Online
                                 double comisionIOL = importe * porcomisionIOL / 100;
