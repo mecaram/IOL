@@ -100,22 +100,22 @@ namespace IOL
 
                         chkSi.Checked = true;
 
-                        txtPorcCompra1.Text = string.Format("{0:00.00}", 0.50m);
+                        txtPorcCompra1.Text = string.Format("{0:00.00}", 0.58m);
                         txtPorcCompra2.Text = string.Format("{0:00.00}", 0.55m);
                         txtPorcCompra3.Text = string.Format("{0:00.00}", 0.60m);
-                        txtPorcCompra4.Text = string.Format("{0:00.00}", 0.65m);
-                        txtPorcCompra5.Text = string.Format("{0:00.00}", 0.70m);
-                        txtPorcCompra6.Text = string.Format("{0:00.00}", 0.05m);
+                        txtPorcCompra4.Text = string.Format("{0:00.00}", 0.59m);
+                        txtPorcCompra5.Text = string.Format("{0:00.00}", 0.60m);
+                        txtPorcCompra6.Text = string.Format("{0:00.00}", 0.01m);
                         txtPorcCompra7.Text = string.Format("{0:00.00}", 0.05m);
-                        txtPorcCompra8.Text = string.Format("{0:00.00}", 0.05m);
-                        txtPorcCompra9.Text = string.Format("{0:00.00}", 0.05m);
+                        txtPorcCompra8.Text = string.Format("{0:00.00}", 0.01m);
+                        txtPorcCompra9.Text = string.Format("{0:00.00}", 0.01m);
                         txtPorcCompra10.Text = string.Format("{0:00.00}", 0.05m);
 
-                        txtPorcVenta1.Text = string.Format("{0:00.00}", 0.65m);
+                        txtPorcVenta1.Text = string.Format("{0:00.00}", 1.0m);
                         txtPorcVenta2.Text = string.Format("{0:00.00}", 0.70m);
                         txtPorcVenta3.Text = string.Format("{0:00.00}", 0.75m);
-                        txtPorcVenta4.Text = string.Format("{0:00.00}", 0.80m);
-                        txtPorcVenta5.Text = string.Format("{0:00.00}", 0.85m);
+                        txtPorcVenta4.Text = string.Format("{0:00.00}", 1.00m);
+                        txtPorcVenta5.Text = string.Format("{0:00.00}", 1.00m);
                         txtPorcVenta6.Text = string.Format("{0:00.00}", 0.15m);
                         txtPorcVenta7.Text = string.Format("{0:00.00}", 0.20m);
                         txtPorcVenta8.Text = string.Format("{0:00.00}", 0.25m);

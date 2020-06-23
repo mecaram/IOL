@@ -8,6 +8,6 @@ namespace IOL
 {
     class PanelModel
     {
-        public PanelTituloModel[] titulos { get; set; }
+        public EPanelPrincipal[] titulos { get; set; }
     }
 }

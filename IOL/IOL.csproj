@@ -118,10 +118,17 @@
       <DependentUpon>Buscar.cs</DependentUpon>
     </Compile>
     <Compile Include="Clases\CotizacionModel.cs" />
+    <Compile Include="Clases\EAcciones.cs" />
+    <Compile Include="Clases\EComitentes.cs" />
+    <Compile Include="Clases\EFeriados.cs" />
+    <Compile Include="Clases\EInformeFinal.cs" />
+    <Compile Include="Clases\ERuedas.cs" />
+    <Compile Include="Clases\ERuedasDetalle.cs" />
+    <Compile Include="Clases\ERuedasDetalleSimulador.cs" />
     <Compile Include="Clases\Operaciones.cs" />
     <Compile Include="Clases\PanelModel.cs" />
-    <Compile Include="Clases\PanelTituloModel.cs" />
-    <Compile Include="Clases\Simulador.cs" />
+    <Compile Include="Clases\EPanelPrincipal.cs" />
+    <Compile Include="Clases\ESimulador.cs" />
     <Compile Include="Clases\TituloModel.cs" />
     <Compile Include="Copia.cs">
       <SubType>Form</SubType>
@@ -192,7 +199,7 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Clases\PuntasModel.cs" />
+    <Compile Include="Clases\EPuntas.cs" />
     <Compile Include="Clases\Token.cs" />
     <Compile Include="Ruedas.cs">
       <SubType>Form</SubType>

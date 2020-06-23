@@ -751,38 +751,41 @@ namespace IOL
                     // Calcular el importe total a vender
                     Importe = (PrecioActualVenta + (PrecioActualVenta * porcincremento / 100)) * cantidadvendida;
 
-                    using (MySqlConnection cone = new MySqlConnection(conexion))
+                    if (cantidadvendida > 0)
                     {
-                        cone.Open();
-                        sentencia = string.Format("Update RuedasDetalleSimulador Set " +
-                                                  " PrecioVenta = {0}, ImporteVenta = {1}, FechaVenta = str_to_date('{2}','%d/%m/%Y %H:%i:%s') , Estado = 'Vendido'," +
-                                                  "UltimoPrecio = {3}, FechaUltimoPrecio = str_to_date('{4}','%d/%m/%Y %H:%i:%s')," +
-                                                  "IdRuedaVenta = {5}  Where IdRuedaDetalle = {6}",
-                                                  precioventa, Importe, DateTime.Now,
-                                                  precioventa, DateTime.Now,
-                                                  IdRueda, iddetalle);
-                        MySqlCommand comando = new MySqlCommand(sentencia, cone);
-                        comando.CommandType = CommandType.Text;
-                        comando.ExecuteNonQuery();
-                        cone.Close();
-                    }
+                        using (MySqlConnection cone = new MySqlConnection(conexion))
+                        {
+                            cone.Open();
+                            sentencia = string.Format("Update RuedasDetalleSimulador Set " +
+                                                      " PrecioVenta = {0}, ImporteVenta = {1}, FechaVenta = str_to_date('{2}','%d/%m/%Y %H:%i:%s') , Estado = 'Vendido'," +
+                                                      "UltimoPrecio = {3}, FechaUltimoPrecio = str_to_date('{4}','%d/%m/%Y %H:%i:%s')," +
+                                                      "IdRuedaVenta = {5}  Where IdRuedaDetalle = {6}",
+                                                      precioventa, Importe, DateTime.Now,
+                                                      precioventa, DateTime.Now,
+                                                      IdRueda, iddetalle);
+                            MySqlCommand comando = new MySqlCommand(sentencia, cone);
+                            comando.CommandType = CommandType.Text;
+                            comando.ExecuteNonQuery();
+                            cone.Close();
+                        }
 
-                    vSimuladores[Simulador, 2] += Importe;
-                    vSimuladores[Simulador, 4] += Importe;
+                        vSimuladores[Simulador, 2] += Importe;
+                        vSimuladores[Simulador, 4] += Importe;
 
-                    using (MySqlConnection coneSimulador = new MySqlConnection(conexion))
-                    {
-                        double disponible = vSimuladores[Simulador, 2];
-                        double activos = vSimuladores[Simulador, 3];
-                        double totaltenencia = vSimuladores[Simulador, 4];
+                        using (MySqlConnection coneSimulador = new MySqlConnection(conexion))
+                        {
+                            double disponible = vSimuladores[Simulador, 2];
+                            double activos = vSimuladores[Simulador, 3];
+                            double totaltenencia = vSimuladores[Simulador, 4];
 
-                        sentencia = string.Format("Update TenenciaSimulador Set DisponibleParaOperar = {0}, ActivosValorizados = {1}," +
-                            " TotalTenencia = {2}, Fecha = Now() Where IdSimulacion = {3}", disponible, activos, totaltenencia, Simulador);
-                        coneSimulador.Open();
-                        MySqlCommand comando = new MySqlCommand(sentencia, coneSimulador);
-                        comando.CommandType = CommandType.Text;
-                        comando.ExecuteNonQuery();
-                        coneSimulador.Close();
+                            sentencia = string.Format("Update TenenciaSimulador Set DisponibleParaOperar = {0}, ActivosValorizados = {1}," +
+                                " TotalTenencia = {2}, Fecha = Now() Where IdSimulacion = {3}", disponible, activos, totaltenencia, Simulador);
+                            coneSimulador.Open();
+                            MySqlCommand comando = new MySqlCommand(sentencia, coneSimulador);
+                            comando.CommandType = CommandType.Text;
+                            comando.ExecuteNonQuery();
+                            coneSimulador.Close();
+                        }
                     }
                 }
             }
@@ -842,7 +845,7 @@ namespace IOL
                                 catch { porcomisionIOL = 0; }
 
                                 // Calcular el Importe total para comprar acciones incluyendo Comision
-                                double importe = vSimuladores[Simulador, 2] * 1 / CantRestantes;
+                                double importe = vSimuladores[Simulador, 2] / CantRestantes;
 
                                 // Calcular la comision de Invertir Online
                                 double comisionIOL = importe * porcomisionIOL / 100;
@@ -861,45 +864,48 @@ namespace IOL
                                 // Calcular la cantidad de acciones compradas
                                 double cantidadcomprada = (int)(importe / preciocompra);
 
-                                using (MySqlConnection cone = new MySqlConnection(conexion))
+                                if (cantidadcomprada > 0)
                                 {
-                                    cone.Open();
-                                    sentencia = string.Format("Insert Into RuedasDetalleSimulador(IdRuedaActual, IdRuedaCompra, IdSimulacion, " +
-                                                              "FechaCompra, Simbolo, Cantidad, " +
-                                                              "PrecioCompra, ImporteCompra, UltimoPrecio," +
-                                                              "FechaUltimoPrecio," +
-                                                              "Estado, PorcComisionIOL, ImporteComisionIOL, IdPanel) " +
-                                                              "Values({0}, {1}, {2}, " +
-                                                              "str_to_date('{3}','%d/%m/%Y %H:%i:%s'),'{4}',{5}, " +
-                                                              "{6},{7},{8}," +
-                                                              "str_to_date('{9}','%d/%m/%Y %H:%i:%s')," +
-                                                              "'{10}',{11},{12},{13})",
-                                                               IdRueda, IdRueda, Simulador,
-                                                               DateTime.Now, Simbolo, cantidadcomprada,
-                                                               preciocompra, importe, precioactual,
-                                                               DateTime.Now,
-                                                               "Comprado", txtPorcComisionIOL.Text.Trim(), comisionIOL, IdPanel);
-                                    MySqlCommand comando = new MySqlCommand(sentencia, cone);
-                                    comando.CommandType = CommandType.Text;
-                                    comando.ExecuteNonQuery();
-                                    cone.Close();
-                                }
-                                vSimuladores[Simulador, 2] -= (importe + comisionIOL);
-                                vSimuladores[Simulador, 4] -= (importe + comisionIOL);
+                                    using (MySqlConnection cone = new MySqlConnection(conexion))
+                                    {
+                                        cone.Open();
+                                        sentencia = string.Format("Insert Into RuedasDetalleSimulador(IdRuedaActual, IdRuedaCompra, IdSimulacion, " +
+                                                                  "FechaCompra, Simbolo, Cantidad, " +
+                                                                  "PrecioCompra, ImporteCompra, UltimoPrecio," +
+                                                                  "FechaUltimoPrecio," +
+                                                                  "Estado, PorcComisionIOL, ImporteComisionIOL, IdPanel) " +
+                                                                  "Values({0}, {1}, {2}, " +
+                                                                  "str_to_date('{3}','%d/%m/%Y %H:%i:%s'),'{4}',{5}, " +
+                                                                  "{6},{7},{8}," +
+                                                                  "str_to_date('{9}','%d/%m/%Y %H:%i:%s')," +
+                                                                  "'{10}',{11},{12},{13})",
+                                                                   IdRueda, IdRueda, Simulador,
+                                                                   DateTime.Now, Simbolo, cantidadcomprada,
+                                                                   preciocompra, importe, precioactual,
+                                                                   DateTime.Now,
+                                                                   "Comprado", txtPorcComisionIOL.Text.Trim(), comisionIOL, IdPanel);
+                                        MySqlCommand comando = new MySqlCommand(sentencia, cone);
+                                        comando.CommandType = CommandType.Text;
+                                        comando.ExecuteNonQuery();
+                                        cone.Close();
+                                    }
+                                    vSimuladores[Simulador, 2] -= (importe + comisionIOL);
+                                    vSimuladores[Simulador, 4] -= (importe + comisionIOL);
 
-                                using (MySqlConnection coneSimulador = new MySqlConnection(conexion))
-                                {
-                                    double disponible = vSimuladores[Simulador, 2];
-                                    double activos = vSimuladores[Simulador, 3];
-                                    double totaltenencia = vSimuladores[Simulador, 4];
+                                    using (MySqlConnection coneSimulador = new MySqlConnection(conexion))
+                                    {
+                                        double disponible = vSimuladores[Simulador, 2];
+                                        double activos = vSimuladores[Simulador, 3];
+                                        double totaltenencia = vSimuladores[Simulador, 4];
 
-                                    sentencia = string.Format("Update TenenciaSimulador Set DisponibleParaOperar = {0}, ActivosValorizados = {1}," +
-                                        " TotalTenencia = {2}, Fecha = Now() Where IdSimulacion = {3}", disponible, activos, totaltenencia, Simulador);
-                                    coneSimulador.Open();
-                                    MySqlCommand comando = new MySqlCommand(sentencia, coneSimulador);
-                                    comando.CommandType = CommandType.Text;
-                                    comando.ExecuteNonQuery();
-                                    coneSimulador.Close();
+                                        sentencia = string.Format("Update TenenciaSimulador Set DisponibleParaOperar = {0}, ActivosValorizados = {1}," +
+                                            " TotalTenencia = {2}, Fecha = Now() Where IdSimulacion = {3}", disponible, activos, totaltenencia, Simulador);
+                                        coneSimulador.Open();
+                                        MySqlCommand comando = new MySqlCommand(sentencia, coneSimulador);
+                                        comando.CommandType = CommandType.Text;
+                                        comando.ExecuteNonQuery();
+                                        coneSimulador.Close();
+                                    }
                                 }
                             }
                         }
@@ -985,38 +991,41 @@ namespace IOL
                         // Calcular el importe total a vender
                         Importe = (PrecioActualVenta + (PrecioActualVenta * porcincremento / 100)) * CantidadVendida;
 
-                        using (MySqlConnection cone = new MySqlConnection(conexion))
+                        if (CantidadVendida > 0)
                         {
-                            cone.Open();
-                            sentencia = string.Format("Update RuedasDetalleSimulador Set " +
-                                                      " PrecioVenta = {0}, ImporteVenta = {1}, FechaVenta = str_to_date('{2}','%d/%m/%Y %H:%i:%s') , Estado = 'Vendido'," +
-                                                      "UltimoPrecio = {3}, FechaUltimoPrecio = str_to_date('{4}','%d/%m/%Y %H:%i:%s')," +
-                                                      "IdRuedaVenta = {5}  Where IdRuedaDetalle = {6}",
-                                                      precioventa, Importe, DateTime.Now,
-                                                      precioventa, DateTime.Now,
-                                                      IdRueda, iddetalle);
-                            MySqlCommand comando = new MySqlCommand(sentencia, cone);
-                            comando.CommandType = CommandType.Text;
-                            comando.ExecuteNonQuery();
-                            cone.Close();
-                        }
+                            using (MySqlConnection cone = new MySqlConnection(conexion))
+                            {
+                                cone.Open();
+                                sentencia = string.Format("Update RuedasDetalleSimulador Set " +
+                                                          " PrecioVenta = {0}, ImporteVenta = {1}, FechaVenta = str_to_date('{2}','%d/%m/%Y %H:%i:%s') , Estado = 'Vendido'," +
+                                                          "UltimoPrecio = {3}, FechaUltimoPrecio = str_to_date('{4}','%d/%m/%Y %H:%i:%s')," +
+                                                          "IdRuedaVenta = {5}  Where IdRuedaDetalle = {6}",
+                                                          precioventa, Importe, DateTime.Now,
+                                                          precioventa, DateTime.Now,
+                                                          IdRueda, iddetalle);
+                                MySqlCommand comando = new MySqlCommand(sentencia, cone);
+                                comando.CommandType = CommandType.Text;
+                                comando.ExecuteNonQuery();
+                                cone.Close();
+                            }
 
-                        vSimuladores[Simulador, 2] += Importe;
-                        vSimuladores[Simulador, 4] += Importe;
+                            vSimuladores[Simulador, 2] += Importe;
+                            vSimuladores[Simulador, 4] += Importe;
 
-                        using (MySqlConnection coneSimulador = new MySqlConnection(conexion))
-                        {
-                            double disponible = vSimuladores[Simulador, 2];
-                            double activos = vSimuladores[Simulador, 3];
-                            double totaltenencia = vSimuladores[Simulador, 4];
+                            using (MySqlConnection coneSimulador = new MySqlConnection(conexion))
+                            {
+                                double disponible = vSimuladores[Simulador, 2];
+                                double activos = vSimuladores[Simulador, 3];
+                                double totaltenencia = vSimuladores[Simulador, 4];
 
-                            sentencia = string.Format("Update TenenciaSimulador Set DisponibleParaOperar = {0}, ActivosValorizados = {1}," +
-                                " TotalTenencia = {2}, Fecha = Now() Where IdSimulacion = {3}", disponible, activos, totaltenencia, Simulador);
-                            coneSimulador.Open();
-                            MySqlCommand comando = new MySqlCommand(sentencia, coneSimulador);
-                            comando.CommandType = CommandType.Text;
-                            comando.ExecuteNonQuery();
-                            coneSimulador.Close();
+                                sentencia = string.Format("Update TenenciaSimulador Set DisponibleParaOperar = {0}, ActivosValorizados = {1}," +
+                                    " TotalTenencia = {2}, Fecha = Now() Where IdSimulacion = {3}", disponible, activos, totaltenencia, Simulador);
+                                coneSimulador.Open();
+                                MySqlCommand comando = new MySqlCommand(sentencia, coneSimulador);
+                                comando.CommandType = CommandType.Text;
+                                comando.ExecuteNonQuery();
+                                coneSimulador.Close();
+                            }
                         }
                     }
                 }
@@ -1082,7 +1091,7 @@ namespace IOL
                                 catch { porcomisionIOL = 0; }
 
                                 // Calcular el Importe total para comprar acciones incluyendo Comision
-                                double importe = vSimuladores[Simulador, 2] * 1 / CantRestantes;
+                                double importe = vSimuladores[Simulador, 2] / CantRestantes;
 
                                 // Calcular la comision de Invertir Online
                                 double comisionIOL = importe * porcomisionIOL / 100;
@@ -1101,45 +1110,48 @@ namespace IOL
                                 // Calcular la cantidad de acciones compradas
                                 double cantidadcomprada = (int)(importe / preciocompra);
 
-                                using (MySqlConnection cone = new MySqlConnection(conexion))
+                                if (cantidadcomprada > 0)
                                 {
-                                    cone.Open();
-                                    sentencia = string.Format("Insert Into RuedasDetalleSimulador(IdRuedaActual, IdRuedaCompra, IdSimulacion, " +
-                                                              "FechaCompra, Simbolo, Cantidad, " +
-                                                              "PrecioCompra, ImporteCompra, UltimoPrecio," +
-                                                              "FechaUltimoPrecio," +
-                                                              "Estado, PorcComisionIOL, ImporteComisionIOL, IdPanel) " +
-                                                              "Values({0}, {1}, {2}, " +
-                                                              "str_to_date('{3}','%d/%m/%Y %H:%i:%s'),'{4}',{5}, " +
-                                                              "{6},{7},{8}," +
-                                                              "str_to_date('{9}','%d/%m/%Y %H:%i:%s')," +
-                                                              "'{10}',{11},{12},{13})",
-                                                               IdRueda, IdRueda, Simulador,
-                                                               DateTime.Now, Simbolo, cantidadcomprada,
-                                                               preciocompra, importe, precioactual,
-                                                               DateTime.Now,
-                                                               "Comprado", txtPorcComisionIOL.Text.Trim(), comisionIOL, IdPanel);
-                                    MySqlCommand comando = new MySqlCommand(sentencia, cone);
-                                    comando.CommandType = CommandType.Text;
-                                    comando.ExecuteNonQuery();
-                                    cone.Close();
-                                }
-                                vSimuladores[Simulador, 2] -= (importe + comisionIOL);
-                                vSimuladores[Simulador, 4] -= (importe + comisionIOL);
+                                    using (MySqlConnection cone = new MySqlConnection(conexion))
+                                    {
+                                        cone.Open();
+                                        sentencia = string.Format("Insert Into RuedasDetalleSimulador(IdRuedaActual, IdRuedaCompra, IdSimulacion, " +
+                                                                  "FechaCompra, Simbolo, Cantidad, " +
+                                                                  "PrecioCompra, ImporteCompra, UltimoPrecio," +
+                                                                  "FechaUltimoPrecio," +
+                                                                  "Estado, PorcComisionIOL, ImporteComisionIOL, IdPanel) " +
+                                                                  "Values({0}, {1}, {2}, " +
+                                                                  "str_to_date('{3}','%d/%m/%Y %H:%i:%s'),'{4}',{5}, " +
+                                                                  "{6},{7},{8}," +
+                                                                  "str_to_date('{9}','%d/%m/%Y %H:%i:%s')," +
+                                                                  "'{10}',{11},{12},{13})",
+                                                                   IdRueda, IdRueda, Simulador,
+                                                                   DateTime.Now, Simbolo, cantidadcomprada,
+                                                                   preciocompra, importe, precioactual,
+                                                                   DateTime.Now,
+                                                                   "Comprado", txtPorcComisionIOL.Text.Trim(), comisionIOL, IdPanel);
+                                        MySqlCommand comando = new MySqlCommand(sentencia, cone);
+                                        comando.CommandType = CommandType.Text;
+                                        comando.ExecuteNonQuery();
+                                        cone.Close();
+                                    }
+                                    vSimuladores[Simulador, 2] -= (importe + comisionIOL);
+                                    vSimuladores[Simulador, 4] -= (importe + comisionIOL);
 
-                                using (MySqlConnection coneSimulador = new MySqlConnection(conexion))
-                                {
-                                    double disponible = vSimuladores[Simulador, 2];
-                                    double activos = vSimuladores[Simulador, 3];
-                                    double totaltenencia = vSimuladores[Simulador, 4];
+                                    using (MySqlConnection coneSimulador = new MySqlConnection(conexion))
+                                    {
+                                        double disponible = vSimuladores[Simulador, 2];
+                                        double activos = vSimuladores[Simulador, 3];
+                                        double totaltenencia = vSimuladores[Simulador, 4];
 
-                                    sentencia = string.Format("Update TenenciaSimulador Set DisponibleParaOperar = {0}, ActivosValorizados = {1}," +
-                                        " TotalTenencia = {2}, Fecha = Now() Where IdSimulacion = {3}", disponible, activos, totaltenencia, Simulador);
-                                    coneSimulador.Open();
-                                    MySqlCommand comando = new MySqlCommand(sentencia, coneSimulador);
-                                    comando.CommandType = CommandType.Text;
-                                    comando.ExecuteNonQuery();
-                                    coneSimulador.Close();
+                                        sentencia = string.Format("Update TenenciaSimulador Set DisponibleParaOperar = {0}, ActivosValorizados = {1}," +
+                                            " TotalTenencia = {2}, Fecha = Now() Where IdSimulacion = {3}", disponible, activos, totaltenencia, Simulador);
+                                        coneSimulador.Open();
+                                        MySqlCommand comando = new MySqlCommand(sentencia, coneSimulador);
+                                        comando.CommandType = CommandType.Text;
+                                        comando.ExecuteNonQuery();
+                                        coneSimulador.Close();
+                                    }
                                 }
                             }
                         }
