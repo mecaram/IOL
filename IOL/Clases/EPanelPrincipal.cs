@@ -6,8 +6,11 @@ using System.Threading.Tasks;
 
 namespace IOL
 {
-    class PanelTituloModel
+    class EPanelPrincipal
     {
+        public int IdPanelPrincipal { get; set; }
+        public int IdRueda { get; set; }
+        public int IdPanel { get; set; }
         public string simbolo { get; set; }
         public double? ultimoprecio { get; set; }
         public double? variacionPorcentual { get; set; }
@@ -23,7 +26,11 @@ namespace IOL
         public string fechaVencimiento { get; set; }
         public string mercado { get; set; }
         public string moneda { get; set; }
-        public PuntasModel puntas { get; set; }
+        public EPuntas puntas { get; set; }
         public string contenido { get; set; }
+        public double? PuntaCompradoraP { get; set; }
+        public double? PuntaVendedoraP { get; set; }
+        public double? PuntaCompradoraC { get; set; }
+        public double? PuntaVendedoraC { get; set; }
     }
 }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace IOL
 {
-    class PuntasModel
+    class EPuntas
     {
         public double? cantidadCompra { get; set; }
         public double? precioCompra { get; set; }

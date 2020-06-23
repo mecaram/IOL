@@ -32,7 +32,7 @@ namespace IOL.Clases
         public string moneda { get; set; }
         public double? precioAjuste { get; set; }
         public double? interesesAbiertos { get; set; }
-        public PuntasModel[] puntas = new PuntasModel[100];
+        public EPuntas[] puntas = new EPuntas[100];
         public int cantidadDeOperaciones { get; set; }
         public string contenido { get; set; }
 
