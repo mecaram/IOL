@@ -86,7 +86,7 @@
             this.label41 = new System.Windows.Forms.Label();
             this.label42 = new System.Windows.Forms.Label();
             this.label43 = new System.Windows.Forms.Label();
-            this.btnDatosSimulador = new System.Windows.Forms.Button();
+            this.btnActualizarSimulador = new System.Windows.Forms.Button();
             this.label20 = new System.Windows.Forms.Label();
             this.label21 = new System.Windows.Forms.Label();
             this.label18 = new System.Windows.Forms.Label();
@@ -120,6 +120,8 @@
             this.nudSimulador = new System.Windows.Forms.NumericUpDown();
             this.lnkEstrategia = new System.Windows.Forms.LinkLabel();
             this.lblTotalAccionesCompradas = new System.Windows.Forms.Label();
+            this.btnActualizarRueda = new System.Windows.Forms.Button();
+            this.btnCerrarRueda = new System.Windows.Forms.Button();
             this.tbcDatosRueda.SuspendLayout();
             this.tbpDatosRueda.SuspendLayout();
             this.tbpDatosSimulador.SuspendLayout();
@@ -150,11 +152,13 @@
             this.tbcDatosRueda.Location = new System.Drawing.Point(3, 8);
             this.tbcDatosRueda.Name = "tbcDatosRueda";
             this.tbcDatosRueda.SelectedIndex = 0;
-            this.tbcDatosRueda.Size = new System.Drawing.Size(247, 447);
+            this.tbcDatosRueda.Size = new System.Drawing.Size(247, 478);
             this.tbcDatosRueda.TabIndex = 0;
             // 
             // tbpDatosRueda
             // 
+            this.tbpDatosRueda.Controls.Add(this.btnCerrarRueda);
+            this.tbpDatosRueda.Controls.Add(this.btnActualizarRueda);
             this.tbpDatosRueda.Controls.Add(this.label26);
             this.tbpDatosRueda.Controls.Add(this.label27);
             this.tbpDatosRueda.Controls.Add(this.txtPorcPuntaVendedora);
@@ -181,7 +185,7 @@
             this.tbpDatosRueda.Location = new System.Drawing.Point(4, 22);
             this.tbpDatosRueda.Name = "tbpDatosRueda";
             this.tbpDatosRueda.Padding = new System.Windows.Forms.Padding(3);
-            this.tbpDatosRueda.Size = new System.Drawing.Size(239, 421);
+            this.tbpDatosRueda.Size = new System.Drawing.Size(239, 452);
             this.tbpDatosRueda.TabIndex = 0;
             this.tbpDatosRueda.Text = "Datos Rueda";
             this.tbpDatosRueda.UseVisualStyleBackColor = true;
@@ -210,7 +214,6 @@
             // 
             // txtPorcPuntaVendedora
             // 
-            this.txtPorcPuntaVendedora.Enabled = false;
             this.txtPorcPuntaVendedora.Font = new System.Drawing.Font("Times New Roman", 14.25F, System.Drawing.FontStyle.Bold);
             this.txtPorcPuntaVendedora.Location = new System.Drawing.Point(97, 294);
             this.txtPorcPuntaVendedora.Name = "txtPorcPuntaVendedora";
@@ -230,7 +233,6 @@
             // 
             // txtPorcPuntaCompradora
             // 
-            this.txtPorcPuntaCompradora.Enabled = false;
             this.txtPorcPuntaCompradora.Font = new System.Drawing.Font("Times New Roman", 14.25F, System.Drawing.FontStyle.Bold);
             this.txtPorcPuntaCompradora.Location = new System.Drawing.Point(97, 259);
             this.txtPorcPuntaCompradora.Name = "txtPorcPuntaCompradora";
@@ -270,7 +272,6 @@
             // 
             // txtPorcComisionIOL
             // 
-            this.txtPorcComisionIOL.Enabled = false;
             this.txtPorcComisionIOL.Font = new System.Drawing.Font("Times New Roman", 14.25F, System.Drawing.FontStyle.Bold);
             this.txtPorcComisionIOL.Location = new System.Drawing.Point(97, 224);
             this.txtPorcComisionIOL.Name = "txtPorcComisionIOL";
@@ -301,7 +302,6 @@
             // 
             // txtPorcVenta
             // 
-            this.txtPorcVenta.Enabled = false;
             this.txtPorcVenta.Font = new System.Drawing.Font("Times New Roman", 14.25F, System.Drawing.FontStyle.Bold);
             this.txtPorcVenta.Location = new System.Drawing.Point(97, 189);
             this.txtPorcVenta.Name = "txtPorcVenta";
@@ -321,7 +321,6 @@
             // 
             // txtPorcCompra
             // 
-            this.txtPorcCompra.Enabled = false;
             this.txtPorcCompra.Font = new System.Drawing.Font("Times New Roman", 14.25F, System.Drawing.FontStyle.Bold);
             this.txtPorcCompra.Location = new System.Drawing.Point(97, 154);
             this.txtPorcCompra.Name = "txtPorcCompra";
@@ -444,7 +443,7 @@
             this.tbpDatosSimulador.Controls.Add(this.label41);
             this.tbpDatosSimulador.Controls.Add(this.label42);
             this.tbpDatosSimulador.Controls.Add(this.label43);
-            this.tbpDatosSimulador.Controls.Add(this.btnDatosSimulador);
+            this.tbpDatosSimulador.Controls.Add(this.btnActualizarSimulador);
             this.tbpDatosSimulador.Controls.Add(this.label20);
             this.tbpDatosSimulador.Controls.Add(this.label21);
             this.tbpDatosSimulador.Controls.Add(this.label18);
@@ -475,7 +474,7 @@
             this.tbpDatosSimulador.Location = new System.Drawing.Point(4, 22);
             this.tbpDatosSimulador.Name = "tbpDatosSimulador";
             this.tbpDatosSimulador.Padding = new System.Windows.Forms.Padding(3);
-            this.tbpDatosSimulador.Size = new System.Drawing.Size(239, 421);
+            this.tbpDatosSimulador.Size = new System.Drawing.Size(239, 452);
             this.tbpDatosSimulador.TabIndex = 1;
             this.tbpDatosSimulador.Text = "Datos Simulador";
             this.tbpDatosSimulador.UseVisualStyleBackColor = true;
@@ -774,16 +773,16 @@
             this.label43.TabIndex = 228;
             this.label43.Text = "6:";
             // 
-            // btnDatosSimulador
+            // btnActualizarSimulador
             // 
-            this.btnDatosSimulador.Font = new System.Drawing.Font("Times New Roman", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnDatosSimulador.Location = new System.Drawing.Point(20, 389);
-            this.btnDatosSimulador.Name = "btnDatosSimulador";
-            this.btnDatosSimulador.Size = new System.Drawing.Size(198, 26);
-            this.btnDatosSimulador.TabIndex = 217;
-            this.btnDatosSimulador.Text = "Actualizar simulador";
-            this.btnDatosSimulador.UseVisualStyleBackColor = true;
-            this.btnDatosSimulador.Click += new System.EventHandler(this.btnDatosSimulador_Click);
+            this.btnActualizarSimulador.Font = new System.Drawing.Font("Times New Roman", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnActualizarSimulador.Location = new System.Drawing.Point(20, 389);
+            this.btnActualizarSimulador.Name = "btnActualizarSimulador";
+            this.btnActualizarSimulador.Size = new System.Drawing.Size(198, 26);
+            this.btnActualizarSimulador.TabIndex = 217;
+            this.btnActualizarSimulador.Text = "Actualizar Simulador";
+            this.btnActualizarSimulador.UseVisualStyleBackColor = true;
+            this.btnActualizarSimulador.Click += new System.EventHandler(this.btnActualizarSimulador_Click);
             // 
             // label20
             // 
@@ -1087,7 +1086,7 @@
             this.dgvAccionesCompradas.Name = "dgvAccionesCompradas";
             this.dgvAccionesCompradas.ReadOnly = true;
             this.dgvAccionesCompradas.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dgvAccionesCompradas.Size = new System.Drawing.Size(1004, 393);
+            this.dgvAccionesCompradas.Size = new System.Drawing.Size(1004, 383);
             this.dgvAccionesCompradas.TabIndex = 190;
             this.dgvAccionesCompradas.DataBindingComplete += new System.Windows.Forms.DataGridViewBindingCompleteEventHandler(this.dgvAccionesCompradas_DataBindingComplete);
             // 
@@ -1157,11 +1156,31 @@
             this.lblTotalAccionesCompradas.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.lblTotalAccionesCompradas.Font = new System.Drawing.Font("Georgia", 12.75F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblTotalAccionesCompradas.ForeColor = System.Drawing.SystemColors.Highlight;
-            this.lblTotalAccionesCompradas.Location = new System.Drawing.Point(248, 433);
+            this.lblTotalAccionesCompradas.Location = new System.Drawing.Point(248, 460);
             this.lblTotalAccionesCompradas.Name = "lblTotalAccionesCompradas";
             this.lblTotalAccionesCompradas.Size = new System.Drawing.Size(308, 22);
             this.lblTotalAccionesCompradas.TabIndex = 196;
             this.lblTotalAccionesCompradas.Text = "Total de acciones Compradas: 00";
+            // 
+            // btnActualizarRueda
+            // 
+            this.btnActualizarRueda.Font = new System.Drawing.Font("Times New Roman", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnActualizarRueda.Location = new System.Drawing.Point(19, 334);
+            this.btnActualizarRueda.Name = "btnActualizarRueda";
+            this.btnActualizarRueda.Size = new System.Drawing.Size(198, 28);
+            this.btnActualizarRueda.TabIndex = 223;
+            this.btnActualizarRueda.Text = "Actualizar Rueda";
+            this.btnActualizarRueda.UseVisualStyleBackColor = true;
+            // 
+            // btnCerrarRueda
+            // 
+            this.btnCerrarRueda.Font = new System.Drawing.Font("Times New Roman", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnCerrarRueda.Location = new System.Drawing.Point(19, 372);
+            this.btnCerrarRueda.Name = "btnCerrarRueda";
+            this.btnCerrarRueda.Size = new System.Drawing.Size(198, 26);
+            this.btnCerrarRueda.TabIndex = 225;
+            this.btnCerrarRueda.Text = "Cerrar Rueda";
+            this.btnCerrarRueda.UseVisualStyleBackColor = true;
             // 
             // Simulador
             // 
@@ -1169,7 +1188,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.SeaShell;
             this.BackgroundImage = global::IOL.Properties.Resources.fondo;
-            this.ClientSize = new System.Drawing.Size(1258, 458);
+            this.ClientSize = new System.Drawing.Size(1258, 488);
             this.Controls.Add(this.lblTotalAccionesCompradas);
             this.Controls.Add(this.lnkEstrategia);
             this.Controls.Add(this.nudSimulador);
@@ -1251,7 +1270,7 @@
         public System.Windows.Forms.Label label22;
         public System.Windows.Forms.Label label23;
         public System.Windows.Forms.Label lblOperar;
-        private System.Windows.Forms.Button btnDatosSimulador;
+        private System.Windows.Forms.Button btnActualizarSimulador;
         public System.Windows.Forms.Label label24;
         public System.Windows.Forms.TextBox txtPorcPuntaCompradora;
         public System.Windows.Forms.Label label25;
@@ -1288,5 +1307,7 @@
         private System.Windows.Forms.Label lblTotalAccionesCompradas;
         private System.Windows.Forms.LinkLabel lnkEstrategiaDos;
         private System.Windows.Forms.LinkLabel lnkEstrategiaUno;
+        private System.Windows.Forms.Button btnActualizarRueda;
+        private System.Windows.Forms.Button btnCerrarRueda;
     }
 }
