@@ -10,6 +10,8 @@ using System.Configuration;
 using MySql.Data;
 using MySql.Data.MySqlClient;
 using System.Data;
+using DocumentFormat.OpenXml.Spreadsheet;
+
 
 namespace IOL
 {
@@ -290,19 +292,37 @@ namespace IOL
                     DataTable ds = new DataTable();
                     da.Fill(ds);
 
+                    lblTotales.Text = string.Format("Total Simulador {0:00}:", IdSimulacion);
+                    txtTotalAcciones.Text = ds.Rows.Count.ToString();
+
+                    double totalCantidad = Convert.ToDouble(ds.Compute("Sum(Cantidad)","Estado = 'Comprado'"));
+                    txtTotalCantidad.Text = string.Format("{0:000}",totalCantidad);
+
+                    double totalImporteComision = Convert.ToDouble(ds.Compute("Sum(ImporteComisionIOL)", "Estado = 'Comprado'"));
+                    txtImporteComision.Text = string.Format("$ {0:#00.00}", totalImporteComision);
+
+                    double totalImporteCompra = Convert.ToDouble(ds.Compute("Sum(ImporteCompra)", "Estado = 'Comprado'"));
+                    txtTotalImporteCompra.Text = string.Format("$ {0:#00.00}", totalImporteCompra);
+
+                    double totalVariacionEnPesos = Convert.ToDouble(ds.Compute("Sum(VariacionEnPesos)", "Estado = 'Comprado'"));
+                    txtTotalVariacionEnPesos.Text = string.Format("$ {0:#00.00}", totalVariacionEnPesos);
+
+                    double totalVariacionEnPorcentajes = Convert.ToDouble(ds.Compute("Sum(VariacionEnPorcentajes)", "Estado = 'Comprado'"));
+                    txtTotalVariacionEnPorcentajes.Text = string.Format("{0:#00.00}", totalVariacionEnPorcentajes);
+
                     if (ds.Rows.Count > 0)
                     {
                         dgvAcciones.DataSource = ds;
 
                         DataGridViewCellStyle EstiloEncabezadoColumna = new DataGridViewCellStyle();
 
-                        EstiloEncabezadoColumna.BackColor = Color.Green;
-                        EstiloEncabezadoColumna.Font = new Font("Times New Roman", 12, FontStyle.Bold);
+                        EstiloEncabezadoColumna.BackColor = System.Drawing.Color.Green;
+                        EstiloEncabezadoColumna.Font = new System.Drawing.Font("Times New Roman", 12, FontStyle.Bold);
                         dgvAcciones.ColumnHeadersDefaultCellStyle = EstiloEncabezadoColumna;
 
                         DataGridViewCellStyle EstiloColumnas = new DataGridViewCellStyle();
-                        EstiloColumnas.BackColor = Color.AliceBlue;
-                        EstiloColumnas.Font = new Font("Times New Roman", 12);
+                        EstiloColumnas.BackColor = System.Drawing.Color.AliceBlue;
+                        EstiloColumnas.Font = new System.Drawing.Font("Times New Roman", 12);
                         dgvAcciones.RowsDefaultCellStyle = EstiloColumnas;
 
                         dgvAcciones.Columns["Simbolo"].HeaderText = "Símbolo";
@@ -369,17 +389,16 @@ namespace IOL
                         dgvAcciones.DataSource = null;
                         dgvAcciones.RefreshEdit();
                     }
-                    lblTotalAccionesCompradas.Text = string.Format("Total Simulador {0:00}:", IdSimulacion);
                 }
             }
             else
             {
                 dgvAcciones.DataSource = null;
-                foreach (Control controles in this.Controls)
+                foreach (System.Windows.Forms.Control controles in this.Controls)
                     controles.Enabled = false;
-                foreach (Control controles in tbpDatosRueda.Controls)
+                foreach (System.Windows.Forms.Control controles in tbpDatosRueda.Controls)
                     controles.Enabled = false;
-                foreach (Control controles in tbpDatosSimulador.Controls)
+                foreach (System.Windows.Forms.Control controles in tbpDatosSimulador.Controls)
                     controles.Enabled = false;
             }
         }
@@ -1893,6 +1912,17 @@ namespace IOL
         private void txtTotalVariacionEnPorcentajes_TextChanged(object sender, EventArgs e)
         {
 
+        }
+
+        private void dgvAcciones_RowPrePaint(object sender, DataGridViewRowPrePaintEventArgs e)
+        {
+            foreach (DataGridViewRow fila in dgvAcciones.Rows)
+            {
+                if (fila.Cells["Estado"].Value.ToString().Trim().ToUpper() == "COMPRADO")
+                    fila.DefaultCellStyle.BackColor = System.Drawing.Color.Red;
+                else
+                    fila.DefaultCellStyle.BackColor = System.Drawing.Color.Green;
+            }
         }
     }
 }
