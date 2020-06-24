@@ -1712,7 +1712,7 @@ namespace IOL
             if (MessageBox.Show("Desea Realizar el Cierre de la Rueda","Pregunta del Sistema",MessageBoxButtons.YesNo,MessageBoxIcon.Question,MessageBoxDefaultButton.Button2) == DialogResult.Yes)
             {
                 MySqlConnection coneRuedaFinalizada = new MySqlConnection(conexion);
-                string sentencia = string.Format("Select * From Ruedas Where IdRueda = {0} And Estado = 1", idrueda);
+                string sentencia = string.Format("Select * From Ruedas Where IdRueda = {0} And Estado = 1", txtIdRueda.Text.Trim());
                 MySqlDataAdapter daRuedaFinalizada = new MySqlDataAdapter(sentencia, coneRuedaFinalizada);
                 DataTable dsRuedaFinalizada = new DataTable();
                 int regRuedaFinalizada = daRuedaFinalizada.Fill(dsRuedaFinalizada);
@@ -1722,7 +1722,7 @@ namespace IOL
                     // Almacenamos el cierre de la rueda
                     using (MySqlConnection cone = new MySqlConnection(conexion))
                     {
-                        sentencia = string.Format("Update Ruedas Set Estado = 2 Where IdRueda = {0}", idrueda);
+                        sentencia = string.Format("Update Ruedas Set Estado = 2 Where IdRueda = {0}", txtIdRueda.Text.Trim());
                         cone.Open();
                         MySqlCommand comandoApertura = new MySqlCommand(sentencia, cone);
                         comandoApertura.ExecuteNonQuery();
@@ -1755,7 +1755,7 @@ namespace IOL
 
                             using (MySqlConnection coneActualizar = new MySqlConnection(conexion))
                             {
-                                sentencia = String.Format("Insert Into InformeFinal (Simbolo, IdRueda) Values('{0}',{1})", simbolo, idrueda);
+                                sentencia = String.Format("Insert Into InformeFinal (Simbolo, IdRueda) Values('{0}',{1})", simbolo, txtIdRueda.Text.Trim());
                                 coneActualizar.Open();
                                 MySqlCommand comando = new MySqlCommand(sentencia, coneActualizar);
                                 comando.CommandType = CommandType.Text;
@@ -1766,7 +1766,7 @@ namespace IOL
                     }
 
                     // Cargo toda la info de la rueda
-                    sentencia = string.Format("Select * From RuedasDetalleSimulador Where IdRuedaActual = {0} And Estado = 'Vendido'", idrueda);
+                    sentencia = string.Format("Select * From RuedasDetalleSimulador Where IdRuedaActual = {0} And Estado = 'Vendido'", txtIdRueda.Text.Trim());
                     MySqlConnection coneRuedas = new MySqlConnection(conexion);
                     MySqlDataAdapter daRuedas = new MySqlDataAdapter(sentencia, coneRuedas);
                     DataTable dsRuedas = new DataTable();
@@ -1784,7 +1784,7 @@ namespace IOL
                             {
                                 sentencia = String.Format("Update InformeFinal Set Variacion{0}Diaria = Variacion{0}Diaria + {1} " +
                                     " Where IdRueda = {2} And Simbolo = '{3}'",
-                                    simulador, variacion, idrueda, simbolo);
+                                    simulador, variacion, txtIdRueda.Text.Trim(), simbolo);
                                 coneActualizar.Open();
                                 MySqlCommand comando = new MySqlCommand(sentencia, coneActualizar);
                                 comando.CommandType = CommandType.Text;
