@@ -284,7 +284,7 @@ namespace IOL
             {
                 using (MySqlConnection coneDetalle = new MySqlConnection(cone))
                 {
-                    string sentencia = string.Format("Select * From RuedasDetalleSimulador Where IdRuedaActual = {0} And Estado = 'Comprado' And IdSimulacion = {1}", txtIdRueda.Text.Trim(), IdSimulacion);
+                    string sentencia = string.Format("Select * From RuedasDetalleSimulador Where IdRuedaActual = {0} And IdSimulacion = {1}", txtIdRueda.Text.Trim(), IdSimulacion);
 
                     MySqlDataAdapter da = new MySqlDataAdapter(sentencia, coneDetalle);
                     DataTable ds = new DataTable();
@@ -292,80 +292,89 @@ namespace IOL
 
                     if (ds.Rows.Count > 0)
                     {
-                        dgvAccionesCompradas.DataSource = ds;
+                        dgvAcciones.DataSource = ds;
 
                         DataGridViewCellStyle EstiloEncabezadoColumna = new DataGridViewCellStyle();
 
                         EstiloEncabezadoColumna.BackColor = Color.Green;
                         EstiloEncabezadoColumna.Font = new Font("Times New Roman", 12, FontStyle.Bold);
-                        dgvAccionesCompradas.ColumnHeadersDefaultCellStyle = EstiloEncabezadoColumna;
+                        dgvAcciones.ColumnHeadersDefaultCellStyle = EstiloEncabezadoColumna;
 
                         DataGridViewCellStyle EstiloColumnas = new DataGridViewCellStyle();
                         EstiloColumnas.BackColor = Color.AliceBlue;
                         EstiloColumnas.Font = new Font("Times New Roman", 12);
-                        dgvAccionesCompradas.RowsDefaultCellStyle = EstiloColumnas;
+                        dgvAcciones.RowsDefaultCellStyle = EstiloColumnas;
 
-                        dgvAccionesCompradas.Columns["Simbolo"].HeaderText = "Símbolo";
-                        dgvAccionesCompradas.Columns["FechaCompra"].HeaderText = "Fecha Compra";
-                        dgvAccionesCompradas.Columns["Cantidad"].HeaderText = "Cantidad";
-                        dgvAccionesCompradas.Columns["PrecioCompra"].HeaderText = "Precio Compra";
-                        dgvAccionesCompradas.Columns["ImporteCompra"].HeaderText = "Importe";
-                        dgvAccionesCompradas.Columns["UltimoPrecio"].HeaderText = "Ultimo Precio";
-                        dgvAccionesCompradas.Columns["FechaUltimoPrecio"].HeaderText = "Fecha Precio";
-                        dgvAccionesCompradas.Columns["VariacionEnPesos"].HeaderText = "Variación$";
-                        dgvAccionesCompradas.Columns["VariacionEnPorcentajes"].HeaderText = "Variación%";
+                        dgvAcciones.Columns["Simbolo"].HeaderText = "Símbolo";
+                        dgvAcciones.Columns["FechaCompra"].HeaderText = "Fecha Compra";
+                        dgvAcciones.Columns["Cantidad"].HeaderText = "Cantidad";
+                        dgvAcciones.Columns["PrecioCompra"].HeaderText = "Precio Compra";
+                        dgvAcciones.Columns["ImporteComisionIOL"].HeaderText = "Comisión$";
+                        dgvAcciones.Columns["ImporteCompra"].HeaderText = "Importe";
+                        dgvAcciones.Columns["UltimoPrecio"].HeaderText = "Ultimo Precio";
+                        dgvAcciones.Columns["FechaUltimoPrecio"].HeaderText = "Fecha Precio";
+                        dgvAcciones.Columns["VariacionEnPesos"].HeaderText = "Variación$";
+                        dgvAcciones.Columns["VariacionEnPorcentajes"].HeaderText = "Variación%";
+                        dgvAcciones.Columns["Estado"].HeaderText = "Estado";
 
-                        dgvAccionesCompradas.Columns["Simbolo"].Width = 100;
-                        dgvAccionesCompradas.Columns["FechaCompra"].Width = 120;
-                        dgvAccionesCompradas.Columns["Cantidad"].Width = 90;
-                        dgvAccionesCompradas.Columns["PrecioCompra"].Width = 120;
-                        dgvAccionesCompradas.Columns["ImporteCompra"].Width = 100;
-                        dgvAccionesCompradas.Columns["UltimoPrecio"].Width = 120;
-                        dgvAccionesCompradas.Columns["FechaUltimoPrecio"].Width = 120;
-                        dgvAccionesCompradas.Columns["VariacionEnPesos"].Width = 90;
-                        dgvAccionesCompradas.Columns["VariacionEnPorcentajes"].Width = 100;
+                        dgvAcciones.Columns["Simbolo"].Width = 100;
+                        dgvAcciones.Columns["FechaCompra"].Width = 120;
+                        dgvAcciones.Columns["Cantidad"].Width = 90;
+                        dgvAcciones.Columns["PrecioCompra"].Width = 120;
+                        dgvAcciones.Columns["ImporteComisionIOL"].Width = 120;
+                        dgvAcciones.Columns["ImporteCompra"].Width = 100;
+                        dgvAcciones.Columns["UltimoPrecio"].Width = 120;
+                        dgvAcciones.Columns["FechaUltimoPrecio"].Width = 120;
+                        dgvAcciones.Columns["VariacionEnPesos"].Width = 90;
+                        dgvAcciones.Columns["VariacionEnPorcentajes"].Width = 100;
+                        dgvAcciones.Columns["Estado"].Width = 100;
 
-                        dgvAccionesCompradas.Columns["Simbolo"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
-                        dgvAccionesCompradas.Columns["FechaCompra"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
-                        dgvAccionesCompradas.Columns["Cantidad"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
-                        dgvAccionesCompradas.Columns["PrecioCompra"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
-                        dgvAccionesCompradas.Columns["ImporteCompra"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
-                        dgvAccionesCompradas.Columns["UltimoPrecio"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
-                        dgvAccionesCompradas.Columns["FechaUltimoPrecio"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
-                        dgvAccionesCompradas.Columns["VariacionEnPesos"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
-                        dgvAccionesCompradas.Columns["VariacionEnPorcentajes"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                        dgvAcciones.Columns["Simbolo"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                        dgvAcciones.Columns["FechaCompra"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                        dgvAcciones.Columns["Cantidad"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                        dgvAcciones.Columns["PrecioCompra"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                        dgvAcciones.Columns["ImporteComisionIOL"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                        dgvAcciones.Columns["ImporteCompra"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                        dgvAcciones.Columns["UltimoPrecio"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                        dgvAcciones.Columns["FechaUltimoPrecio"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                        dgvAcciones.Columns["VariacionEnPesos"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                        dgvAcciones.Columns["VariacionEnPorcentajes"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                        dgvAcciones.Columns["Estado"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
 
-                        dgvAccionesCompradas.Columns["PrecioCompra"].DefaultCellStyle.Format = "$ #00.00";
-                        dgvAccionesCompradas.Columns["Cantidad"].DefaultCellStyle.Format = "#00.00";
-                        dgvAccionesCompradas.Columns["ImporteCompra"].DefaultCellStyle.Format = "$ #00.00";
-                        dgvAccionesCompradas.Columns["UltimoPrecio"].DefaultCellStyle.Format = "$ #00.00";
-                        dgvAccionesCompradas.Columns["VariacionEnPesos"].DefaultCellStyle.Format = "$ #00.00";
-                        dgvAccionesCompradas.Columns["VariacionEnPorcentajes"].DefaultCellStyle.Format = "#00.00";
+                        dgvAcciones.Columns["PrecioCompra"].DefaultCellStyle.Format = "$ #00.00";
+                        dgvAcciones.Columns["Cantidad"].DefaultCellStyle.Format = "#00.00";
+                        dgvAcciones.Columns["ImporteCompra"].DefaultCellStyle.Format = "$ #00.00";
+                        dgvAcciones.Columns["ImporteComisionIOL"].DefaultCellStyle.Format = "$ #00.00";
+                        dgvAcciones.Columns["UltimoPrecio"].DefaultCellStyle.Format = "$ #00.00";
+                        dgvAcciones.Columns["VariacionEnPesos"].DefaultCellStyle.Format = "$ #00.00";
+                        dgvAcciones.Columns["VariacionEnPorcentajes"].DefaultCellStyle.Format = "#00.00";
 
-                        dgvAccionesCompradas.Columns["Simbolo"].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
-                        dgvAccionesCompradas.Columns["FechaCompra"].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
-                        dgvAccionesCompradas.Columns["Cantidad"].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
-                        dgvAccionesCompradas.Columns["PrecioCompra"].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
-                        dgvAccionesCompradas.Columns["ImporteCompra"].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
-                        dgvAccionesCompradas.Columns["UltimoPrecio"].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
-                        dgvAccionesCompradas.Columns["FechaUltimoPrecio"].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
-                        dgvAccionesCompradas.Columns["VariacionEnPesos"].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
-                        dgvAccionesCompradas.Columns["VariacionEnPorcentajes"].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                        dgvAcciones.Columns["Simbolo"].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                        dgvAcciones.Columns["FechaCompra"].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                        dgvAcciones.Columns["Cantidad"].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                        dgvAcciones.Columns["PrecioCompra"].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                        dgvAcciones.Columns["ImporteComisionIOL"].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                        dgvAcciones.Columns["ImporteCompra"].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                        dgvAcciones.Columns["UltimoPrecio"].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                        dgvAcciones.Columns["FechaUltimoPrecio"].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                        dgvAcciones.Columns["VariacionEnPesos"].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                        dgvAcciones.Columns["VariacionEnPorcentajes"].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                        dgvAcciones.Columns["Estado"].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
 
-                        dgvAccionesCompradas.RefreshEdit();
-                        dgvAccionesCompradas.Enabled = true;
+                        dgvAcciones.RefreshEdit();
+                        dgvAcciones.Enabled = true;
                     }
                     else
                     {
-                        dgvAccionesCompradas.DataSource = null;
-                        dgvAccionesCompradas.RefreshEdit();
+                        dgvAcciones.DataSource = null;
+                        dgvAcciones.RefreshEdit();
                     }
-                    lblTotalAccionesCompradas.Text = string.Format("Total de Acciones Compradas: {0:00}", ds.Rows.Count);
+                    lblTotalAccionesCompradas.Text = string.Format("Total Simulador {0:00}:", IdSimulacion);
                 }
             }
             else
             {
-                dgvAccionesCompradas.DataSource = null;
+                dgvAcciones.DataSource = null;
                 foreach (Control controles in this.Controls)
                     controles.Enabled = false;
                 foreach (Control controles in tbpDatosRueda.Controls)
@@ -1249,18 +1258,16 @@ namespace IOL
 
         private void dgvAccionesCompradas_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
         {
-            dgvAccionesCompradas.Columns["IdRuedaActual"].Visible = false;
-            dgvAccionesCompradas.Columns["IdPanel"].Visible = false;
-            dgvAccionesCompradas.Columns["PrecioVenta"].Visible = false;
-            dgvAccionesCompradas.Columns["ImporteVenta"].Visible = false;
-            dgvAccionesCompradas.Columns["IdRuedaDetalle"].Visible = false;
-            dgvAccionesCompradas.Columns["IdRuedaCompra"].Visible = false;
-            dgvAccionesCompradas.Columns["IdRuedaVenta"].Visible = false;
-            dgvAccionesCompradas.Columns["IdSimulacion"].Visible = false;
-            dgvAccionesCompradas.Columns["FechaVenta"].Visible = false;
-            dgvAccionesCompradas.Columns["Estado"].Visible = false;
-            dgvAccionesCompradas.Columns["PorcComisionIOL"].Visible = false;
-            dgvAccionesCompradas.Columns["ImporteComisionIOL"].Visible = false;
+            dgvAcciones.Columns["IdRuedaActual"].Visible = false;
+            dgvAcciones.Columns["IdPanel"].Visible = false;
+            dgvAcciones.Columns["PrecioVenta"].Visible = false;
+            dgvAcciones.Columns["ImporteVenta"].Visible = false;
+            dgvAcciones.Columns["IdRuedaDetalle"].Visible = false;
+            dgvAcciones.Columns["IdRuedaCompra"].Visible = false;
+            dgvAcciones.Columns["IdRuedaVenta"].Visible = false;
+            dgvAcciones.Columns["IdSimulacion"].Visible = false;
+            dgvAcciones.Columns["FechaVenta"].Visible = false;
+            dgvAcciones.Columns["PorcComisionIOL"].Visible = false;
         }
 
         private void txtPorcCompra6_Click(object sender, EventArgs e)
@@ -1808,6 +1815,85 @@ namespace IOL
                 e.Handled = true;
         }
 
+        private void txtPorcCompra_Click(object sender, EventArgs e)
+        {
+            SeleccionarTexto(sender);
+        }
+
+        private void txtPorcVenta_Click(object sender, EventArgs e)
+        {
+            SeleccionarTexto(sender);
+        }
+
+        private void txtPorcComisionIOL_Click(object sender, EventArgs e)
+        {
+            SeleccionarTexto(sender);
+        }
+
+        private void txtPorcPuntaCompradora_Click(object sender, EventArgs e)
+        {
+            SeleccionarTexto(sender);
+        }
+
+        private void txtPorcPuntaVendedora_Click(object sender, EventArgs e)
+        {
+            SeleccionarTexto(sender);
+        }
+
+        private void txtPorcCompra_Leave(object sender, EventArgs e)
+        {
+            FormatoPorcentaje(sender);
+        }
+
+        private void txtPorcVenta_Leave(object sender, EventArgs e)
+        {
+            FormatoPorcentaje(sender);
+        }
+
+        private void txtPorcComisionIOL_Leave(object sender, EventArgs e)
+        {
+            FormatoPorcentaje(sender);
+        }
+
+        private void txtPorcPuntaCompradora_Leave(object sender, EventArgs e)
+        {
+            FormatoPorcentaje(sender);
+        }
+
+        private void txtPorcPuntaVendedora_Leave(object sender, EventArgs e)
+        {
+            FormatoPorcentaje(sender);
+        }
+
+        private void txtPorcCompra_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            ValidacionNumerica(e);
+        }
+
+        private void txtPorcVenta_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            ValidacionNumerica(e);
+        }
+
+        private void txtPorcComisionIOL_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            ValidacionNumerica(e);
+        }
+
+        private void txtPorcPuntaCompradora_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            ValidacionNumerica(e);
+        }
+
+        private void txtPorcPuntaVendedora_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            ValidacionNumerica(e);
+        }
+
+        private void txtTotalVariacionEnPorcentajes_TextChanged(object sender, EventArgs e)
+        {
+
+        }
     }
 }
 
