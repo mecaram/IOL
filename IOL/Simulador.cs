@@ -10,6 +10,8 @@ using System.Configuration;
 using MySql.Data;
 using MySql.Data.MySqlClient;
 using System.Data;
+using DocumentFormat.OpenXml.Spreadsheet;
+
 
 namespace IOL
 {
@@ -284,93 +286,119 @@ namespace IOL
             {
                 using (MySqlConnection coneDetalle = new MySqlConnection(cone))
                 {
-                    string sentencia = string.Format("Select * From RuedasDetalleSimulador Where IdRuedaActual = {0} And Estado = 'Comprado' And IdSimulacion = {1}", txtIdRueda.Text.Trim(), IdSimulacion);
+                    string sentencia = string.Format("Select * From RuedasDetalleSimulador Where IdRuedaActual = {0} And IdSimulacion = {1}", txtIdRueda.Text.Trim(), IdSimulacion);
 
                     MySqlDataAdapter da = new MySqlDataAdapter(sentencia, coneDetalle);
                     DataTable ds = new DataTable();
                     da.Fill(ds);
 
+                    lblTotales.Text = string.Format("Total Simulador {0:00}:", IdSimulacion);
+                    txtTotalAcciones.Text = ds.Rows.Count.ToString();
+
+                    double totalCantidad = Convert.ToDouble(ds.Compute("Sum(Cantidad)","Estado = 'Comprado'"));
+                    txtTotalCantidad.Text = string.Format("{0:000}",totalCantidad);
+
+                    double totalImporteComision = Convert.ToDouble(ds.Compute("Sum(ImporteComisionIOL)", "Estado = 'Comprado'"));
+                    txtImporteComision.Text = string.Format("$ {0:#00.00}", totalImporteComision);
+
+                    double totalImporteCompra = Convert.ToDouble(ds.Compute("Sum(ImporteCompra)", "Estado = 'Comprado'"));
+                    txtTotalImporteCompra.Text = string.Format("$ {0:#00.00}", totalImporteCompra);
+
+                    double totalVariacionEnPesos = Convert.ToDouble(ds.Compute("Sum(VariacionEnPesos)", "Estado = 'Comprado'"));
+                    txtTotalVariacionEnPesos.Text = string.Format("$ {0:#00.00}", totalVariacionEnPesos);
+
+                    double totalVariacionEnPorcentajes = Convert.ToDouble(ds.Compute("Sum(VariacionEnPorcentajes)", "Estado = 'Comprado'"));
+                    txtTotalVariacionEnPorcentajes.Text = string.Format("{0:#00.00}", totalVariacionEnPorcentajes);
+
                     if (ds.Rows.Count > 0)
                     {
-                        dgvAccionesCompradas.DataSource = ds;
+                        dgvAcciones.DataSource = ds;
 
                         DataGridViewCellStyle EstiloEncabezadoColumna = new DataGridViewCellStyle();
 
-                        EstiloEncabezadoColumna.BackColor = Color.Green;
-                        EstiloEncabezadoColumna.Font = new Font("Times New Roman", 12, FontStyle.Bold);
-                        dgvAccionesCompradas.ColumnHeadersDefaultCellStyle = EstiloEncabezadoColumna;
+                        EstiloEncabezadoColumna.BackColor = System.Drawing.Color.Green;
+                        EstiloEncabezadoColumna.Font = new System.Drawing.Font("Times New Roman", 12, FontStyle.Bold);
+                        dgvAcciones.ColumnHeadersDefaultCellStyle = EstiloEncabezadoColumna;
 
                         DataGridViewCellStyle EstiloColumnas = new DataGridViewCellStyle();
-                        EstiloColumnas.BackColor = Color.AliceBlue;
-                        EstiloColumnas.Font = new Font("Times New Roman", 12);
-                        dgvAccionesCompradas.RowsDefaultCellStyle = EstiloColumnas;
+                        EstiloColumnas.BackColor = System.Drawing.Color.AliceBlue;
+                        EstiloColumnas.Font = new System.Drawing.Font("Times New Roman", 12);
+                        dgvAcciones.RowsDefaultCellStyle = EstiloColumnas;
 
-                        dgvAccionesCompradas.Columns["Simbolo"].HeaderText = "Símbolo";
-                        dgvAccionesCompradas.Columns["FechaCompra"].HeaderText = "Fecha Compra";
-                        dgvAccionesCompradas.Columns["Cantidad"].HeaderText = "Cantidad";
-                        dgvAccionesCompradas.Columns["PrecioCompra"].HeaderText = "Precio Compra";
-                        dgvAccionesCompradas.Columns["ImporteCompra"].HeaderText = "Importe";
-                        dgvAccionesCompradas.Columns["UltimoPrecio"].HeaderText = "Ultimo Precio";
-                        dgvAccionesCompradas.Columns["FechaUltimoPrecio"].HeaderText = "Fecha Precio";
-                        dgvAccionesCompradas.Columns["VariacionEnPesos"].HeaderText = "Variación$";
-                        dgvAccionesCompradas.Columns["VariacionEnPorcentajes"].HeaderText = "Variación%";
+                        dgvAcciones.Columns["Simbolo"].HeaderText = "Símbolo";
+                        dgvAcciones.Columns["FechaCompra"].HeaderText = "Fecha Compra";
+                        dgvAcciones.Columns["Cantidad"].HeaderText = "Cantidad";
+                        dgvAcciones.Columns["PrecioCompra"].HeaderText = "Precio Compra";
+                        dgvAcciones.Columns["ImporteComisionIOL"].HeaderText = "Comisión$";
+                        dgvAcciones.Columns["ImporteCompra"].HeaderText = "Importe";
+                        dgvAcciones.Columns["UltimoPrecio"].HeaderText = "Ultimo Precio";
+                        dgvAcciones.Columns["FechaUltimoPrecio"].HeaderText = "Fecha Precio";
+                        dgvAcciones.Columns["VariacionEnPesos"].HeaderText = "Variación$";
+                        dgvAcciones.Columns["VariacionEnPorcentajes"].HeaderText = "Variación%";
+                        dgvAcciones.Columns["Estado"].HeaderText = "Estado";
 
-                        dgvAccionesCompradas.Columns["Simbolo"].Width = 100;
-                        dgvAccionesCompradas.Columns["FechaCompra"].Width = 120;
-                        dgvAccionesCompradas.Columns["Cantidad"].Width = 90;
-                        dgvAccionesCompradas.Columns["PrecioCompra"].Width = 120;
-                        dgvAccionesCompradas.Columns["ImporteCompra"].Width = 100;
-                        dgvAccionesCompradas.Columns["UltimoPrecio"].Width = 120;
-                        dgvAccionesCompradas.Columns["FechaUltimoPrecio"].Width = 120;
-                        dgvAccionesCompradas.Columns["VariacionEnPesos"].Width = 90;
-                        dgvAccionesCompradas.Columns["VariacionEnPorcentajes"].Width = 100;
+                        dgvAcciones.Columns["Simbolo"].Width = 100;
+                        dgvAcciones.Columns["FechaCompra"].Width = 120;
+                        dgvAcciones.Columns["Cantidad"].Width = 90;
+                        dgvAcciones.Columns["PrecioCompra"].Width = 120;
+                        dgvAcciones.Columns["ImporteComisionIOL"].Width = 120;
+                        dgvAcciones.Columns["ImporteCompra"].Width = 100;
+                        dgvAcciones.Columns["UltimoPrecio"].Width = 120;
+                        dgvAcciones.Columns["FechaUltimoPrecio"].Width = 120;
+                        dgvAcciones.Columns["VariacionEnPesos"].Width = 90;
+                        dgvAcciones.Columns["VariacionEnPorcentajes"].Width = 100;
+                        dgvAcciones.Columns["Estado"].Width = 100;
 
-                        dgvAccionesCompradas.Columns["Simbolo"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
-                        dgvAccionesCompradas.Columns["FechaCompra"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
-                        dgvAccionesCompradas.Columns["Cantidad"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
-                        dgvAccionesCompradas.Columns["PrecioCompra"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
-                        dgvAccionesCompradas.Columns["ImporteCompra"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
-                        dgvAccionesCompradas.Columns["UltimoPrecio"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
-                        dgvAccionesCompradas.Columns["FechaUltimoPrecio"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
-                        dgvAccionesCompradas.Columns["VariacionEnPesos"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
-                        dgvAccionesCompradas.Columns["VariacionEnPorcentajes"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                        dgvAcciones.Columns["Simbolo"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                        dgvAcciones.Columns["FechaCompra"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                        dgvAcciones.Columns["Cantidad"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                        dgvAcciones.Columns["PrecioCompra"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                        dgvAcciones.Columns["ImporteComisionIOL"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                        dgvAcciones.Columns["ImporteCompra"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                        dgvAcciones.Columns["UltimoPrecio"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                        dgvAcciones.Columns["FechaUltimoPrecio"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                        dgvAcciones.Columns["VariacionEnPesos"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                        dgvAcciones.Columns["VariacionEnPorcentajes"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                        dgvAcciones.Columns["Estado"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
 
-                        dgvAccionesCompradas.Columns["PrecioCompra"].DefaultCellStyle.Format = "$ #00.00";
-                        dgvAccionesCompradas.Columns["Cantidad"].DefaultCellStyle.Format = "#00.00";
-                        dgvAccionesCompradas.Columns["ImporteCompra"].DefaultCellStyle.Format = "$ #00.00";
-                        dgvAccionesCompradas.Columns["UltimoPrecio"].DefaultCellStyle.Format = "$ #00.00";
-                        dgvAccionesCompradas.Columns["VariacionEnPesos"].DefaultCellStyle.Format = "$ #00.00";
-                        dgvAccionesCompradas.Columns["VariacionEnPorcentajes"].DefaultCellStyle.Format = "#00.00";
+                        dgvAcciones.Columns["PrecioCompra"].DefaultCellStyle.Format = "$ #00.00";
+                        dgvAcciones.Columns["Cantidad"].DefaultCellStyle.Format = "#00.00";
+                        dgvAcciones.Columns["ImporteCompra"].DefaultCellStyle.Format = "$ #00.00";
+                        dgvAcciones.Columns["ImporteComisionIOL"].DefaultCellStyle.Format = "$ #00.00";
+                        dgvAcciones.Columns["UltimoPrecio"].DefaultCellStyle.Format = "$ #00.00";
+                        dgvAcciones.Columns["VariacionEnPesos"].DefaultCellStyle.Format = "$ #00.00";
+                        dgvAcciones.Columns["VariacionEnPorcentajes"].DefaultCellStyle.Format = "#00.00";
 
-                        dgvAccionesCompradas.Columns["Simbolo"].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
-                        dgvAccionesCompradas.Columns["FechaCompra"].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
-                        dgvAccionesCompradas.Columns["Cantidad"].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
-                        dgvAccionesCompradas.Columns["PrecioCompra"].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
-                        dgvAccionesCompradas.Columns["ImporteCompra"].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
-                        dgvAccionesCompradas.Columns["UltimoPrecio"].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
-                        dgvAccionesCompradas.Columns["FechaUltimoPrecio"].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
-                        dgvAccionesCompradas.Columns["VariacionEnPesos"].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
-                        dgvAccionesCompradas.Columns["VariacionEnPorcentajes"].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                        dgvAcciones.Columns["Simbolo"].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                        dgvAcciones.Columns["FechaCompra"].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                        dgvAcciones.Columns["Cantidad"].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                        dgvAcciones.Columns["PrecioCompra"].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                        dgvAcciones.Columns["ImporteComisionIOL"].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                        dgvAcciones.Columns["ImporteCompra"].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                        dgvAcciones.Columns["UltimoPrecio"].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                        dgvAcciones.Columns["FechaUltimoPrecio"].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                        dgvAcciones.Columns["VariacionEnPesos"].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                        dgvAcciones.Columns["VariacionEnPorcentajes"].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                        dgvAcciones.Columns["Estado"].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
 
-                        dgvAccionesCompradas.RefreshEdit();
-                        dgvAccionesCompradas.Enabled = true;
+                        dgvAcciones.RefreshEdit();
+                        dgvAcciones.Enabled = true;
                     }
                     else
                     {
-                        dgvAccionesCompradas.DataSource = null;
-                        dgvAccionesCompradas.RefreshEdit();
+                        dgvAcciones.DataSource = null;
+                        dgvAcciones.RefreshEdit();
                     }
-                    lblTotalAccionesCompradas.Text = string.Format("Total de Acciones Compradas: {0:00}", ds.Rows.Count);
                 }
             }
             else
             {
-                dgvAccionesCompradas.DataSource = null;
-                foreach (Control controles in this.Controls)
+                dgvAcciones.DataSource = null;
+                foreach (System.Windows.Forms.Control controles in this.Controls)
                     controles.Enabled = false;
-                foreach (Control controles in tbpDatosRueda.Controls)
+                foreach (System.Windows.Forms.Control controles in tbpDatosRueda.Controls)
                     controles.Enabled = false;
-                foreach (Control controles in tbpDatosSimulador.Controls)
+                foreach (System.Windows.Forms.Control controles in tbpDatosSimulador.Controls)
                     controles.Enabled = false;
             }
         }
@@ -609,93 +637,6 @@ namespace IOL
                         }
                     }
                     ActualizarAccionesCompradas(); // Actualiza la grilla de acciones compradas
-                }
-                else
-                if (HoraActual >= 17)
-                {
-                    MySqlConnection coneRuedaFinalizada = new MySqlConnection(conexion);
-                    sentencia = string.Format("Select * From Ruedas Where IdRueda = {0} And Estado = 1", idrueda);
-                    MySqlDataAdapter daRuedaFinalizada = new MySqlDataAdapter(sentencia, coneRuedaFinalizada);
-                    DataTable dsRuedaFinalizada = new DataTable();
-                    int regRuedaFinalizada = daRuedaFinalizada.Fill(dsRuedaFinalizada);
-                    coneRuedaFinalizada.Close();
-                    if (regRuedaFinalizada == 1)
-                    {
-                        // Almacenamos el cierre de la rueda
-                        using (MySqlConnection cone = new MySqlConnection(conexion))
-                        {
-                            sentencia = string.Format("Update Ruedas Set Estado = 2 Where IdRueda = {0}", idrueda);
-                            cone.Open();
-                            MySqlCommand comandoApertura = new MySqlCommand(sentencia, cone);
-                            comandoApertura.ExecuteNonQuery();
-                            cone.Close();
-                        }
-
-                        // Borrar tabla de InformeDeSimuladores
-                        using (MySqlConnection coneEliminar = new MySqlConnection(conexion))
-                        {
-                            sentencia = "Delete From InformeFinal";
-                            coneEliminar.Open();
-                            MySqlCommand comando = new MySqlCommand(sentencia, coneEliminar);
-                            comando.CommandType = CommandType.Text;
-                            comando.ExecuteNonQuery();
-                            coneEliminar.Close();
-                        }
-
-                        // Cargo todas las acciones
-                        sentencia = string.Format("Select Simbolo From Acciones Order By Simbolo");
-                        MySqlConnection coneAcciones = new MySqlConnection(conexion);
-                        MySqlDataAdapter daAcciones = new MySqlDataAdapter(sentencia, coneAcciones);
-                        DataTable dsAcciones = new DataTable();
-                        daAcciones.Fill(dsAcciones);
-
-                        if (dsAcciones.Rows.Count > 0)
-                        {
-                            foreach (DataRow fila in dsAcciones.Rows)
-                            {
-                                string simbolo = fila["Simbolo"].ToString();
-
-                                using (MySqlConnection coneActualizar = new MySqlConnection(conexion))
-                                {
-                                    sentencia = String.Format("Insert Into InformeFinal (Simbolo, IdRueda) Values('{0}',{1})", simbolo, idrueda);
-                                    coneActualizar.Open();
-                                    MySqlCommand comando = new MySqlCommand(sentencia, coneActualizar);
-                                    comando.CommandType = CommandType.Text;
-                                    comando.ExecuteNonQuery();
-                                    coneActualizar.Close();
-                                }
-                            }
-                        }
-
-                        // Cargo toda la info de la rueda
-                        sentencia = string.Format("Select * From RuedasDetalleSimulador Where IdRuedaActual = {0} And Estado = 'Vendido'", idrueda);
-                        MySqlConnection coneRuedas = new MySqlConnection(conexion);
-                        MySqlDataAdapter daRuedas = new MySqlDataAdapter(sentencia, coneRuedas);
-                        DataTable dsRuedas = new DataTable();
-                        daRuedas.Fill(dsRuedas);
-
-                        if (dsRuedas.Rows.Count > 0)
-                        {
-                            foreach (DataRow fila in dsRuedas.Rows)
-                            {
-                                string simbolo = fila["Simbolo"].ToString();
-                                int simulador = Convert.ToInt16(fila["IdSimulacion"]);
-                                decimal variacion = Convert.ToDecimal(fila["VariacionEnPorcentajes"]);
-
-                                using (MySqlConnection coneActualizar = new MySqlConnection(conexion))
-                                {
-                                    sentencia = String.Format("Update InformeFinal Set Variacion{0}Diaria = Variacion{0}Diaria + {1} " +
-                                        " Where IdRueda = {2} And Simbolo = '{3}'",
-                                        simulador, variacion, idrueda, simbolo);
-                                    coneActualizar.Open();
-                                    MySqlCommand comando = new MySqlCommand(sentencia, coneActualizar);
-                                    comando.CommandType = CommandType.Text;
-                                    comando.ExecuteNonQuery();
-                                    coneActualizar.Close();
-                                }
-                            }
-                        }
-                    }
                 }
             }
             txtEstado.Text = (estado) ? "Abierto" : "Cerrado";
@@ -1174,12 +1115,7 @@ namespace IOL
 
         private void txtInversionTotalSimulador_KeyPress(object sender, KeyPressEventArgs e)
         {
-            if (char.IsDigit(e.KeyChar) || e.KeyChar == Convert.ToChar(Keys.Delete) || e.KeyChar == Convert.ToChar(Keys.Back))
-                e.Handled = false;
-            else if (e.KeyChar == Convert.ToChar(Keys.Enter))
-                SendKeys.Send("{Tab}");
-            else
-                e.Handled = true;
+            ValidacionNumerica(e);
         }
         private void SeleccionarTexto(Object sender)
         {
@@ -1240,176 +1176,290 @@ namespace IOL
 
         private void txtPorcCompra1_KeyPress(object sender, KeyPressEventArgs e)
         {
-            if (char.IsDigit(e.KeyChar) || e.KeyChar == Convert.ToChar(Keys.Delete) || e.KeyChar == Convert.ToChar(Keys.Back))
-                e.Handled = false;
-            else if (e.KeyChar == Convert.ToChar(Keys.Enter))
-                SendKeys.Send("{Tab}");
-            else
-                e.Handled = true;
+            ValidacionNumerica(e);
         }
 
         private void txtPorcVenta1_KeyPress(object sender, KeyPressEventArgs e)
         {
-            if (char.IsDigit(e.KeyChar) || e.KeyChar == Convert.ToChar(Keys.Delete) || e.KeyChar == Convert.ToChar(Keys.Back))
-                e.Handled = false;
-            else if (e.KeyChar == Convert.ToChar(Keys.Enter))
-                SendKeys.Send("{Tab}");
-            else
-                e.Handled = true;
+            ValidacionNumerica(e);
         }
 
         private void txtPorcCompra2_KeyPress(object sender, KeyPressEventArgs e)
         {
-            if (char.IsDigit(e.KeyChar) || e.KeyChar == Convert.ToChar(Keys.Delete) || e.KeyChar == Convert.ToChar(Keys.Back))
-                e.Handled = false;
-            else if (e.KeyChar == Convert.ToChar(Keys.Enter))
-                SendKeys.Send("{Tab}");
-            else
-                e.Handled = true;
+            ValidacionNumerica(e);
         }
 
         private void txtPorcVenta2_KeyPress(object sender, KeyPressEventArgs e)
         {
-            if (char.IsDigit(e.KeyChar) || e.KeyChar == Convert.ToChar(Keys.Delete) || e.KeyChar == Convert.ToChar(Keys.Back))
-                e.Handled = false;
-            else if (e.KeyChar == Convert.ToChar(Keys.Enter))
-                SendKeys.Send("{Tab}");
-            else
-                e.Handled = true;
+            ValidacionNumerica(e);
         }
 
         private void txtPorcCompra3_KeyPress(object sender, KeyPressEventArgs e)
         {
-            if (char.IsDigit(e.KeyChar) || e.KeyChar == Convert.ToChar(Keys.Delete) || e.KeyChar == Convert.ToChar(Keys.Back))
-                e.Handled = false;
-            else if (e.KeyChar == Convert.ToChar(Keys.Enter))
-                SendKeys.Send("{Tab}");
-            else
-                e.Handled = true;
+            ValidacionNumerica(e);
         }
 
         private void txtPorcVenta3_KeyPress(object sender, KeyPressEventArgs e)
         {
-            if (char.IsDigit(e.KeyChar) || e.KeyChar == Convert.ToChar(Keys.Delete) || e.KeyChar == Convert.ToChar(Keys.Back))
-                e.Handled = false;
-            else if (e.KeyChar == Convert.ToChar(Keys.Enter))
-                SendKeys.Send("{Tab}");
-            else
-                e.Handled = true;
+            ValidacionNumerica(e);
         }
 
         private void txtPorcCompra4_KeyPress(object sender, KeyPressEventArgs e)
         {
-            if (char.IsDigit(e.KeyChar) || e.KeyChar == Convert.ToChar(Keys.Delete) || e.KeyChar == Convert.ToChar(Keys.Back))
-                e.Handled = false;
-            else if (e.KeyChar == Convert.ToChar(Keys.Enter))
-                SendKeys.Send("{Tab}");
-            else
-                e.Handled = true;
+            ValidacionNumerica(e);
         }
 
         private void txtPorcVenta4_KeyPress(object sender, KeyPressEventArgs e)
         {
-            if (char.IsDigit(e.KeyChar) || e.KeyChar == Convert.ToChar(Keys.Delete) || e.KeyChar == Convert.ToChar(Keys.Back))
-                e.Handled = false;
-            else if (e.KeyChar == Convert.ToChar(Keys.Enter))
-                SendKeys.Send("{Tab}");
-            else
-                e.Handled = true;
+            ValidacionNumerica(e);
         }
 
         private void txtPorcCompra5_KeyPress(object sender, KeyPressEventArgs e)
         {
-            if (char.IsDigit(e.KeyChar) || e.KeyChar == Convert.ToChar(Keys.Delete) || e.KeyChar == Convert.ToChar(Keys.Back))
-                e.Handled = false;
-            else if (e.KeyChar == Convert.ToChar(Keys.Enter))
-                SendKeys.Send("{Tab}");
-            else
-                e.Handled = true;
+            ValidacionNumerica(e);
         }
 
         private void txtPorcVenta5_KeyPress(object sender, KeyPressEventArgs e)
         {
-            if (char.IsDigit(e.KeyChar) || e.KeyChar == Convert.ToChar(Keys.Delete) || e.KeyChar == Convert.ToChar(Keys.Back))
-                e.Handled = false;
-            else if (e.KeyChar == Convert.ToChar(Keys.Enter))
-                SendKeys.Send("{Tab}");
-            else
-                e.Handled = true;
+            ValidacionNumerica(e);
         }
 
- 
+
         private void txtPorcCompra1_Leave(object sender, EventArgs e)
         {
-            TextBox control = (TextBox)sender;
-            decimal Porcentaje = Convert.ToDecimal(control.Text.Trim());
-            control.Text = string.Format("{0:00.00}", Porcentaje);
+            FormatoPorcentaje(sender);
         }
 
         private void txtPorcVenta1_Leave(object sender, EventArgs e)
         {
-            TextBox control = (TextBox)sender;
-            decimal Porcentaje = Convert.ToDecimal(control.Text.Trim());
-            control.Text = string.Format("{0:00.00}", Porcentaje);
+            FormatoPorcentaje(sender);
         }
 
         private void txtPorcCompra2_Leave(object sender, EventArgs e)
         {
-            TextBox control = (TextBox)sender;
-            decimal Porcentaje = Convert.ToDecimal(control.Text.Trim());
-            control.Text = string.Format("{0:00.00}", Porcentaje);
+            FormatoPorcentaje(sender);
         }
 
         private void txtPorcVenta2_Leave(object sender, EventArgs e)
         {
-            TextBox control = (TextBox)sender;
-            decimal Porcentaje = Convert.ToDecimal(control.Text.Trim());
-            control.Text = string.Format("{0:00.00}", Porcentaje);
+            FormatoPorcentaje(sender);
         }
 
         private void txtPorcCompra3_Leave(object sender, EventArgs e)
         {
-            TextBox control = (TextBox)sender;
-            decimal Porcentaje = Convert.ToDecimal(control.Text.Trim());
-            control.Text = string.Format("{0:00.00}", Porcentaje);
+            FormatoPorcentaje(sender);
         }
 
         private void txtPorcVenta3_Leave(object sender, EventArgs e)
         {
-            TextBox control = (TextBox)sender;
-            decimal Porcentaje = Convert.ToDecimal(control.Text.Trim());
-            control.Text = string.Format("{0:00.00}", Porcentaje);
+            FormatoPorcentaje(sender);
         }
 
         private void txtPorcCompra4_Leave(object sender, EventArgs e)
         {
-            TextBox control = (TextBox)sender;
-            decimal Porcentaje = Convert.ToDecimal(control.Text.Trim());
-            control.Text = string.Format("{0:00.00}", Porcentaje);
+            FormatoPorcentaje(sender);
         }
 
         private void txtPorcVenta4_Leave(object sender, EventArgs e)
         {
-            TextBox control = (TextBox)sender;
-            decimal Porcentaje = Convert.ToDecimal(control.Text.Trim());
-            control.Text = string.Format("{0:00.00}", Porcentaje);
+            FormatoPorcentaje(sender);
         }
 
         private void txtPorcCompra5_Leave(object sender, EventArgs e)
         {
-            TextBox control = (TextBox)sender;
-            decimal Porcentaje = Convert.ToDecimal(control.Text.Trim());
-            control.Text = string.Format("{0:00.00}", Porcentaje);
+            FormatoPorcentaje(sender);
         }
 
         private void txtPorcVenta5_Leave(object sender, EventArgs e)
+        {
+            FormatoPorcentaje(sender);
+        }
+
+        private void dgvAccionesCompradas_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
+        {
+            dgvAcciones.Columns["IdRuedaActual"].Visible = false;
+            dgvAcciones.Columns["IdPanel"].Visible = false;
+            dgvAcciones.Columns["PrecioVenta"].Visible = false;
+            dgvAcciones.Columns["ImporteVenta"].Visible = false;
+            dgvAcciones.Columns["IdRuedaDetalle"].Visible = false;
+            dgvAcciones.Columns["IdRuedaCompra"].Visible = false;
+            dgvAcciones.Columns["IdRuedaVenta"].Visible = false;
+            dgvAcciones.Columns["IdSimulacion"].Visible = false;
+            dgvAcciones.Columns["FechaVenta"].Visible = false;
+            dgvAcciones.Columns["PorcComisionIOL"].Visible = false;
+        }
+
+        private void txtPorcCompra6_Click(object sender, EventArgs e)
+        {
+            SeleccionarTexto(sender);
+        }
+
+        private void txtPorcCompra7_Click(object sender, EventArgs e)
+        {
+            SeleccionarTexto(sender);
+        }
+
+        private void txtPorcCompra8_Click(object sender, EventArgs e)
+        {
+            SeleccionarTexto(sender);
+        }
+
+        private void txtPorcCompra9_Click(object sender, EventArgs e)
+        {
+            SeleccionarTexto(sender);
+        }
+
+        private void txtPorcCompra10_Click(object sender, EventArgs e)
+        {
+            SeleccionarTexto(sender);
+        }
+
+        private void txtPorcVenta6_Click(object sender, EventArgs e)
+        {
+            SeleccionarTexto(sender);
+        }
+
+        private void txtPorcVenta7_Click(object sender, EventArgs e)
+        {
+            SeleccionarTexto(sender);
+        }
+
+        private void txtPorcVenta8_Click(object sender, EventArgs e)
+        {
+            SeleccionarTexto(sender);
+        }
+
+        private void txtPorcVenta9_Click(object sender, EventArgs e)
+        {
+            SeleccionarTexto(sender);
+        }
+
+        private void txtPorcVenta10_Click(object sender, EventArgs e)
+        {
+            SeleccionarTexto(sender);
+        }
+
+        private void txtPorcCompra6_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            ValidacionNumerica(e);
+        }
+
+        private void txtPorcCompra7_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            ValidacionNumerica(e);
+        }
+
+        private void txtPorcCompra8_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            ValidacionNumerica(e);
+        }
+
+        private void txtPorcCompra9_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            ValidacionNumerica(e);
+        }
+
+        private void txtPorcCompra10_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            ValidacionNumerica(e);
+        }
+
+        private void txtPorcVenta6_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            ValidacionNumerica(e);
+        }
+
+        private void txtPorcVenta7_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            ValidacionNumerica(e);
+        }
+
+        private void txtPorcVenta8_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            ValidacionNumerica(e);
+        }
+
+        private void txtPorcVenta9_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            ValidacionNumerica(e);
+        }
+
+        private void txtPorcVenta10_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            ValidacionNumerica(e);
+        }
+
+        private void txtPorcCompra6_Leave(object sender, EventArgs e)
+        {
+            FormatoPorcentaje(sender);
+        }
+
+        private void txtPorcCompra7_Leave(object sender, EventArgs e)
+        {
+            FormatoPorcentaje(sender);
+        }
+
+        private void txtPorcCompra8_Leave(object sender, EventArgs e)
+        {
+            FormatoPorcentaje(sender);
+        }
+
+        private void txtPorcCompra9_Leave(object sender, EventArgs e)
+        {
+            FormatoPorcentaje(sender);
+        }
+
+        private void txtPorcCompra10_Leave(object sender, EventArgs e)
+        {
+            FormatoPorcentaje(sender);
+        }
+
+        private void txtPorcVenta6_Leave(object sender, EventArgs e)
+        {
+            FormatoPorcentaje(sender);
+        }
+
+        private void txtPorcVenta7_Leave(object sender, EventArgs e)
+        {
+            FormatoPorcentaje(sender);
+        }
+
+        private void txtPorcVenta8_Leave(object sender, EventArgs e)
+        {
+            FormatoPorcentaje(sender);
+        }
+
+        private void txtPorcVenta9_Leave(object sender, EventArgs e)
+        {
+            FormatoPorcentaje(sender);
+        }
+
+        private void txtPorcVenta10_Leave(object sender, EventArgs e)
+        {
+            FormatoPorcentaje(sender);
+        }
+
+        private void FormatoPorcentaje(object sender)
         {
             TextBox control = (TextBox)sender;
             decimal Porcentaje = Convert.ToDecimal(control.Text.Trim());
             control.Text = string.Format("{0:00.00}", Porcentaje);
         }
 
-        private void btnDatosSimulador_Click(object sender, EventArgs e)
+        private void nudSimulador_ValueChanged(object sender, EventArgs e)
+        {
+            ActualizarAccionesCompradas();
+            int simulacion = 0;
+            try { simulacion = Convert.ToInt32(nudSimulador.Value); }
+            catch { simulacion = 0; }
+
+            if (simulacion >= 1 && simulacion <= 5)
+                lnkEstrategia.Text = "Estrategia Uno";
+            else
+                lnkEstrategia.Text = "Estrategia Dos";
+        }
+
+        private void btnActualizarSimulador_Click(object sender, EventArgs e)
         {
             bool lValidado = true;
             string Mensaje = string.Empty;
@@ -1673,88 +1723,108 @@ namespace IOL
                     comando.Parameters.AddWithValue("@IdRueda", txtIdRueda.Text.Trim());
                     comando.ExecuteNonQuery();
                     cone.Close();
-                    MessageBox.Show("Simulador Actualizado con Exito", "Información del Sistema",MessageBoxButtons.OK,MessageBoxIcon.Information);
+                    MessageBox.Show("Simulador Actualizado con Exito", "Información del Sistema", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
             }
-            catch (MySqlException ex )
+            catch (MySqlException ex)
             {
-                MessageBox.Show(ex.Message + " - " + ex.ErrorCode.ToString(), "Informe de Errores", MessageBoxButtons.OK,MessageBoxIcon.Stop);
+                MessageBox.Show(ex.Message + " - " + ex.ErrorCode.ToString(), "Informe de Errores", MessageBoxButtons.OK, MessageBoxIcon.Stop);
             }
             ActualizarSimuladores();
         }
 
-        private void dgvAccionesCompradas_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
+        private void btnCerrarRueda_Click(object sender, EventArgs e)
         {
-            dgvAccionesCompradas.Columns["IdRuedaActual"].Visible = false;
-            dgvAccionesCompradas.Columns["IdPanel"].Visible = false;
-            dgvAccionesCompradas.Columns["PrecioVenta"].Visible = false;
-            dgvAccionesCompradas.Columns["ImporteVenta"].Visible = false;
-            dgvAccionesCompradas.Columns["IdRuedaDetalle"].Visible = false;
-            dgvAccionesCompradas.Columns["IdRuedaCompra"].Visible = false;
-            dgvAccionesCompradas.Columns["IdRuedaVenta"].Visible = false;
-            dgvAccionesCompradas.Columns["IdSimulacion"].Visible = false;
-            dgvAccionesCompradas.Columns["FechaVenta"].Visible = false;
-            dgvAccionesCompradas.Columns["Estado"].Visible = false;
-            dgvAccionesCompradas.Columns["PorcComisionIOL"].Visible = false;
-            dgvAccionesCompradas.Columns["ImporteComisionIOL"].Visible = false;
+            if (MessageBox.Show("Desea Realizar el Cierre de la Rueda","Pregunta del Sistema",MessageBoxButtons.YesNo,MessageBoxIcon.Question,MessageBoxDefaultButton.Button2) == DialogResult.Yes)
+            {
+                MySqlConnection coneRuedaFinalizada = new MySqlConnection(conexion);
+                string sentencia = string.Format("Select * From Ruedas Where IdRueda = {0} And Estado = 1", txtIdRueda.Text.Trim());
+                MySqlDataAdapter daRuedaFinalizada = new MySqlDataAdapter(sentencia, coneRuedaFinalizada);
+                DataTable dsRuedaFinalizada = new DataTable();
+                int regRuedaFinalizada = daRuedaFinalizada.Fill(dsRuedaFinalizada);
+                coneRuedaFinalizada.Close();
+                if (regRuedaFinalizada == 1)
+                {
+                    // Almacenamos el cierre de la rueda
+                    using (MySqlConnection cone = new MySqlConnection(conexion))
+                    {
+                        sentencia = string.Format("Update Ruedas Set Estado = 2 Where IdRueda = {0}", txtIdRueda.Text.Trim());
+                        cone.Open();
+                        MySqlCommand comandoApertura = new MySqlCommand(sentencia, cone);
+                        comandoApertura.ExecuteNonQuery();
+                        cone.Close();
+                    }
+
+                    // Borrar tabla de InformeDeSimuladores
+                    using (MySqlConnection coneEliminar = new MySqlConnection(conexion))
+                    {
+                        sentencia = "Delete From InformeFinal";
+                        coneEliminar.Open();
+                        MySqlCommand comando = new MySqlCommand(sentencia, coneEliminar);
+                        comando.CommandType = CommandType.Text;
+                        comando.ExecuteNonQuery();
+                        coneEliminar.Close();
+                    }
+
+                    // Cargo todas las acciones
+                    sentencia = string.Format("Select Simbolo From Acciones Order By Simbolo");
+                    MySqlConnection coneAcciones = new MySqlConnection(conexion);
+                    MySqlDataAdapter daAcciones = new MySqlDataAdapter(sentencia, coneAcciones);
+                    DataTable dsAcciones = new DataTable();
+                    daAcciones.Fill(dsAcciones);
+
+                    if (dsAcciones.Rows.Count > 0)
+                    {
+                        foreach (DataRow fila in dsAcciones.Rows)
+                        {
+                            string simbolo = fila["Simbolo"].ToString();
+
+                            using (MySqlConnection coneActualizar = new MySqlConnection(conexion))
+                            {
+                                sentencia = String.Format("Insert Into InformeFinal (Simbolo, IdRueda) Values('{0}',{1})", simbolo, txtIdRueda.Text.Trim());
+                                coneActualizar.Open();
+                                MySqlCommand comando = new MySqlCommand(sentencia, coneActualizar);
+                                comando.CommandType = CommandType.Text;
+                                comando.ExecuteNonQuery();
+                                coneActualizar.Close();
+                            }
+                        }
+                    }
+
+                    // Cargo toda la info de la rueda
+                    sentencia = string.Format("Select * From RuedasDetalleSimulador Where IdRuedaActual = {0} And Estado = 'Vendido'", txtIdRueda.Text.Trim());
+                    MySqlConnection coneRuedas = new MySqlConnection(conexion);
+                    MySqlDataAdapter daRuedas = new MySqlDataAdapter(sentencia, coneRuedas);
+                    DataTable dsRuedas = new DataTable();
+                    daRuedas.Fill(dsRuedas);
+
+                    if (dsRuedas.Rows.Count > 0)
+                    {
+                        foreach (DataRow fila in dsRuedas.Rows)
+                        {
+                            string simbolo = fila["Simbolo"].ToString();
+                            int simulador = Convert.ToInt16(fila["IdSimulacion"]);
+                            decimal variacion = Convert.ToDecimal(fila["VariacionEnPorcentajes"]);
+
+                            using (MySqlConnection coneActualizar = new MySqlConnection(conexion))
+                            {
+                                sentencia = String.Format("Update InformeFinal Set Variacion{0}Diaria = Variacion{0}Diaria + {1} " +
+                                    " Where IdRueda = {2} And Simbolo = '{3}'",
+                                    simulador, variacion, txtIdRueda.Text.Trim(), simbolo);
+                                coneActualizar.Open();
+                                MySqlCommand comando = new MySqlCommand(sentencia, coneActualizar);
+                                comando.CommandType = CommandType.Text;
+                                comando.ExecuteNonQuery();
+                                coneActualizar.Close();
+                            }
+                        }
+                    }
+                }
+            }
+
         }
 
-        private void btnCancelarRueda_Click_1(object sender, EventArgs e)
-        {
-
-        }
-
-        private void txtPorcCompra6_Click(object sender, EventArgs e)
-        {
-            SeleccionarTexto(sender);
-        }
-
-        private void txtPorcCompra7_Click(object sender, EventArgs e)
-        {
-            SeleccionarTexto(sender);
-        }
-
-        private void txtPorcCompra8_Click(object sender, EventArgs e)
-        {
-            SeleccionarTexto(sender);
-        }
-
-        private void txtPorcCompra9_Click(object sender, EventArgs e)
-        {
-            SeleccionarTexto(sender);
-        }
-
-        private void txtPorcCompra10_Click(object sender, EventArgs e)
-        {
-            SeleccionarTexto(sender);
-        }
-
-        private void txtPorcVenta6_Click(object sender, EventArgs e)
-        {
-            SeleccionarTexto(sender);
-        }
-
-        private void txtPorcVenta7_Click(object sender, EventArgs e)
-        {
-            SeleccionarTexto(sender);
-        }
-
-        private void txtPorcVenta8_Click(object sender, EventArgs e)
-        {
-            SeleccionarTexto(sender);
-        }
-
-        private void txtPorcVenta9_Click(object sender, EventArgs e)
-        {
-            SeleccionarTexto(sender);
-        }
-
-        private void txtPorcVenta10_Click(object sender, EventArgs e)
-        {
-            SeleccionarTexto(sender);
-        }
-
-        private void txtPorcCompra6_KeyPress(object sender, KeyPressEventArgs e)
+        private void ValidacionNumerica(KeyPressEventArgs e)
         {
             if (char.IsDigit(e.KeyChar) || e.KeyChar == Convert.ToChar(Keys.Delete) || e.KeyChar == Convert.ToChar(Keys.Back))
                 e.Handled = false;
@@ -1764,177 +1834,95 @@ namespace IOL
                 e.Handled = true;
         }
 
-        private void txtPorcCompra7_KeyPress(object sender, KeyPressEventArgs e)
+        private void txtPorcCompra_Click(object sender, EventArgs e)
         {
-            if (char.IsDigit(e.KeyChar) || e.KeyChar == Convert.ToChar(Keys.Delete) || e.KeyChar == Convert.ToChar(Keys.Back))
-                e.Handled = false;
-            else if (e.KeyChar == Convert.ToChar(Keys.Enter))
-                SendKeys.Send("{Tab}");
-            else
-                e.Handled = true;
+            SeleccionarTexto(sender);
         }
 
-        private void txtPorcCompra8_KeyPress(object sender, KeyPressEventArgs e)
+        private void txtPorcVenta_Click(object sender, EventArgs e)
         {
-            if (char.IsDigit(e.KeyChar) || e.KeyChar == Convert.ToChar(Keys.Delete) || e.KeyChar == Convert.ToChar(Keys.Back))
-                e.Handled = false;
-            else if (e.KeyChar == Convert.ToChar(Keys.Enter))
-                SendKeys.Send("{Tab}");
-            else
-                e.Handled = true;
+            SeleccionarTexto(sender);
         }
 
-        private void txtPorcCompra9_KeyPress(object sender, KeyPressEventArgs e)
+        private void txtPorcComisionIOL_Click(object sender, EventArgs e)
         {
-            if (char.IsDigit(e.KeyChar) || e.KeyChar == Convert.ToChar(Keys.Delete) || e.KeyChar == Convert.ToChar(Keys.Back))
-                e.Handled = false;
-            else if (e.KeyChar == Convert.ToChar(Keys.Enter))
-                SendKeys.Send("{Tab}");
-            else
-                e.Handled = true;
+            SeleccionarTexto(sender);
         }
 
-        private void txtPorcCompra10_KeyPress(object sender, KeyPressEventArgs e)
+        private void txtPorcPuntaCompradora_Click(object sender, EventArgs e)
         {
-            if (char.IsDigit(e.KeyChar) || e.KeyChar == Convert.ToChar(Keys.Delete) || e.KeyChar == Convert.ToChar(Keys.Back))
-                e.Handled = false;
-            else if (e.KeyChar == Convert.ToChar(Keys.Enter))
-                SendKeys.Send("{Tab}");
-            else
-                e.Handled = true;
+            SeleccionarTexto(sender);
         }
 
-        private void txtPorcVenta6_KeyPress(object sender, KeyPressEventArgs e)
+        private void txtPorcPuntaVendedora_Click(object sender, EventArgs e)
         {
-            if (char.IsDigit(e.KeyChar) || e.KeyChar == Convert.ToChar(Keys.Delete) || e.KeyChar == Convert.ToChar(Keys.Back))
-                e.Handled = false;
-            else if (e.KeyChar == Convert.ToChar(Keys.Enter))
-                SendKeys.Send("{Tab}");
-            else
-                e.Handled = true;
+            SeleccionarTexto(sender);
         }
 
-        private void txtPorcVenta7_KeyPress(object sender, KeyPressEventArgs e)
+        private void txtPorcCompra_Leave(object sender, EventArgs e)
         {
-            if (char.IsDigit(e.KeyChar) || e.KeyChar == Convert.ToChar(Keys.Delete) || e.KeyChar == Convert.ToChar(Keys.Back))
-                e.Handled = false;
-            else if (e.KeyChar == Convert.ToChar(Keys.Enter))
-                SendKeys.Send("{Tab}");
-            else
-                e.Handled = true;
+            FormatoPorcentaje(sender);
         }
 
-        private void txtPorcVenta8_KeyPress(object sender, KeyPressEventArgs e)
+        private void txtPorcVenta_Leave(object sender, EventArgs e)
         {
-            if (char.IsDigit(e.KeyChar) || e.KeyChar == Convert.ToChar(Keys.Delete) || e.KeyChar == Convert.ToChar(Keys.Back))
-                e.Handled = false;
-            else if (e.KeyChar == Convert.ToChar(Keys.Enter))
-                SendKeys.Send("{Tab}");
-            else
-                e.Handled = true;
+            FormatoPorcentaje(sender);
         }
 
-        private void txtPorcVenta9_KeyPress(object sender, KeyPressEventArgs e)
+        private void txtPorcComisionIOL_Leave(object sender, EventArgs e)
         {
-            if (char.IsDigit(e.KeyChar) || e.KeyChar == Convert.ToChar(Keys.Delete) || e.KeyChar == Convert.ToChar(Keys.Back))
-                e.Handled = false;
-            else if (e.KeyChar == Convert.ToChar(Keys.Enter))
-                SendKeys.Send("{Tab}");
-            else
-                e.Handled = true;
+            FormatoPorcentaje(sender);
         }
 
-        private void txtPorcVenta10_KeyPress(object sender, KeyPressEventArgs e)
+        private void txtPorcPuntaCompradora_Leave(object sender, EventArgs e)
         {
-            if (char.IsDigit(e.KeyChar) || e.KeyChar == Convert.ToChar(Keys.Delete) || e.KeyChar == Convert.ToChar(Keys.Back))
-                e.Handled = false;
-            else if (e.KeyChar == Convert.ToChar(Keys.Enter))
-                SendKeys.Send("{Tab}");
-            else
-                e.Handled = true;
+            FormatoPorcentaje(sender);
         }
 
-        private void txtPorcCompra6_Leave(object sender, EventArgs e)
+        private void txtPorcPuntaVendedora_Leave(object sender, EventArgs e)
         {
-            TextBox control = (TextBox)sender;
-            decimal Porcentaje = Convert.ToDecimal(control.Text.Trim());
-            control.Text = string.Format("{0:00.00}", Porcentaje);
+            FormatoPorcentaje(sender);
         }
 
-        private void txtPorcCompra7_Leave(object sender, EventArgs e)
+        private void txtPorcCompra_KeyPress(object sender, KeyPressEventArgs e)
         {
-            TextBox control = (TextBox)sender;
-            decimal Porcentaje = Convert.ToDecimal(control.Text.Trim());
-            control.Text = string.Format("{0:00.00}", Porcentaje);
+            ValidacionNumerica(e);
         }
 
-        private void txtPorcCompra8_Leave(object sender, EventArgs e)
+        private void txtPorcVenta_KeyPress(object sender, KeyPressEventArgs e)
         {
-            TextBox control = (TextBox)sender;
-            decimal Porcentaje = Convert.ToDecimal(control.Text.Trim());
-            control.Text = string.Format("{0:00.00}", Porcentaje);
+            ValidacionNumerica(e);
         }
 
-        private void txtPorcCompra9_Leave(object sender, EventArgs e)
+        private void txtPorcComisionIOL_KeyPress(object sender, KeyPressEventArgs e)
         {
-            TextBox control = (TextBox)sender;
-            decimal Porcentaje = Convert.ToDecimal(control.Text.Trim());
-            control.Text = string.Format("{0:00.00}", Porcentaje);
+            ValidacionNumerica(e);
         }
 
-        private void txtPorcCompra10_Leave(object sender, EventArgs e)
+        private void txtPorcPuntaCompradora_KeyPress(object sender, KeyPressEventArgs e)
         {
-            TextBox control = (TextBox)sender;
-            decimal Porcentaje = Convert.ToDecimal(control.Text.Trim());
-            control.Text = string.Format("{0:00.00}", Porcentaje);
+            ValidacionNumerica(e);
         }
 
-        private void txtPorcVenta6_Leave(object sender, EventArgs e)
+        private void txtPorcPuntaVendedora_KeyPress(object sender, KeyPressEventArgs e)
         {
-            TextBox control = (TextBox)sender;
-            decimal Porcentaje = Convert.ToDecimal(control.Text.Trim());
-            control.Text = string.Format("{0:00.00}", Porcentaje);
+            ValidacionNumerica(e);
         }
 
-        private void txtPorcVenta7_Leave(object sender, EventArgs e)
+        private void txtTotalVariacionEnPorcentajes_TextChanged(object sender, EventArgs e)
         {
-            TextBox control = (TextBox)sender;
-            decimal Porcentaje = Convert.ToDecimal(control.Text.Trim());
-            control.Text = string.Format("{0:00.00}", Porcentaje);
+
         }
 
-        private void txtPorcVenta8_Leave(object sender, EventArgs e)
+        private void dgvAcciones_RowPrePaint(object sender, DataGridViewRowPrePaintEventArgs e)
         {
-            TextBox control = (TextBox)sender;
-            decimal Porcentaje = Convert.ToDecimal(control.Text.Trim());
-            control.Text = string.Format("{0:00.00}", Porcentaje);
-        }
-
-        private void txtPorcVenta9_Leave(object sender, EventArgs e)
-        {
-            TextBox control = (TextBox)sender;
-            decimal Porcentaje = Convert.ToDecimal(control.Text.Trim());
-            control.Text = string.Format("{0:00.00}", Porcentaje);
-        }
-
-        private void txtPorcVenta10_Leave(object sender, EventArgs e)
-        {
-            TextBox control = (TextBox)sender;
-            decimal Porcentaje = Convert.ToDecimal(control.Text.Trim());
-            control.Text = string.Format("{0:00.00}", Porcentaje);
-        }
-
-        private void nudSimulador_ValueChanged(object sender, EventArgs e)
-        {
-            ActualizarAccionesCompradas();
-            int simulacion = 0;
-            try { simulacion = Convert.ToInt32(nudSimulador.Value); }
-            catch { simulacion = 0; }
-
-            if (simulacion >= 1 && simulacion <= 5)
-                lnkEstrategia.Text = "Estrategia Uno";
-            else
-                lnkEstrategia.Text = "Estrategia Dos";
+            foreach (DataGridViewRow fila in dgvAcciones.Rows)
+            {
+                if (fila.Cells["Estado"].Value.ToString().Trim().ToUpper() == "COMPRADO")
+                    fila.DefaultCellStyle.BackColor = System.Drawing.Color.Red;
+                else
+                    fila.DefaultCellStyle.BackColor = System.Drawing.Color.Green;
+            }
         }
     }
 }

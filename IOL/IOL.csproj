@@ -125,6 +125,10 @@
     <Compile Include="Clases\ERuedas.cs" />
     <Compile Include="Clases\ERuedasDetalle.cs" />
     <Compile Include="Clases\ERuedasDetalleSimulador.cs" />
+    <Compile Include="Clases\ERuedasVolumen.cs" />
+    <Compile Include="Clases\ESesiones.cs" />
+    <Compile Include="Clases\ETenenciasComitentes.cs" />
+    <Compile Include="Clases\ETenenciasSimulador.cs" />
     <Compile Include="Clases\Operaciones.cs" />
     <Compile Include="Clases\PanelModel.cs" />
     <Compile Include="Clases\EPanelPrincipal.cs" />

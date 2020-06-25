@@ -86,7 +86,7 @@
             this.label41 = new System.Windows.Forms.Label();
             this.label42 = new System.Windows.Forms.Label();
             this.label43 = new System.Windows.Forms.Label();
-            this.btnDatosSimulador = new System.Windows.Forms.Button();
+            this.btnActualizarSimulador = new System.Windows.Forms.Button();
             this.label20 = new System.Windows.Forms.Label();
             this.label21 = new System.Windows.Forms.Label();
             this.label18 = new System.Windows.Forms.Label();
@@ -114,16 +114,30 @@
             this.label9 = new System.Windows.Forms.Label();
             this.label22 = new System.Windows.Forms.Label();
             this.label23 = new System.Windows.Forms.Label();
-            this.dgvAccionesCompradas = new System.Windows.Forms.DataGridView();
-            this.lblAccionesCompradas = new System.Windows.Forms.Label();
+            this.dgvAcciones = new System.Windows.Forms.DataGridView();
+            this.lblAcciones = new System.Windows.Forms.Label();
             this.lblOperar = new System.Windows.Forms.Label();
             this.nudSimulador = new System.Windows.Forms.NumericUpDown();
             this.lnkEstrategia = new System.Windows.Forms.LinkLabel();
-            this.lblTotalAccionesCompradas = new System.Windows.Forms.Label();
+            this.lblTotales = new System.Windows.Forms.Label();
+            this.btnActualizarRueda = new System.Windows.Forms.Button();
+            this.btnCerrarRueda = new System.Windows.Forms.Button();
+            this.txtTotalAcciones = new System.Windows.Forms.TextBox();
+            this.txtTotalCantidad = new System.Windows.Forms.TextBox();
+            this.txtTotalImporteCompra = new System.Windows.Forms.TextBox();
+            this.txtTotalVariacionEnPesos = new System.Windows.Forms.TextBox();
+            this.txtTotalVariacionEnPorcentajes = new System.Windows.Forms.TextBox();
+            this.lblTotalAcciones = new System.Windows.Forms.Label();
+            this.lblTotalCantidad = new System.Windows.Forms.Label();
+            this.lblTotalImporte = new System.Windows.Forms.Label();
+            this.label44 = new System.Windows.Forms.Label();
+            this.label45 = new System.Windows.Forms.Label();
+            this.lblImporteComision = new System.Windows.Forms.Label();
+            this.txtImporteComision = new System.Windows.Forms.TextBox();
             this.tbcDatosRueda.SuspendLayout();
             this.tbpDatosRueda.SuspendLayout();
             this.tbpDatosSimulador.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dgvAccionesCompradas)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvAcciones)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudSimulador)).BeginInit();
             this.SuspendLayout();
             // 
@@ -150,11 +164,13 @@
             this.tbcDatosRueda.Location = new System.Drawing.Point(3, 8);
             this.tbcDatosRueda.Name = "tbcDatosRueda";
             this.tbcDatosRueda.SelectedIndex = 0;
-            this.tbcDatosRueda.Size = new System.Drawing.Size(247, 447);
+            this.tbcDatosRueda.Size = new System.Drawing.Size(247, 468);
             this.tbcDatosRueda.TabIndex = 0;
             // 
             // tbpDatosRueda
             // 
+            this.tbpDatosRueda.Controls.Add(this.btnCerrarRueda);
+            this.tbpDatosRueda.Controls.Add(this.btnActualizarRueda);
             this.tbpDatosRueda.Controls.Add(this.label26);
             this.tbpDatosRueda.Controls.Add(this.label27);
             this.tbpDatosRueda.Controls.Add(this.txtPorcPuntaVendedora);
@@ -181,7 +197,7 @@
             this.tbpDatosRueda.Location = new System.Drawing.Point(4, 22);
             this.tbpDatosRueda.Name = "tbpDatosRueda";
             this.tbpDatosRueda.Padding = new System.Windows.Forms.Padding(3);
-            this.tbpDatosRueda.Size = new System.Drawing.Size(239, 421);
+            this.tbpDatosRueda.Size = new System.Drawing.Size(239, 442);
             this.tbpDatosRueda.TabIndex = 0;
             this.tbpDatosRueda.Text = "Datos Rueda";
             this.tbpDatosRueda.UseVisualStyleBackColor = true;
@@ -210,12 +226,14 @@
             // 
             // txtPorcPuntaVendedora
             // 
-            this.txtPorcPuntaVendedora.Enabled = false;
             this.txtPorcPuntaVendedora.Font = new System.Drawing.Font("Times New Roman", 14.25F, System.Drawing.FontStyle.Bold);
             this.txtPorcPuntaVendedora.Location = new System.Drawing.Point(97, 294);
             this.txtPorcPuntaVendedora.Name = "txtPorcPuntaVendedora";
             this.txtPorcPuntaVendedora.Size = new System.Drawing.Size(79, 29);
             this.txtPorcPuntaVendedora.TabIndex = 9;
+            this.txtPorcPuntaVendedora.Click += new System.EventHandler(this.txtPorcPuntaVendedora_Click);
+            this.txtPorcPuntaVendedora.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtPorcPuntaVendedora_KeyPress);
+            this.txtPorcPuntaVendedora.Leave += new System.EventHandler(this.txtPorcPuntaVendedora_Leave);
             // 
             // label24
             // 
@@ -230,12 +248,14 @@
             // 
             // txtPorcPuntaCompradora
             // 
-            this.txtPorcPuntaCompradora.Enabled = false;
             this.txtPorcPuntaCompradora.Font = new System.Drawing.Font("Times New Roman", 14.25F, System.Drawing.FontStyle.Bold);
             this.txtPorcPuntaCompradora.Location = new System.Drawing.Point(97, 259);
             this.txtPorcPuntaCompradora.Name = "txtPorcPuntaCompradora";
             this.txtPorcPuntaCompradora.Size = new System.Drawing.Size(79, 29);
             this.txtPorcPuntaCompradora.TabIndex = 8;
+            this.txtPorcPuntaCompradora.Click += new System.EventHandler(this.txtPorcPuntaCompradora_Click);
+            this.txtPorcPuntaCompradora.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtPorcPuntaCompradora_KeyPress);
+            this.txtPorcPuntaCompradora.Leave += new System.EventHandler(this.txtPorcPuntaCompradora_Leave);
             // 
             // label25
             // 
@@ -270,12 +290,14 @@
             // 
             // txtPorcComisionIOL
             // 
-            this.txtPorcComisionIOL.Enabled = false;
             this.txtPorcComisionIOL.Font = new System.Drawing.Font("Times New Roman", 14.25F, System.Drawing.FontStyle.Bold);
             this.txtPorcComisionIOL.Location = new System.Drawing.Point(97, 224);
             this.txtPorcComisionIOL.Name = "txtPorcComisionIOL";
             this.txtPorcComisionIOL.Size = new System.Drawing.Size(79, 29);
             this.txtPorcComisionIOL.TabIndex = 7;
+            this.txtPorcComisionIOL.Click += new System.EventHandler(this.txtPorcComisionIOL_Click);
+            this.txtPorcComisionIOL.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtPorcComisionIOL_KeyPress);
+            this.txtPorcComisionIOL.Leave += new System.EventHandler(this.txtPorcComisionIOL_Leave);
             // 
             // label11
             // 
@@ -301,12 +323,14 @@
             // 
             // txtPorcVenta
             // 
-            this.txtPorcVenta.Enabled = false;
             this.txtPorcVenta.Font = new System.Drawing.Font("Times New Roman", 14.25F, System.Drawing.FontStyle.Bold);
             this.txtPorcVenta.Location = new System.Drawing.Point(97, 189);
             this.txtPorcVenta.Name = "txtPorcVenta";
             this.txtPorcVenta.Size = new System.Drawing.Size(79, 29);
             this.txtPorcVenta.TabIndex = 6;
+            this.txtPorcVenta.Click += new System.EventHandler(this.txtPorcVenta_Click);
+            this.txtPorcVenta.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtPorcVenta_KeyPress);
+            this.txtPorcVenta.Leave += new System.EventHandler(this.txtPorcVenta_Leave);
             // 
             // label10
             // 
@@ -321,12 +345,14 @@
             // 
             // txtPorcCompra
             // 
-            this.txtPorcCompra.Enabled = false;
             this.txtPorcCompra.Font = new System.Drawing.Font("Times New Roman", 14.25F, System.Drawing.FontStyle.Bold);
             this.txtPorcCompra.Location = new System.Drawing.Point(97, 154);
             this.txtPorcCompra.Name = "txtPorcCompra";
             this.txtPorcCompra.Size = new System.Drawing.Size(79, 29);
             this.txtPorcCompra.TabIndex = 5;
+            this.txtPorcCompra.Click += new System.EventHandler(this.txtPorcCompra_Click);
+            this.txtPorcCompra.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtPorcCompra_KeyPress);
+            this.txtPorcCompra.Leave += new System.EventHandler(this.txtPorcCompra_Leave);
             // 
             // lblPorcCompra
             // 
@@ -444,7 +470,7 @@
             this.tbpDatosSimulador.Controls.Add(this.label41);
             this.tbpDatosSimulador.Controls.Add(this.label42);
             this.tbpDatosSimulador.Controls.Add(this.label43);
-            this.tbpDatosSimulador.Controls.Add(this.btnDatosSimulador);
+            this.tbpDatosSimulador.Controls.Add(this.btnActualizarSimulador);
             this.tbpDatosSimulador.Controls.Add(this.label20);
             this.tbpDatosSimulador.Controls.Add(this.label21);
             this.tbpDatosSimulador.Controls.Add(this.label18);
@@ -475,7 +501,7 @@
             this.tbpDatosSimulador.Location = new System.Drawing.Point(4, 22);
             this.tbpDatosSimulador.Name = "tbpDatosSimulador";
             this.tbpDatosSimulador.Padding = new System.Windows.Forms.Padding(3);
-            this.tbpDatosSimulador.Size = new System.Drawing.Size(239, 421);
+            this.tbpDatosSimulador.Size = new System.Drawing.Size(239, 452);
             this.tbpDatosSimulador.TabIndex = 1;
             this.tbpDatosSimulador.Text = "Datos Simulador";
             this.tbpDatosSimulador.UseVisualStyleBackColor = true;
@@ -774,16 +800,16 @@
             this.label43.TabIndex = 228;
             this.label43.Text = "6:";
             // 
-            // btnDatosSimulador
+            // btnActualizarSimulador
             // 
-            this.btnDatosSimulador.Font = new System.Drawing.Font("Times New Roman", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnDatosSimulador.Location = new System.Drawing.Point(20, 389);
-            this.btnDatosSimulador.Name = "btnDatosSimulador";
-            this.btnDatosSimulador.Size = new System.Drawing.Size(198, 26);
-            this.btnDatosSimulador.TabIndex = 217;
-            this.btnDatosSimulador.Text = "Actualizar simulador";
-            this.btnDatosSimulador.UseVisualStyleBackColor = true;
-            this.btnDatosSimulador.Click += new System.EventHandler(this.btnDatosSimulador_Click);
+            this.btnActualizarSimulador.Font = new System.Drawing.Font("Times New Roman", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnActualizarSimulador.Location = new System.Drawing.Point(20, 389);
+            this.btnActualizarSimulador.Name = "btnActualizarSimulador";
+            this.btnActualizarSimulador.Size = new System.Drawing.Size(198, 26);
+            this.btnActualizarSimulador.TabIndex = 217;
+            this.btnActualizarSimulador.Text = "Actualizar Simulador";
+            this.btnActualizarSimulador.UseVisualStyleBackColor = true;
+            this.btnActualizarSimulador.Click += new System.EventHandler(this.btnActualizarSimulador_Click);
             // 
             // label20
             // 
@@ -1077,32 +1103,33 @@
             this.label23.TabIndex = 200;
             this.label23.Text = "1:";
             // 
-            // dgvAccionesCompradas
+            // dgvAcciones
             // 
-            this.dgvAccionesCompradas.AllowUserToAddRows = false;
-            this.dgvAccionesCompradas.AllowUserToDeleteRows = false;
-            this.dgvAccionesCompradas.AllowUserToOrderColumns = true;
-            this.dgvAccionesCompradas.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dgvAccionesCompradas.Location = new System.Drawing.Point(250, 37);
-            this.dgvAccionesCompradas.Name = "dgvAccionesCompradas";
-            this.dgvAccionesCompradas.ReadOnly = true;
-            this.dgvAccionesCompradas.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dgvAccionesCompradas.Size = new System.Drawing.Size(1004, 393);
-            this.dgvAccionesCompradas.TabIndex = 190;
-            this.dgvAccionesCompradas.DataBindingComplete += new System.Windows.Forms.DataGridViewBindingCompleteEventHandler(this.dgvAccionesCompradas_DataBindingComplete);
+            this.dgvAcciones.AllowUserToAddRows = false;
+            this.dgvAcciones.AllowUserToDeleteRows = false;
+            this.dgvAcciones.AllowUserToOrderColumns = true;
+            this.dgvAcciones.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgvAcciones.Location = new System.Drawing.Point(250, 37);
+            this.dgvAcciones.Name = "dgvAcciones";
+            this.dgvAcciones.ReadOnly = true;
+            this.dgvAcciones.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.dgvAcciones.Size = new System.Drawing.Size(994, 387);
+            this.dgvAcciones.TabIndex = 190;
+            this.dgvAcciones.DataBindingComplete += new System.Windows.Forms.DataGridViewBindingCompleteEventHandler(this.dgvAccionesCompradas_DataBindingComplete);
+            this.dgvAcciones.RowPrePaint += new System.Windows.Forms.DataGridViewRowPrePaintEventHandler(this.dgvAcciones_RowPrePaint);
             // 
-            // lblAccionesCompradas
+            // lblAcciones
             // 
-            this.lblAccionesCompradas.AutoSize = true;
-            this.lblAccionesCompradas.BackColor = System.Drawing.Color.SeaShell;
-            this.lblAccionesCompradas.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.lblAccionesCompradas.Font = new System.Drawing.Font("Georgia", 12.75F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblAccionesCompradas.ForeColor = System.Drawing.SystemColors.Highlight;
-            this.lblAccionesCompradas.Location = new System.Drawing.Point(248, 8);
-            this.lblAccionesCompradas.Name = "lblAccionesCompradas";
-            this.lblAccionesCompradas.Size = new System.Drawing.Size(199, 22);
-            this.lblAccionesCompradas.TabIndex = 191;
-            this.lblAccionesCompradas.Text = "Acciones Compradas";
+            this.lblAcciones.AutoSize = true;
+            this.lblAcciones.BackColor = System.Drawing.Color.SeaShell;
+            this.lblAcciones.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.lblAcciones.Font = new System.Drawing.Font("Georgia", 12.75F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblAcciones.ForeColor = System.Drawing.SystemColors.Highlight;
+            this.lblAcciones.Location = new System.Drawing.Point(248, 8);
+            this.lblAcciones.Name = "lblAcciones";
+            this.lblAcciones.Size = new System.Drawing.Size(189, 22);
+            this.lblAcciones.TabIndex = 191;
+            this.lblAcciones.Text = "Listado de Acciones";
             // 
             // lblOperar
             // 
@@ -1150,18 +1177,177 @@
             this.lnkEstrategia.TabStop = true;
             this.lnkEstrategia.Text = "Estrategia Uno";
             // 
-            // lblTotalAccionesCompradas
+            // lblTotales
             // 
-            this.lblTotalAccionesCompradas.AutoSize = true;
-            this.lblTotalAccionesCompradas.BackColor = System.Drawing.Color.SeaShell;
-            this.lblTotalAccionesCompradas.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.lblTotalAccionesCompradas.Font = new System.Drawing.Font("Georgia", 12.75F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblTotalAccionesCompradas.ForeColor = System.Drawing.SystemColors.Highlight;
-            this.lblTotalAccionesCompradas.Location = new System.Drawing.Point(248, 433);
-            this.lblTotalAccionesCompradas.Name = "lblTotalAccionesCompradas";
-            this.lblTotalAccionesCompradas.Size = new System.Drawing.Size(308, 22);
-            this.lblTotalAccionesCompradas.TabIndex = 196;
-            this.lblTotalAccionesCompradas.Text = "Total de acciones Compradas: 00";
+            this.lblTotales.AutoSize = true;
+            this.lblTotales.BackColor = System.Drawing.Color.SeaShell;
+            this.lblTotales.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.lblTotales.Font = new System.Drawing.Font("Georgia", 12.75F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblTotales.ForeColor = System.Drawing.SystemColors.Highlight;
+            this.lblTotales.Location = new System.Drawing.Point(256, 454);
+            this.lblTotales.Name = "lblTotales";
+            this.lblTotales.Size = new System.Drawing.Size(192, 22);
+            this.lblTotales.TabIndex = 196;
+            this.lblTotales.Text = "Total Simulador 00:";
+            // 
+            // btnActualizarRueda
+            // 
+            this.btnActualizarRueda.Font = new System.Drawing.Font("Times New Roman", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnActualizarRueda.Location = new System.Drawing.Point(19, 334);
+            this.btnActualizarRueda.Name = "btnActualizarRueda";
+            this.btnActualizarRueda.Size = new System.Drawing.Size(198, 28);
+            this.btnActualizarRueda.TabIndex = 223;
+            this.btnActualizarRueda.Text = "Actualizar Rueda";
+            this.btnActualizarRueda.UseVisualStyleBackColor = true;
+            // 
+            // btnCerrarRueda
+            // 
+            this.btnCerrarRueda.Font = new System.Drawing.Font("Times New Roman", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnCerrarRueda.Location = new System.Drawing.Point(19, 372);
+            this.btnCerrarRueda.Name = "btnCerrarRueda";
+            this.btnCerrarRueda.Size = new System.Drawing.Size(198, 26);
+            this.btnCerrarRueda.TabIndex = 225;
+            this.btnCerrarRueda.Text = "Cerrar Rueda";
+            this.btnCerrarRueda.UseVisualStyleBackColor = true;
+            // 
+            // txtTotalAcciones
+            // 
+            this.txtTotalAcciones.Enabled = false;
+            this.txtTotalAcciones.Font = new System.Drawing.Font("Times New Roman", 14.25F, System.Drawing.FontStyle.Bold);
+            this.txtTotalAcciones.Location = new System.Drawing.Point(461, 448);
+            this.txtTotalAcciones.Name = "txtTotalAcciones";
+            this.txtTotalAcciones.Size = new System.Drawing.Size(83, 29);
+            this.txtTotalAcciones.TabIndex = 197;
+            this.txtTotalAcciones.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // txtTotalCantidad
+            // 
+            this.txtTotalCantidad.Enabled = false;
+            this.txtTotalCantidad.Font = new System.Drawing.Font("Times New Roman", 14.25F, System.Drawing.FontStyle.Bold);
+            this.txtTotalCantidad.Location = new System.Drawing.Point(547, 448);
+            this.txtTotalCantidad.Name = "txtTotalCantidad";
+            this.txtTotalCantidad.Size = new System.Drawing.Size(83, 29);
+            this.txtTotalCantidad.TabIndex = 198;
+            this.txtTotalCantidad.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // txtTotalImporteCompra
+            // 
+            this.txtTotalImporteCompra.Enabled = false;
+            this.txtTotalImporteCompra.Font = new System.Drawing.Font("Times New Roman", 14.25F, System.Drawing.FontStyle.Bold);
+            this.txtTotalImporteCompra.Location = new System.Drawing.Point(746, 448);
+            this.txtTotalImporteCompra.Name = "txtTotalImporteCompra";
+            this.txtTotalImporteCompra.Size = new System.Drawing.Size(110, 29);
+            this.txtTotalImporteCompra.TabIndex = 199;
+            this.txtTotalImporteCompra.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // txtTotalVariacionEnPesos
+            // 
+            this.txtTotalVariacionEnPesos.Enabled = false;
+            this.txtTotalVariacionEnPesos.Font = new System.Drawing.Font("Times New Roman", 14.25F, System.Drawing.FontStyle.Bold);
+            this.txtTotalVariacionEnPesos.Location = new System.Drawing.Point(859, 448);
+            this.txtTotalVariacionEnPesos.Name = "txtTotalVariacionEnPesos";
+            this.txtTotalVariacionEnPesos.Size = new System.Drawing.Size(110, 29);
+            this.txtTotalVariacionEnPesos.TabIndex = 200;
+            this.txtTotalVariacionEnPesos.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // txtTotalVariacionEnPorcentajes
+            // 
+            this.txtTotalVariacionEnPorcentajes.Enabled = false;
+            this.txtTotalVariacionEnPorcentajes.Font = new System.Drawing.Font("Times New Roman", 14.25F, System.Drawing.FontStyle.Bold);
+            this.txtTotalVariacionEnPorcentajes.Location = new System.Drawing.Point(972, 448);
+            this.txtTotalVariacionEnPorcentajes.Name = "txtTotalVariacionEnPorcentajes";
+            this.txtTotalVariacionEnPorcentajes.Size = new System.Drawing.Size(110, 29);
+            this.txtTotalVariacionEnPorcentajes.TabIndex = 201;
+            this.txtTotalVariacionEnPorcentajes.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.txtTotalVariacionEnPorcentajes.TextChanged += new System.EventHandler(this.txtTotalVariacionEnPorcentajes_TextChanged);
+            // 
+            // lblTotalAcciones
+            // 
+            this.lblTotalAcciones.AutoSize = true;
+            this.lblTotalAcciones.BackColor = System.Drawing.Color.SeaShell;
+            this.lblTotalAcciones.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.lblTotalAcciones.Font = new System.Drawing.Font("Georgia", 9.75F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblTotalAcciones.ForeColor = System.Drawing.Color.Green;
+            this.lblTotalAcciones.Location = new System.Drawing.Point(464, 427);
+            this.lblTotalAcciones.Name = "lblTotalAcciones";
+            this.lblTotalAcciones.Size = new System.Drawing.Size(76, 18);
+            this.lblTotalAcciones.TabIndex = 202;
+            this.lblTotalAcciones.Text = "Acciones";
+            // 
+            // lblTotalCantidad
+            // 
+            this.lblTotalCantidad.AutoSize = true;
+            this.lblTotalCantidad.BackColor = System.Drawing.Color.SeaShell;
+            this.lblTotalCantidad.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.lblTotalCantidad.Font = new System.Drawing.Font("Georgia", 9.75F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblTotalCantidad.ForeColor = System.Drawing.Color.Green;
+            this.lblTotalCantidad.Location = new System.Drawing.Point(551, 427);
+            this.lblTotalCantidad.Name = "lblTotalCantidad";
+            this.lblTotalCantidad.Size = new System.Drawing.Size(75, 18);
+            this.lblTotalCantidad.TabIndex = 203;
+            this.lblTotalCantidad.Text = "Cantidad";
+            // 
+            // lblTotalImporte
+            // 
+            this.lblTotalImporte.AutoSize = true;
+            this.lblTotalImporte.BackColor = System.Drawing.Color.SeaShell;
+            this.lblTotalImporte.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.lblTotalImporte.Font = new System.Drawing.Font("Georgia", 9.75F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblTotalImporte.ForeColor = System.Drawing.Color.Green;
+            this.lblTotalImporte.Location = new System.Drawing.Point(749, 427);
+            this.lblTotalImporte.Name = "lblTotalImporte";
+            this.lblTotalImporte.Size = new System.Drawing.Size(105, 18);
+            this.lblTotalImporte.TabIndex = 204;
+            this.lblTotalImporte.Text = "Importe Cpa.";
+            // 
+            // label44
+            // 
+            this.label44.AutoSize = true;
+            this.label44.BackColor = System.Drawing.Color.SeaShell;
+            this.label44.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.label44.Font = new System.Drawing.Font("Georgia", 9.75F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label44.ForeColor = System.Drawing.Color.Green;
+            this.label44.Location = new System.Drawing.Point(868, 427);
+            this.label44.Name = "label44";
+            this.label44.Size = new System.Drawing.Size(93, 18);
+            this.label44.TabIndex = 205;
+            this.label44.Text = "Variacion $";
+            // 
+            // label45
+            // 
+            this.label45.AutoSize = true;
+            this.label45.BackColor = System.Drawing.Color.SeaShell;
+            this.label45.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.label45.Font = new System.Drawing.Font("Georgia", 9.75F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label45.ForeColor = System.Drawing.Color.Green;
+            this.label45.Location = new System.Drawing.Point(979, 427);
+            this.label45.Name = "label45";
+            this.label45.Size = new System.Drawing.Size(96, 18);
+            this.label45.TabIndex = 206;
+            this.label45.Text = "Variacion %";
+            // 
+            // lblImporteComision
+            // 
+            this.lblImporteComision.AutoSize = true;
+            this.lblImporteComision.BackColor = System.Drawing.Color.SeaShell;
+            this.lblImporteComision.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.lblImporteComision.Font = new System.Drawing.Font("Georgia", 9.75F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblImporteComision.ForeColor = System.Drawing.Color.Green;
+            this.lblImporteComision.Location = new System.Drawing.Point(648, 427);
+            this.lblImporteComision.Name = "lblImporteComision";
+            this.lblImporteComision.Size = new System.Drawing.Size(80, 18);
+            this.lblImporteComision.TabIndex = 208;
+            this.lblImporteComision.Text = "Comisión";
+            // 
+            // txtImporteComision
+            // 
+            this.txtImporteComision.Enabled = false;
+            this.txtImporteComision.Font = new System.Drawing.Font("Times New Roman", 14.25F, System.Drawing.FontStyle.Bold);
+            this.txtImporteComision.Location = new System.Drawing.Point(633, 448);
+            this.txtImporteComision.Name = "txtImporteComision";
+            this.txtImporteComision.Size = new System.Drawing.Size(110, 29);
+            this.txtImporteComision.TabIndex = 207;
+            this.txtImporteComision.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // Simulador
             // 
@@ -1169,14 +1355,26 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.SeaShell;
             this.BackgroundImage = global::IOL.Properties.Resources.fondo;
-            this.ClientSize = new System.Drawing.Size(1258, 458);
-            this.Controls.Add(this.lblTotalAccionesCompradas);
+            this.ClientSize = new System.Drawing.Size(1253, 487);
+            this.Controls.Add(this.lblImporteComision);
+            this.Controls.Add(this.txtImporteComision);
+            this.Controls.Add(this.label45);
+            this.Controls.Add(this.label44);
+            this.Controls.Add(this.lblTotalImporte);
+            this.Controls.Add(this.lblTotalCantidad);
+            this.Controls.Add(this.lblTotalAcciones);
+            this.Controls.Add(this.txtTotalVariacionEnPorcentajes);
+            this.Controls.Add(this.txtTotalVariacionEnPesos);
+            this.Controls.Add(this.txtTotalImporteCompra);
+            this.Controls.Add(this.txtTotalCantidad);
+            this.Controls.Add(this.txtTotalAcciones);
+            this.Controls.Add(this.lblTotales);
             this.Controls.Add(this.lnkEstrategia);
             this.Controls.Add(this.nudSimulador);
             this.Controls.Add(this.lblOperar);
-            this.Controls.Add(this.lblAccionesCompradas);
+            this.Controls.Add(this.lblAcciones);
             this.Controls.Add(this.tbcDatosRueda);
-            this.Controls.Add(this.dgvAccionesCompradas);
+            this.Controls.Add(this.dgvAcciones);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.MinimizeBox = false;
@@ -1189,7 +1387,7 @@
             this.tbpDatosRueda.PerformLayout();
             this.tbpDatosSimulador.ResumeLayout(false);
             this.tbpDatosSimulador.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dgvAccionesCompradas)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvAcciones)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudSimulador)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -1218,8 +1416,8 @@
         public System.Windows.Forms.Label label29;
         public System.Windows.Forms.TextBox txtHora;
         private System.Windows.Forms.TabPage tbpDatosSimulador;
-        private System.Windows.Forms.DataGridView dgvAccionesCompradas;
-        private System.Windows.Forms.Label lblAccionesCompradas;
+        private System.Windows.Forms.DataGridView dgvAcciones;
+        private System.Windows.Forms.Label lblAcciones;
         public System.Windows.Forms.Label label4;
         public System.Windows.Forms.Label lblPorcComisionIOL;
         public System.Windows.Forms.TextBox txtPorcComisionIOL;
@@ -1251,7 +1449,7 @@
         public System.Windows.Forms.Label label22;
         public System.Windows.Forms.Label label23;
         public System.Windows.Forms.Label lblOperar;
-        private System.Windows.Forms.Button btnDatosSimulador;
+        private System.Windows.Forms.Button btnActualizarSimulador;
         public System.Windows.Forms.Label label24;
         public System.Windows.Forms.TextBox txtPorcPuntaCompradora;
         public System.Windows.Forms.Label label25;
@@ -1285,8 +1483,22 @@
         public System.Windows.Forms.Label label43;
         private System.Windows.Forms.NumericUpDown nudSimulador;
         private System.Windows.Forms.LinkLabel lnkEstrategia;
-        private System.Windows.Forms.Label lblTotalAccionesCompradas;
+        private System.Windows.Forms.Label lblTotales;
         private System.Windows.Forms.LinkLabel lnkEstrategiaDos;
         private System.Windows.Forms.LinkLabel lnkEstrategiaUno;
+        private System.Windows.Forms.Button btnActualizarRueda;
+        private System.Windows.Forms.Button btnCerrarRueda;
+        public System.Windows.Forms.TextBox txtTotalAcciones;
+        public System.Windows.Forms.TextBox txtTotalCantidad;
+        public System.Windows.Forms.TextBox txtTotalImporteCompra;
+        public System.Windows.Forms.TextBox txtTotalVariacionEnPesos;
+        public System.Windows.Forms.TextBox txtTotalVariacionEnPorcentajes;
+        private System.Windows.Forms.Label lblTotalAcciones;
+        private System.Windows.Forms.Label lblTotalCantidad;
+        private System.Windows.Forms.Label lblTotalImporte;
+        private System.Windows.Forms.Label label44;
+        private System.Windows.Forms.Label label45;
+        private System.Windows.Forms.Label lblImporteComision;
+        public System.Windows.Forms.TextBox txtImporteComision;
     }
 }
