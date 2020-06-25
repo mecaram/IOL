@@ -293,22 +293,19 @@ namespace IOL
                     da.Fill(ds);
 
                     lblTotales.Text = string.Format("Total Simulador {0:00}:", IdSimulacion);
-                    txtTotalAcciones.Text = ds.Rows.Count.ToString();
 
-                    double totalCantidad = Convert.ToDouble(ds.Compute("Sum(Cantidad)","Estado = 'Comprado'"));
-                    txtTotalCantidad.Text = string.Format("{0:000}",totalCantidad);
-
-                    double totalImporteComision = Convert.ToDouble(ds.Compute("Sum(ImporteComisionIOL)", "Estado = 'Comprado'"));
-                    txtImporteComision.Text = string.Format("$ {0:#00.00}", totalImporteComision);
-
-                    double totalImporteCompra = Convert.ToDouble(ds.Compute("Sum(ImporteCompra)", "Estado = 'Comprado'"));
-                    txtTotalImporteCompra.Text = string.Format("$ {0:#00.00}", totalImporteCompra);
-
-                    double totalVariacionEnPesos = Convert.ToDouble(ds.Compute("Sum(VariacionEnPesos)", "Estado = 'Comprado'"));
-                    txtTotalVariacionEnPesos.Text = string.Format("$ {0:#00.00}", totalVariacionEnPesos);
-
-                    double totalVariacionEnPorcentajes = Convert.ToDouble(ds.Compute("Sum(VariacionEnPorcentajes)", "Estado = 'Comprado'"));
-                    txtTotalVariacionEnPorcentajes.Text = string.Format("{0:#00.00}", totalVariacionEnPorcentajes);
+                    double totalAccionesCompradas = 0,
+                           totalCantidadCompradas = 0,
+                           totalImporteComisionCompradas = 0,
+                           totalImporteCompra = 0,
+                           totalVariacionEnPesosCompradas = 0,
+                           totalVariacionEnPorcentajesCompradas = 0,
+                           totalAccionesVendidas = 0,
+                           totalCantidadVendidas = 0,
+                           totalImporteComisionVentas = 0,
+                           totalImporteVentas = 0,
+                           totalVariacionEnPesosVendidas = 0,
+                           totalVariacionEnPorcentajesVendidas = 0;
 
                     if (ds.Rows.Count > 0)
                     {
@@ -383,12 +380,38 @@ namespace IOL
 
                         dgvAcciones.RefreshEdit();
                         dgvAcciones.Enabled = true;
+
+                        totalAccionesCompradas = Convert.ToDouble(ds.Compute("Count(Simbolo)", "Estado = 'Comprado'"));
+                        totalCantidadCompradas = Convert.ToDouble(ds.Compute("Sum(Cantidad)", "Estado = 'Comprado'"));
+                        totalImporteComisionCompradas = Convert.ToDouble(ds.Compute("Sum(ImporteComisionIOL)", "Estado = 'Comprado'"));
+                        totalImporteCompra = Convert.ToDouble(ds.Compute("Sum(ImporteCompra)", "Estado = 'Comprado'"));
+                        totalVariacionEnPesosCompradas = Convert.ToDouble(ds.Compute("Sum(VariacionEnPesos)", "Estado = 'Comprado'"));
+                        totalVariacionEnPorcentajesCompradas = Convert.ToDouble(ds.Compute("Sum(VariacionEnPorcentajes)", "Estado = 'Comprado'"));
+                        totalAccionesVendidas = Convert.ToDouble(ds.Compute("Count(Simbolo)", "Estado = 'Vendido'"));
+                        totalCantidadVendidas = Convert.ToDouble(ds.Compute("Sum(Cantidad)", "Estado = 'Vendido'"));
+                        totalImporteComisionVentas = Convert.ToDouble(ds.Compute("Sum(ImporteComisionIOL)", "Estado = 'Vendido'"));
+                        totalImporteVentas = Convert.ToDouble(ds.Compute("Sum(ImporteVenta)", "Estado = 'Vendido'"));
+                        totalVariacionEnPesosVendidas = Convert.ToDouble(ds.Compute("Sum(VariacionEnPesos)", "Estado = 'Vendido'"));
+                        totalVariacionEnPorcentajesVendidas = Convert.ToDouble(ds.Compute("Sum(VariacionEnPorcentajes)", "Estado = 'Vendido'"));
                     }
                     else
                     {
                         dgvAcciones.DataSource = null;
                         dgvAcciones.RefreshEdit();
                     }
+
+                    txtTotalCantidadCompradas.Text = string.Format("{0:000}", totalAccionesCompradas);
+                    txtTotalCantidadCompradas.Text = string.Format("{0:000}", totalCantidadCompradas);
+                    txtImporteComisionCompradas.Text = string.Format("$ {0:#00.00}", totalImporteComisionCompradas);
+                    txtTotalImporteCompra.Text = string.Format("$ {0:#00.00}", totalImporteCompra);
+                    txtTotalVariacionEnPesosComp.Text = string.Format("$ {0:#00.00}", totalVariacionEnPesosCompradas);
+                    txtTotalVariacionEnPorcentajesCompra.Text = string.Format("{0:#00.00}", totalVariacionEnPorcentajesCompradas);
+                    txtTotalCantidadVendidas.Text = string.Format("{0:000}", totalAccionesVendidas);
+                    txtTotalCantidadVendidas.Text = string.Format("{0:000}", totalCantidadVendidas);
+                    txtImporteComisionVendidas.Text = string.Format("$ {0:#00.00}", totalImporteComisionVentas);
+                    txtTotalImporteVenta.Text = string.Format("$ {0:#00.00}", totalImporteVentas);
+                    txtTotalVariacionEnPesosVent.Text = string.Format("$ {0:#00.00}", totalVariacionEnPesosVendidas);
+                    txtTotalVariacionEnPorcentajesVenta.Text = string.Format("{0:#00.00}", totalVariacionEnPorcentajesVendidas);
                 }
             }
             else
