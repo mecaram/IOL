@@ -99,8 +99,8 @@ namespace IOL
                     foreach (DataRow fila in dsSimulador.Rows)
                     {
                         double disponible = Convert.ToDouble(fila["DisponibleParaOperar"]);
-                        double activos = Convert.ToDouble(fila["DisponibleParaOperar"]);
-                        double totaltenencia = Convert.ToDouble(fila["DisponibleParaOperar"]);
+                        double activos = Convert.ToDouble(fila["ActivosValorizados"]);
+                        double totaltenencia = Convert.ToDouble(fila["TotalTenencia"]);
                         if (totaltenencia < total)
                         {
                             disponible = total - totaltenencia;
@@ -193,7 +193,7 @@ namespace IOL
                 txtPorcVenta9.Text = string.Format("{0:00.00}", Convert.ToDecimal(Fila["PorcVenta9"]));
                 txtPorcVenta10.Text = string.Format("{0:00.00}", Convert.ToDecimal(Fila["PorcVenta10"]));
 
-                tmrActualizarToken_Tick(sender,e);
+                tmrActualizarToken_Tick(sender, e);
                 ActualizarSimuladores();
                 ActualizarAccionesCompradas();
             }
@@ -210,7 +210,7 @@ namespace IOL
             daRuedas.Fill(dsRuedas);
             if (dsRuedas.Rows.Count > 0)
             {
-                ActualizarLoad(sender,e);
+                ActualizarLoad(sender, e);
             }
             else
             {
@@ -249,7 +249,7 @@ namespace IOL
                 }
             }
         }
-        
+
 
 
         private int AgregarAccesoIOL()
@@ -696,7 +696,7 @@ namespace IOL
                 // SI(PrecioCompra+(PrecioCompra*0,7%) < PrecioActual;"VENTA";"NEUTRO")
                 double resultado = 0, cantidadvendida = 0;
 
-                resultado = PrecioCompra + (PrecioCompra * vSimuladores[Simulador, 1] / 100);
+                resultado = PrecioCompra + (PrecioCompra * ObtenerPorcVentaSimulador(IdRueda,Simulador) / 100);
 
                 if (resultado < PrecioActualVenta)  // Vendemos
                 {
@@ -778,7 +778,7 @@ namespace IOL
                     if (regUltimosPrecios == 3)
                     {
                         promedio1 = suma / 3;
-                        promedio2 = (suma / 3) * vSimuladores[Simulador, 0] / 100;
+                        promedio2 = (suma / 3) * ObtenerPorcCompraSimulador(IdRueda, Simulador) / 100;
                         resultado = promedio1 - promedio2;
                         precioactual = PrecioActualCompra;
                         if (resultado > precioactual)
@@ -809,7 +809,7 @@ namespace IOL
                                 catch { porcomisionIOL = 0; }
 
                                 // Calcular el Importe total para comprar acciones incluyendo Comision
-                                double importe = vSimuladores[Simulador, 2] / CantRestantes;
+                                double importe = ObtenerPorcVentaSimulador(IdRueda, Simulador) / CantRestantes;
 
                                 // Calcular la comision de Invertir Online
                                 double comisionIOL = importe * porcomisionIOL / 100;
@@ -932,8 +932,8 @@ namespace IOL
                     catch { precioanteriorAA = 0; }
 
                     resultado1 = PrecioCompra + (PrecioCompra * .0007);
-                    resultado2 = precioanterior - (precioanterior * vSimuladores[Simulador, 1] / 100);
-                    resultado3 = precioanteriorA - (precioanteriorA * vSimuladores[Simulador, 1] / 100);
+                    resultado2 = precioanterior - (precioanterior * ObtenerPorcCompraSimulador(IdRueda, Simulador) / 100);
+                    resultado3 = precioanteriorA - (precioanteriorA * ObtenerPorcCompraSimulador(IdRueda, Simulador) / 100);
 
                     bool lvender1 = precioactual > resultado1 && precioactual < resultado2 && precioanterior > precioanteriorA;
                     bool lvender2 = precioactual > resultado1 && precioactual < resultado3 && precioanteriorA > precioanteriorAA;
@@ -1021,8 +1021,8 @@ namespace IOL
                         try { precioanteriorAA = Convert.ToDouble(dsUltimosPrecios.Rows[0]["Precio"]); }
                         catch { precioanteriorAA = 0; }
 
-                        resultado1 = precioanterior + (precioanterior * vSimuladores[Simulador, 0] / 100);
-                        resultado2 = precioanteriorA + (precioanteriorA * vSimuladores[Simulador, 0] / 100);
+                        resultado1 = precioanterior + (precioanterior * ObtenerPorcCompraSimulador(IdRueda, Simulador) / 100);
+                        resultado2 = precioanteriorA + (precioanteriorA * ObtenerPorcCompraSimulador(IdRueda, Simulador) / 100);
 
                         bool lComprar1 = precioactual > resultado1 && precioactual < precioanterior;
                         bool lComprar2 = precioactual > resultado2 && precioanteriorA < precioanteriorAA;
@@ -1055,7 +1055,7 @@ namespace IOL
                                 catch { porcomisionIOL = 0; }
 
                                 // Calcular el Importe total para comprar acciones incluyendo Comision
-                                double importe = vSimuladores[Simulador, 2] / CantRestantes;
+                                double importe = ObtenerPorcVentaSimulador(IdRueda, Simulador) / CantRestantes;
 
                                 // Calcular la comision de Invertir Online
                                 double comisionIOL = importe * porcomisionIOL / 100;
@@ -1123,7 +1123,7 @@ namespace IOL
                 }
             }
         }
-        
+
         private void txtInversionTotalSimulador_Click(object sender, EventArgs e)
         {
             SeleccionarTexto(sender);
@@ -1489,126 +1489,69 @@ namespace IOL
 
             string sentencia = string.Empty;
 
-            decimal porccompra1 = 0,
-                    porccompra2 = 0,
-                    porccompra3 = 0,
-                    porccompra4 = 0,
-                    porccompra5 = 0,
-                    porccompra6 = 0,
-                    porccompra7 = 0,
-                    porccompra8 = 0,
-                    porccompra9 = 0,
-                    porccompra10 = 0,
-                    porcventa1 = 0,
-                    porcventa2 = 0,
-                    porcventa3 = 0,
-                    porcventa4 = 0,
-                    porcventa5 = 0,
-                    porcventa6 = 0,
-                    porcventa7 = 0,
-                    porcventa8 = 0,
-                    porcventa9 = 0,
-                    porcventa10 = 0;
+            decimal porccompra1, porccompra2, porccompra3, porccompra4, porccompra5, porccompra6, porccompra7,
+                    porccompra8, porccompra9, porccompra10, porcventa1, porcventa2, porcventa3, porcventa4,
+                    porcventa5, porcventa6, porcventa7, porcventa8, porcventa9, porcventa10;
 
-            try
-            { porccompra1 = Convert.ToDecimal(txtPorcCompra1.Text.Trim()); }
-            catch
-            { porccompra1 = 0; }
+            try { porccompra1 = Convert.ToDecimal(txtPorcCompra1.Text.Trim()); }
+            catch { porccompra1 = 0; }
 
-            try
-            { porccompra2 = Convert.ToDecimal(txtPorcCompra2.Text.Trim()); }
-            catch
-            { porccompra2 = 0; }
+            try { porccompra2 = Convert.ToDecimal(txtPorcCompra2.Text.Trim()); }
+            catch { porccompra2 = 0; }
 
-            try
-            { porccompra3 = Convert.ToDecimal(txtPorcCompra3.Text.Trim()); }
-            catch
-            { porccompra3 = 0; }
+            try { porccompra3 = Convert.ToDecimal(txtPorcCompra3.Text.Trim()); }
+            catch { porccompra3 = 0; }
 
-            try
-            { porccompra4 = Convert.ToDecimal(txtPorcCompra4.Text.Trim()); }
-            catch
-            { porccompra4 = 0; }
+            try { porccompra4 = Convert.ToDecimal(txtPorcCompra4.Text.Trim()); }
+            catch { porccompra4 = 0; }
 
-            try
-            { porccompra5 = Convert.ToDecimal(txtPorcCompra5.Text.Trim()); }
-            catch
-            { porccompra5 = 0; }
+            try { porccompra5 = Convert.ToDecimal(txtPorcCompra5.Text.Trim()); }
+            catch { porccompra5 = 0; }
 
-            try
-            { porccompra6 = Convert.ToDecimal(txtPorcCompra6.Text.Trim()); }
-            catch
-            { porccompra6 = 0; }
+            try { porccompra6 = Convert.ToDecimal(txtPorcCompra6.Text.Trim()); }
+            catch { porccompra6 = 0; }
 
-            try
-            { porccompra7 = Convert.ToDecimal(txtPorcCompra7.Text.Trim()); }
-            catch
-            { porccompra7 = 0; }
+            try { porccompra7 = Convert.ToDecimal(txtPorcCompra7.Text.Trim()); }
+            catch { porccompra7 = 0; }
 
-            try
-            { porccompra8 = Convert.ToDecimal(txtPorcCompra8.Text.Trim()); }
-            catch
-            { porccompra8 = 0; }
+            try { porccompra8 = Convert.ToDecimal(txtPorcCompra8.Text.Trim()); }
+            catch { porccompra8 = 0; }
 
-            try
-            { porccompra9 = Convert.ToDecimal(txtPorcCompra9.Text.Trim()); }
-            catch
-            { porccompra9 = 0; }
+            try { porccompra9 = Convert.ToDecimal(txtPorcCompra9.Text.Trim()); }
+            catch { porccompra9 = 0; }
 
-            try
-            { porccompra10 = Convert.ToDecimal(txtPorcCompra10.Text.Trim()); }
-            catch
-            { porccompra10 = 0; }
+            try { porccompra10 = Convert.ToDecimal(txtPorcCompra10.Text.Trim()); }
+            catch { porccompra10 = 0; }
 
-            try
-            { porcventa1 = Convert.ToDecimal(txtPorcVenta1.Text.Trim()); }
-            catch
-            { porcventa1 = 0; }
+            try { porcventa1 = Convert.ToDecimal(txtPorcVenta1.Text.Trim()); }
+            catch { porcventa1 = 0; }
 
-            try
-            { porcventa2 = Convert.ToDecimal(txtPorcVenta2.Text.Trim()); }
-            catch
-            { porcventa2 = 0; }
+            try { porcventa2 = Convert.ToDecimal(txtPorcVenta2.Text.Trim()); }
+            catch { porcventa2 = 0; }
 
-            try
-            { porcventa3 = Convert.ToDecimal(txtPorcVenta3.Text.Trim()); }
-            catch
-            { porcventa3 = 0; }
+            try { porcventa3 = Convert.ToDecimal(txtPorcVenta3.Text.Trim()); }
+            catch { porcventa3 = 0; }
 
-            try
-            { porcventa4 = Convert.ToDecimal(txtPorcVenta4.Text.Trim()); }
-            catch
-            { porcventa4 = 0; }
+            try { porcventa4 = Convert.ToDecimal(txtPorcVenta4.Text.Trim()); }
+            catch { porcventa4 = 0; }
 
-            try
-            { porcventa5 = Convert.ToDecimal(txtPorcVenta5.Text.Trim()); }
-            catch
-            { porcventa5 = 0; }
+            try { porcventa5 = Convert.ToDecimal(txtPorcVenta5.Text.Trim()); }
+            catch { porcventa5 = 0; }
 
-            try
-            { porcventa6 = Convert.ToDecimal(txtPorcVenta6.Text.Trim()); }
-            catch
-            { porcventa6 = 0; }
+            try { porcventa6 = Convert.ToDecimal(txtPorcVenta6.Text.Trim()); }
+            catch { porcventa6 = 0; }
 
-            try
-            { porcventa7 = Convert.ToDecimal(txtPorcVenta7.Text.Trim()); }
-            catch
-            { porcventa7 = 0; }
+            try { porcventa7 = Convert.ToDecimal(txtPorcVenta7.Text.Trim()); }
+            catch { porcventa7 = 0; }
 
-            try
-            { porcventa8 = Convert.ToDecimal(txtPorcVenta8.Text.Trim()); }
-            catch
-            { porcventa8 = 0; }
+            try { porcventa8 = Convert.ToDecimal(txtPorcVenta8.Text.Trim()); }
+            catch { porcventa8 = 0; }
 
-            try
-            { porcventa9 = Convert.ToDecimal(txtPorcVenta9.Text.Trim()); }
-            catch
-            { porcventa9 = 0; }
+            try { porcventa9 = Convert.ToDecimal(txtPorcVenta9.Text.Trim()); }
+            catch { porcventa9 = 0; }
 
-            try
-            { porcventa10 = Convert.ToDecimal(txtPorcVenta10.Text.Trim()); }
-            catch
-            { porcventa10 = 0; }
+            try { porcventa10 = Convert.ToDecimal(txtPorcVenta10.Text.Trim()); }
+            catch { porcventa10 = 0; }
 
             if (porccompra1 <= 0)
             {
@@ -1700,27 +1643,14 @@ namespace IOL
                 using (MySqlConnection cone = new MySqlConnection(conexion))
                 {
                     cone.Open();
-                    sentencia = string.Format("Update Ruedas Set PorcCompra1 =  @PorcCompra1," +
-                                                                "PorcVenta1 =   @PorcVenta1," +
-                                                                "PorcCompra2 =  @PorcCompra2," +
-                                                                "PorcVenta2 =   @PorcVenta2," +
-                                                                "PorcCompra3 =  @PorcCompra3," +
-                                                                "PorcVenta3 =   @PorcVenta3," +
-                                                                "PorcCompra4 =  @PorcCompra4," +
-                                                                "PorcVenta4 =   @PorcVenta4," +
-                                                                "PorcCompra5 =  @PorcCompra5," +
-                                                                "PorcVenta5 =   @PorcVenta5," +
-                                                                "PorcCompra6 =  @PorcCompra6," +
-                                                                "PorcVenta6 =   @PorcVenta6, " +
-                                                                "PorcCompra7 =  @PorcCompra7," +
-                                                                "PorcVenta7 =   @PorcVenta7," +
-                                                                "PorcCompra8 =  @PorcCompra8," +
-                                                                "PorcVenta8 =   @PorcVenta8," +
-                                                                "PorcCompra9 =  @PorcCompra9," +
-                                                                "PorcVenta9 =   @PorcVenta9," +
-                                                                "PorcCompra10 = @PorcCompra10," +
-                                                                "PorcVenta10 =  @PorcVenta10 " +
-                                                                " Where IdRueda = @IdRueda");
+                    sentencia = string.Format("Update Ruedas Set PorcCompra1 =  @PorcCompra1, PorcVenta1 =   @PorcVenta1, PorcCompra2 =  @PorcCompra2," +
+                                                                "PorcVenta2 =   @PorcVenta2, PorcCompra3 =  @PorcCompra3, PorcVenta3 =   @PorcVenta3," +
+                                                                "PorcCompra4 =  @PorcCompra4, PorcVenta4 =  @PorcVenta4, PorcCompra5 =  @PorcCompra5," +
+                                                                "PorcVenta5 =   @PorcVenta5, PorcCompra6 =  @PorcCompra6, PorcVenta6 =   @PorcVenta6, " +
+                                                                "PorcCompra7 =  @PorcCompra7, PorcVenta7 =   @PorcVenta7, PorcCompra8 =  @PorcCompra8," +
+                                                                "PorcVenta8 =   @PorcVenta8, PorcCompra9 =  @PorcCompra9, PorcVenta9 =   @PorcVenta9," +
+                                                                "PorcCompra10 = @PorcCompra10, PorcVenta10 =  @PorcVenta10 " +
+                                                                "Where IdRueda = @IdRueda");
 
                     MySqlCommand comando = new MySqlCommand(sentencia, cone);
                     comando.Parameters.AddWithValue("@PorcCompra1", porccompra1);
@@ -1758,7 +1688,7 @@ namespace IOL
 
         private void btnCerrarRueda_Click(object sender, EventArgs e)
         {
-            if (MessageBox.Show("Desea Realizar el Cierre de la Rueda","Pregunta del Sistema",MessageBoxButtons.YesNo,MessageBoxIcon.Question,MessageBoxDefaultButton.Button2) == DialogResult.Yes)
+            if (MessageBox.Show("Desea Realizar el Cierre de la Rueda", "Pregunta del Sistema", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) == DialogResult.Yes)
             {
                 MySqlConnection coneRuedaFinalizada = new MySqlConnection(conexion);
                 string sentencia = string.Format("Select * From Ruedas Where IdRueda = {0} And Estado = 1", txtIdRueda.Text.Trim());
@@ -1946,6 +1876,43 @@ namespace IOL
                 else
                     fila.DefaultCellStyle.BackColor = System.Drawing.Color.Green;
             }
+        }
+
+        private void btnActualizarRueda_Click(object sender, EventArgs e)
+        {
+        }
+
+        private double ObtenerPorcVentaSimulador(int rueda, int simulador)
+        {
+            double auxPorcVenta = 0;
+            using (MySqlConnection coneSimulador = new MySqlConnection(conexion))
+            {
+                string sentencia = string.Format("Select PorcVenta{0} as PorcVenta From Ruedas Where IdRueda = {1} And IdSimulacion = {0}", simulador, rueda);
+                MySqlDataAdapter da = new MySqlDataAdapter(sentencia, coneSimulador);
+                DataTable ds = new DataTable();
+                da.Fill(ds);
+                if (ds.Rows.Count > 0)
+                {
+                    auxPorcVenta = Convert.ToDouble(ds.Rows[0]["PorcVenta"]);
+                }
+            }
+            return auxPorcVenta;
+        }
+        private double ObtenerPorcCompraSimulador(int rueda, int simulador)
+        {
+            double auxPorcCompra = 0;
+            using (MySqlConnection coneSimulador = new MySqlConnection(conexion))
+            {
+                string sentencia = string.Format("Select PorcCompra{0} as PorcCompra From Ruedas Where IdRueda = {1} And IdSimulacion = {0}", simulador, rueda);
+                MySqlDataAdapter da = new MySqlDataAdapter(sentencia, coneSimulador);
+                DataTable ds = new DataTable();
+                da.Fill(ds);
+                if (ds.Rows.Count > 0)
+                {
+                    auxPorcCompra = Convert.ToDouble(ds.Rows[0]["PorcCompra"]);
+                }
+            }
+            return auxPorcCompra;
         }
     }
 }

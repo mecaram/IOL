@@ -217,6 +217,7 @@
             this.btnCerrarRueda.TabIndex = 225;
             this.btnCerrarRueda.Text = "Cerrar Rueda";
             this.btnCerrarRueda.UseVisualStyleBackColor = true;
+            this.btnCerrarRueda.Click += new System.EventHandler(this.btnCerrarRueda_Click);
             // 
             // btnActualizarRueda
             // 
@@ -227,6 +228,7 @@
             this.btnActualizarRueda.TabIndex = 223;
             this.btnActualizarRueda.Text = "Actualizar Rueda";
             this.btnActualizarRueda.UseVisualStyleBackColor = true;
+            this.btnActualizarRueda.Click += new System.EventHandler(this.btnActualizarRueda_Click);
             // 
             // label26
             // 
@@ -829,9 +831,9 @@
             // btnActualizarSimulador
             // 
             this.btnActualizarSimulador.Font = new System.Drawing.Font("Times New Roman", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnActualizarSimulador.Location = new System.Drawing.Point(20, 389);
+            this.btnActualizarSimulador.Location = new System.Drawing.Point(20, 391);
             this.btnActualizarSimulador.Name = "btnActualizarSimulador";
-            this.btnActualizarSimulador.Size = new System.Drawing.Size(198, 26);
+            this.btnActualizarSimulador.Size = new System.Drawing.Size(198, 28);
             this.btnActualizarSimulador.TabIndex = 217;
             this.btnActualizarSimulador.Text = "Actualizar Simulador";
             this.btnActualizarSimulador.UseVisualStyleBackColor = true;
