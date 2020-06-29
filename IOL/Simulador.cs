@@ -12,7 +12,6 @@ using MySql.Data.MySqlClient;
 using System.Data;
 using DocumentFormat.OpenXml.Spreadsheet;
 
-
 namespace IOL
 {
     public partial class Simulador : Form
@@ -24,10 +23,6 @@ namespace IOL
         const int simulaciones = 11;
 
         Token permisoIOL = null; // Token para acceder a IOL
-
-        // El Vector vSimuladores contiene Porcentajes de Simulacion para la Compra y Venta, SaldoSimulador, Activos Valorizados y Total Tenencia
-        double[,] vSimuladores = new double[simulaciones, 5];
-
         public Simulador()
         {
             InitializeComponent();
@@ -50,105 +45,9 @@ namespace IOL
             }
         }
 
-        private void ActualizarSimuladores()
-        {
-            vSimuladores[1, 0] = Convert.ToDouble(txtPorcCompra1.Text.Trim());
-            vSimuladores[1, 1] = Convert.ToDouble(txtPorcVenta1.Text.Trim());
-
-            vSimuladores[2, 0] = Convert.ToDouble(txtPorcCompra2.Text.Trim());
-            vSimuladores[2, 1] = Convert.ToDouble(txtPorcVenta2.Text.Trim());
-
-            vSimuladores[3, 0] = Convert.ToDouble(txtPorcCompra3.Text.Trim());
-            vSimuladores[3, 1] = Convert.ToDouble(txtPorcVenta3.Text.Trim());
-
-            vSimuladores[4, 0] = Convert.ToDouble(txtPorcCompra4.Text.Trim());
-            vSimuladores[4, 1] = Convert.ToDouble(txtPorcVenta4.Text.Trim());
-
-            vSimuladores[5, 0] = Convert.ToDouble(txtPorcCompra5.Text.Trim());
-            vSimuladores[5, 1] = Convert.ToDouble(txtPorcVenta5.Text.Trim());
-
-            vSimuladores[6, 0] = Convert.ToDouble(txtPorcCompra6.Text.Trim());
-            vSimuladores[6, 1] = Convert.ToDouble(txtPorcVenta6.Text.Trim());
-
-            vSimuladores[7, 0] = Convert.ToDouble(txtPorcCompra7.Text.Trim());
-            vSimuladores[7, 1] = Convert.ToDouble(txtPorcVenta7.Text.Trim());
-
-            vSimuladores[8, 0] = Convert.ToDouble(txtPorcCompra8.Text.Trim());
-            vSimuladores[8, 1] = Convert.ToDouble(txtPorcVenta8.Text.Trim());
-
-            vSimuladores[9, 0] = Convert.ToDouble(txtPorcCompra9.Text.Trim());
-            vSimuladores[9, 1] = Convert.ToDouble(txtPorcVenta9.Text.Trim());
-
-            vSimuladores[10, 0] = Convert.ToDouble(txtPorcCompra10.Text.Trim());
-            vSimuladores[10, 1] = Convert.ToDouble(txtPorcVenta10.Text.Trim());
-        }
-
         private void ActualizarLoad(object sender, EventArgs e)
         {
             string sentencia = string.Empty;
-            double total = 100000;
-
-            using (MySqlConnection cone = new MySqlConnection(conexion))
-            {
-                sentencia = string.Format("Select * From TenenciaSimulador Order By IdSimulacion");
-                MySqlDataAdapter daSimulador = new MySqlDataAdapter(sentencia, cone);
-                DataTable dsSimulador = new DataTable();
-                int nSimuladores = daSimulador.Fill(dsSimulador);
-                if (nSimuladores > 0)
-                {
-                    foreach (DataRow fila in dsSimulador.Rows)
-                    {
-                        double disponible = Convert.ToDouble(fila["DisponibleParaOperar"]);
-                        double activos = Convert.ToDouble(fila["ActivosValorizados"]);
-                        double totaltenencia = Convert.ToDouble(fila["TotalTenencia"]);
-                        if (totaltenencia < total)
-                        {
-                            disponible = total - totaltenencia;
-                            totaltenencia = disponible + activos;
-                        }
-                        int nIdSimulador = 0;
-                        try { nIdSimulador = Convert.ToInt32(fila["IdSimulacion"]); }
-                        catch { nIdSimulador = 0; }
-
-                        if (nIdSimulador != 0)
-                        {
-                            vSimuladores[nIdSimulador, 2] = disponible;
-                            vSimuladores[nIdSimulador, 3] = activos;
-                            vSimuladores[nIdSimulador, 4] = totaltenencia;
-                        }
-                    }
-
-                }
-                else
-                {
-                    for (int indice = 1; indice < simulaciones; indice++)
-                    {
-                        vSimuladores[indice, 2] = total;
-                        vSimuladores[indice, 3] = 0;
-                        vSimuladores[indice, 4] = total;
-                    }
-                }
-
-                cone.Close();
-            }
-
-            using (MySqlConnection coneSimulador = new MySqlConnection(conexion))
-            {
-                for (int i = 1; i < simulaciones; i++)
-                {
-                    double disponible = vSimuladores[i, 2];
-                    double activos = vSimuladores[i, 3];
-                    double totaltenencia = vSimuladores[i, 4];
-
-                    sentencia = string.Format("Update TenenciaSimulador Set DisponibleParaOperar = {0}, ActivosValorizados = {1}," +
-                        " TotalTenencia = {2}, Fecha = Now() Where IdSimulacion = {3}", disponible, activos, totaltenencia, i);
-                    coneSimulador.Open();
-                    MySqlCommand comando = new MySqlCommand(sentencia, coneSimulador);
-                    comando.CommandType = CommandType.Text;
-                    comando.ExecuteNonQuery();
-                    coneSimulador.Close();
-                }
-            }
 
             MySqlConnection coneRuedas = new MySqlConnection(conexion);
             DateTime? fecha = DateTime.Now.Date;
@@ -194,8 +93,7 @@ namespace IOL
                 txtPorcVenta10.Text = string.Format("{0:00.00}", Convert.ToDecimal(Fila["PorcVenta10"]));
 
                 tmrActualizarToken_Tick(sender, e);
-                ActualizarSimuladores();
-                ActualizarAccionesCompradas();
+                ActualizarAcciones();
             }
         }
         private void Simulador_Load(object sender, EventArgs e)
@@ -274,7 +172,7 @@ namespace IOL
                 return 0;
         }
 
-        private void ActualizarAccionesCompradas()
+        private void ActualizarAcciones()
         {
             string cone = ConfigurationManager.ConnectionStrings["conexion"].ToString();
 
@@ -286,7 +184,7 @@ namespace IOL
             {
                 using (MySqlConnection coneDetalle = new MySqlConnection(cone))
                 {
-                    string sentencia = string.Format("Select * From RuedasDetalleSimulador Where IdRuedaActual = {0} And IdSimulacion = {1}", txtIdRueda.Text.Trim(), IdSimulacion);
+                    string sentencia = string.Format("Select Simbolo, FechaCompra, Cantidad, PrecioCompra, ImporteComisionIOL, ImporteCompra, UltimoPrecio, FechaUltimoPrecio, VariacionEnPesos, VariacionEnPorcentajes, Estado, IdRuedaActual, IdPanel, PrecioVenta, ImporteVenta, IdRuedaDetalle, IdRuedaCompra, IdRuedaVenta, IdSimulacion, FechaVenta, PorcComisionIOL From RuedasDetalleSimulador Where IdRuedaActual = {0} And IdSimulacion = {1}", txtIdRueda.Text.Trim(), IdSimulacion);
 
                     MySqlDataAdapter da = new MySqlDataAdapter(sentencia, coneDetalle);
                     DataTable ds = new DataTable();
@@ -294,18 +192,10 @@ namespace IOL
 
                     lblTotales.Text = string.Format("Total Simulador {0:00}:", IdSimulacion);
 
-                    double totalAccionesCompradas = 0,
-                           totalCantidadCompradas = 0,
-                           totalImporteComisionCompradas = 0,
-                           totalImporteCompra = 0,
-                           totalVariacionEnPesosCompradas = 0,
-                           totalVariacionEnPorcentajesCompradas = 0,
-                           totalAccionesVendidas = 0,
-                           totalCantidadVendidas = 0,
-                           totalImporteComisionVentas = 0,
-                           totalImporteVentas = 0,
-                           totalVariacionEnPesosVendidas = 0,
-                           totalVariacionEnPorcentajesVendidas = 0;
+                    double totalAccionesCompradas = 0, totalCantidadCompradas = 0, totalImporteComisionCompradas = 0,
+                           totalImporteCompra = 0, totalVariacionEnPesosCompradas = 0, totalVariacionEnPorcentajesCompradas = 0,
+                           totalAccionesVendidas = 0, totalCantidadVendidas = 0, totalImporteComisionVentas = 0,
+                           totalImporteVentas = 0, totalVariacionEnPesosVendidas = 0, totalVariacionEnPorcentajesVendidas = 0;
 
                     if (ds.Rows.Count > 0)
                     {
@@ -381,18 +271,41 @@ namespace IOL
                         dgvAcciones.RefreshEdit();
                         dgvAcciones.Enabled = true;
 
-                        totalAccionesCompradas = Convert.ToDouble(ds.Compute("Count(Simbolo)", "Estado = 'Comprado'"));
-                        totalCantidadCompradas = Convert.ToDouble(ds.Compute("Sum(Cantidad)", "Estado = 'Comprado'"));
-                        totalImporteComisionCompradas = Convert.ToDouble(ds.Compute("Sum(ImporteComisionIOL)", "Estado = 'Comprado'"));
-                        totalImporteCompra = Convert.ToDouble(ds.Compute("Sum(ImporteCompra)", "Estado = 'Comprado'"));
-                        totalVariacionEnPesosCompradas = Convert.ToDouble(ds.Compute("Sum(VariacionEnPesos)", "Estado = 'Comprado'"));
-                        totalVariacionEnPorcentajesCompradas = Convert.ToDouble(ds.Compute("Sum(VariacionEnPorcentajes)", "Estado = 'Comprado'"));
-                        totalAccionesVendidas = Convert.ToDouble(ds.Compute("Count(Simbolo)", "Estado = 'Vendido'"));
-                        totalCantidadVendidas = Convert.ToDouble(ds.Compute("Sum(Cantidad)", "Estado = 'Vendido'"));
-                        totalImporteComisionVentas = Convert.ToDouble(ds.Compute("Sum(ImporteComisionIOL)", "Estado = 'Vendido'"));
-                        totalImporteVentas = Convert.ToDouble(ds.Compute("Sum(ImporteVenta)", "Estado = 'Vendido'"));
-                        totalVariacionEnPesosVendidas = Convert.ToDouble(ds.Compute("Sum(VariacionEnPesos)", "Estado = 'Vendido'"));
-                        totalVariacionEnPorcentajesVendidas = Convert.ToDouble(ds.Compute("Sum(VariacionEnPorcentajes)", "Estado = 'Vendido'"));
+                        try { totalAccionesCompradas = Convert.ToDouble(ds.Compute("Count(Simbolo)", "Estado = 'Comprado'")); }
+                        catch { totalAccionesCompradas = 0; }
+
+                        try { totalCantidadCompradas = Convert.ToDouble(ds.Compute("Sum(Cantidad)", "Estado = 'Comprado'")); }
+                        catch { totalCantidadCompradas = 0; }
+
+                        try { totalImporteComisionCompradas = Convert.ToDouble(ds.Compute("Sum(ImporteComisionIOL)", "Estado = 'Comprado'")); }
+                        catch { totalImporteComisionCompradas = 0; }
+
+                        try { totalImporteCompra = Convert.ToDouble(ds.Compute("Sum(ImporteCompra)", "Estado = 'Comprado'")); }
+                        catch { totalImporteCompra = 0; }
+
+                        try { totalVariacionEnPesosCompradas = Convert.ToDouble(ds.Compute("Sum(VariacionEnPesos)", "Estado = 'Comprado'")); }
+                        catch { totalVariacionEnPesosCompradas = 0; }
+
+                        try { totalVariacionEnPorcentajesCompradas = Convert.ToDouble(ds.Compute("Sum(VariacionEnPorcentajes)", "Estado = 'Comprado'")); }
+                        catch { totalVariacionEnPorcentajesCompradas = 0; }
+
+                        try { totalAccionesVendidas = Convert.ToDouble(ds.Compute("Count(Simbolo)", "Estado = 'Vendido'")); }
+                        catch { totalAccionesVendidas = 0; }
+
+                        try { totalCantidadVendidas = Convert.ToDouble(ds.Compute("Sum(Cantidad)", "Estado = 'Vendido'")); }
+                        catch { totalCantidadVendidas = 0; }
+
+                        try { totalImporteComisionVentas = Convert.ToDouble(ds.Compute("Sum(ImporteComisionIOL)", "Estado = 'Vendido'")); }
+                        catch { totalImporteComisionVentas = 0; }
+
+                        try { totalImporteVentas = Convert.ToDouble(ds.Compute("Sum(ImporteVenta)", "Estado = 'Vendido'")); }
+                        catch { totalImporteVentas = 0; }
+
+                        try { totalVariacionEnPesosVendidas = Convert.ToDouble(ds.Compute("Sum(VariacionEnPesos)", "Estado = 'Vendido'")); }
+                        catch { totalVariacionEnPesosVendidas = 0; }
+
+                        try { totalVariacionEnPorcentajesVendidas = Convert.ToDouble(ds.Compute("Sum(VariacionEnPorcentajes)", "Estado = 'Vendido'")); }
+                        catch { totalVariacionEnPorcentajesVendidas = 0; }
                     }
                     else
                     {
@@ -400,13 +313,13 @@ namespace IOL
                         dgvAcciones.RefreshEdit();
                     }
 
-                    txtTotalCantidadCompradas.Text = string.Format("{0:000}", totalAccionesCompradas);
+                    txtTotalAccionesCompradas.Text = string.Format("{0:000}", totalAccionesCompradas);
                     txtTotalCantidadCompradas.Text = string.Format("{0:000}", totalCantidadCompradas);
                     txtImporteComisionCompradas.Text = string.Format("$ {0:#00.00}", totalImporteComisionCompradas);
                     txtTotalImporteCompra.Text = string.Format("$ {0:#00.00}", totalImporteCompra);
                     txtTotalVariacionEnPesosComp.Text = string.Format("$ {0:#00.00}", totalVariacionEnPesosCompradas);
                     txtTotalVariacionEnPorcentajesCompra.Text = string.Format("{0:#00.00}", totalVariacionEnPorcentajesCompradas);
-                    txtTotalCantidadVendidas.Text = string.Format("{0:000}", totalAccionesVendidas);
+                    txtTotalAccionesVendidas.Text = string.Format("{0:000}", totalAccionesVendidas);
                     txtTotalCantidadVendidas.Text = string.Format("{0:000}", totalCantidadVendidas);
                     txtImporteComisionVendidas.Text = string.Format("$ {0:#00.00}", totalImporteComisionVentas);
                     txtTotalImporteVenta.Text = string.Format("$ {0:#00.00}", totalImporteVentas);
@@ -450,7 +363,7 @@ namespace IOL
                 {
                     // La variable comprar nos indica si estamos en horario para comprar
                     comprar = (HoraActual >= 16 && HoraActual < 17) ? false : true;
-                    //comprar = true;  // OJO BORRAR
+                    comprar = true;  // OJO BORRAR
 
                     // Verificamos se realizo la apertura de la rueda
                     if (estado == false)
@@ -659,7 +572,7 @@ namespace IOL
 
                         }
                     }
-                    ActualizarAccionesCompradas(); // Actualiza la grilla de acciones compradas
+                    ActualizarAcciones(); // Actualiza la grilla de acciones compradas
                 }
             }
             txtEstado.Text = (estado) ? "Abierto" : "Cerrado";
@@ -696,7 +609,7 @@ namespace IOL
                 // SI(PrecioCompra+(PrecioCompra*0,7%) < PrecioActual;"VENTA";"NEUTRO")
                 double resultado = 0, cantidadvendida = 0;
 
-                resultado = PrecioCompra + (PrecioCompra * ObtenerPorcVentaSimulador(IdRueda,Simulador) / 100);
+                resultado = PrecioCompra + (PrecioCompra * ObtenerPorcVentaSimulador(IdRueda, Simulador) / 100);
 
                 if (resultado < PrecioActualVenta)  // Vendemos
                 {
@@ -732,24 +645,7 @@ namespace IOL
                             comando.ExecuteNonQuery();
                             cone.Close();
                         }
-
-                        vSimuladores[Simulador, 2] += Importe;
-                        vSimuladores[Simulador, 4] += Importe;
-
-                        using (MySqlConnection coneSimulador = new MySqlConnection(conexion))
-                        {
-                            double disponible = vSimuladores[Simulador, 2];
-                            double activos = vSimuladores[Simulador, 3];
-                            double totaltenencia = vSimuladores[Simulador, 4];
-
-                            sentencia = string.Format("Update TenenciaSimulador Set DisponibleParaOperar = {0}, ActivosValorizados = {1}," +
-                                " TotalTenencia = {2}, Fecha = Now() Where IdSimulacion = {3}", disponible, activos, totaltenencia, Simulador);
-                            coneSimulador.Open();
-                            MySqlCommand comando = new MySqlCommand(sentencia, coneSimulador);
-                            comando.CommandType = CommandType.Text;
-                            comando.ExecuteNonQuery();
-                            coneSimulador.Close();
-                        }
+                        ActualizarVentaSimulador(Simulador, Importe);
                     }
                 }
             }
@@ -853,29 +749,12 @@ namespace IOL
                                         comando.ExecuteNonQuery();
                                         cone.Close();
                                     }
-                                    vSimuladores[Simulador, 2] -= (importe + comisionIOL);
-                                    vSimuladores[Simulador, 4] -= (importe + comisionIOL);
-
-                                    using (MySqlConnection coneSimulador = new MySqlConnection(conexion))
-                                    {
-                                        double disponible = vSimuladores[Simulador, 2];
-                                        double activos = vSimuladores[Simulador, 3];
-                                        double totaltenencia = vSimuladores[Simulador, 4];
-
-                                        sentencia = string.Format("Update TenenciaSimulador Set DisponibleParaOperar = {0}, ActivosValorizados = {1}," +
-                                            " TotalTenencia = {2}, Fecha = Now() Where IdSimulacion = {3}", disponible, activos, totaltenencia, Simulador);
-                                        coneSimulador.Open();
-                                        MySqlCommand comando = new MySqlCommand(sentencia, coneSimulador);
-                                        comando.CommandType = CommandType.Text;
-                                        comando.ExecuteNonQuery();
-                                        coneSimulador.Close();
-                                    }
+                                    ActualizarCompraSimulador(Simulador, Importe);
                                 }
                             }
                         }
                     }
                 }
-
             }
         }
 
@@ -973,23 +852,7 @@ namespace IOL
                                 cone.Close();
                             }
 
-                            vSimuladores[Simulador, 2] += Importe;
-                            vSimuladores[Simulador, 4] += Importe;
-
-                            using (MySqlConnection coneSimulador = new MySqlConnection(conexion))
-                            {
-                                double disponible = vSimuladores[Simulador, 2];
-                                double activos = vSimuladores[Simulador, 3];
-                                double totaltenencia = vSimuladores[Simulador, 4];
-
-                                sentencia = string.Format("Update TenenciaSimulador Set DisponibleParaOperar = {0}, ActivosValorizados = {1}," +
-                                    " TotalTenencia = {2}, Fecha = Now() Where IdSimulacion = {3}", disponible, activos, totaltenencia, Simulador);
-                                coneSimulador.Open();
-                                MySqlCommand comando = new MySqlCommand(sentencia, coneSimulador);
-                                comando.CommandType = CommandType.Text;
-                                comando.ExecuteNonQuery();
-                                coneSimulador.Close();
-                            }
+                            ActualizarVentaSimulador(Simulador, Importe);
                         }
                     }
                 }
@@ -1099,23 +962,7 @@ namespace IOL
                                         comando.ExecuteNonQuery();
                                         cone.Close();
                                     }
-                                    vSimuladores[Simulador, 2] -= (importe + comisionIOL);
-                                    vSimuladores[Simulador, 4] -= (importe + comisionIOL);
-
-                                    using (MySqlConnection coneSimulador = new MySqlConnection(conexion))
-                                    {
-                                        double disponible = vSimuladores[Simulador, 2];
-                                        double activos = vSimuladores[Simulador, 3];
-                                        double totaltenencia = vSimuladores[Simulador, 4];
-
-                                        sentencia = string.Format("Update TenenciaSimulador Set DisponibleParaOperar = {0}, ActivosValorizados = {1}," +
-                                            " TotalTenencia = {2}, Fecha = Now() Where IdSimulacion = {3}", disponible, activos, totaltenencia, Simulador);
-                                        coneSimulador.Open();
-                                        MySqlCommand comando = new MySqlCommand(sentencia, coneSimulador);
-                                        comando.CommandType = CommandType.Text;
-                                        comando.ExecuteNonQuery();
-                                        coneSimulador.Close();
-                                    }
+                                    ActualizarCompraSimulador(Simulador, Importe);
                                 }
                             }
                         }
@@ -1465,13 +1312,17 @@ namespace IOL
         private void FormatoPorcentaje(object sender)
         {
             TextBox control = (TextBox)sender;
-            decimal Porcentaje = Convert.ToDecimal(control.Text.Trim());
+
+            decimal Porcentaje = 0;
+            try { Porcentaje = Convert.ToDecimal(control.Text.Trim()); }
+            catch { Porcentaje = 0;}
+
             control.Text = string.Format("{0:00.00}", Porcentaje);
         }
 
         private void nudSimulador_ValueChanged(object sender, EventArgs e)
         {
-            ActualizarAccionesCompradas();
+            ActualizarAcciones();
             int simulacion = 0;
             try { simulacion = Convert.ToInt32(nudSimulador.Value); }
             catch { simulacion = 0; }
@@ -1493,288 +1344,301 @@ namespace IOL
                     porccompra8, porccompra9, porccompra10, porcventa1, porcventa2, porcventa3, porcventa4,
                     porcventa5, porcventa6, porcventa7, porcventa8, porcventa9, porcventa10;
 
-            try { porccompra1 = Convert.ToDecimal(txtPorcCompra1.Text.Trim()); }
-            catch { porccompra1 = 0; }
+            int IdRueda = 0;
+            try { IdRueda = Convert.ToInt32(txtIdRueda.Text.Trim()); }
+            catch { IdRueda = 0; }
 
-            try { porccompra2 = Convert.ToDecimal(txtPorcCompra2.Text.Trim()); }
-            catch { porccompra2 = 0; }
-
-            try { porccompra3 = Convert.ToDecimal(txtPorcCompra3.Text.Trim()); }
-            catch { porccompra3 = 0; }
-
-            try { porccompra4 = Convert.ToDecimal(txtPorcCompra4.Text.Trim()); }
-            catch { porccompra4 = 0; }
-
-            try { porccompra5 = Convert.ToDecimal(txtPorcCompra5.Text.Trim()); }
-            catch { porccompra5 = 0; }
-
-            try { porccompra6 = Convert.ToDecimal(txtPorcCompra6.Text.Trim()); }
-            catch { porccompra6 = 0; }
-
-            try { porccompra7 = Convert.ToDecimal(txtPorcCompra7.Text.Trim()); }
-            catch { porccompra7 = 0; }
-
-            try { porccompra8 = Convert.ToDecimal(txtPorcCompra8.Text.Trim()); }
-            catch { porccompra8 = 0; }
-
-            try { porccompra9 = Convert.ToDecimal(txtPorcCompra9.Text.Trim()); }
-            catch { porccompra9 = 0; }
-
-            try { porccompra10 = Convert.ToDecimal(txtPorcCompra10.Text.Trim()); }
-            catch { porccompra10 = 0; }
-
-            try { porcventa1 = Convert.ToDecimal(txtPorcVenta1.Text.Trim()); }
-            catch { porcventa1 = 0; }
-
-            try { porcventa2 = Convert.ToDecimal(txtPorcVenta2.Text.Trim()); }
-            catch { porcventa2 = 0; }
-
-            try { porcventa3 = Convert.ToDecimal(txtPorcVenta3.Text.Trim()); }
-            catch { porcventa3 = 0; }
-
-            try { porcventa4 = Convert.ToDecimal(txtPorcVenta4.Text.Trim()); }
-            catch { porcventa4 = 0; }
-
-            try { porcventa5 = Convert.ToDecimal(txtPorcVenta5.Text.Trim()); }
-            catch { porcventa5 = 0; }
-
-            try { porcventa6 = Convert.ToDecimal(txtPorcVenta6.Text.Trim()); }
-            catch { porcventa6 = 0; }
-
-            try { porcventa7 = Convert.ToDecimal(txtPorcVenta7.Text.Trim()); }
-            catch { porcventa7 = 0; }
-
-            try { porcventa8 = Convert.ToDecimal(txtPorcVenta8.Text.Trim()); }
-            catch { porcventa8 = 0; }
-
-            try { porcventa9 = Convert.ToDecimal(txtPorcVenta9.Text.Trim()); }
-            catch { porcventa9 = 0; }
-
-            try { porcventa10 = Convert.ToDecimal(txtPorcVenta10.Text.Trim()); }
-            catch { porcventa10 = 0; }
-
-            if (porccompra1 <= 0)
+            if (IdRueda > 0)
             {
-                Mensaje += String.Format("Ingrese Porcentaje de Compra 1 \r");
-                lValidado = false;
+
+                try { porccompra1 = Convert.ToDecimal(txtPorcCompra1.Text.Trim()); }
+                catch { porccompra1 = 0; }
+
+                try { porccompra2 = Convert.ToDecimal(txtPorcCompra2.Text.Trim()); }
+                catch { porccompra2 = 0; }
+
+                try { porccompra3 = Convert.ToDecimal(txtPorcCompra3.Text.Trim()); }
+                catch { porccompra3 = 0; }
+
+                try { porccompra4 = Convert.ToDecimal(txtPorcCompra4.Text.Trim()); }
+                catch { porccompra4 = 0; }
+
+                try { porccompra5 = Convert.ToDecimal(txtPorcCompra5.Text.Trim()); }
+                catch { porccompra5 = 0; }
+
+                try { porccompra6 = Convert.ToDecimal(txtPorcCompra6.Text.Trim()); }
+                catch { porccompra6 = 0; }
+
+                try { porccompra7 = Convert.ToDecimal(txtPorcCompra7.Text.Trim()); }
+                catch { porccompra7 = 0; }
+
+                try { porccompra8 = Convert.ToDecimal(txtPorcCompra8.Text.Trim()); }
+                catch { porccompra8 = 0; }
+
+                try { porccompra9 = Convert.ToDecimal(txtPorcCompra9.Text.Trim()); }
+                catch { porccompra9 = 0; }
+
+                try { porccompra10 = Convert.ToDecimal(txtPorcCompra10.Text.Trim()); }
+                catch { porccompra10 = 0; }
+
+                try { porcventa1 = Convert.ToDecimal(txtPorcVenta1.Text.Trim()); }
+                catch { porcventa1 = 0; }
+
+                try { porcventa2 = Convert.ToDecimal(txtPorcVenta2.Text.Trim()); }
+                catch { porcventa2 = 0; }
+
+                try { porcventa3 = Convert.ToDecimal(txtPorcVenta3.Text.Trim()); }
+                catch { porcventa3 = 0; }
+
+                try { porcventa4 = Convert.ToDecimal(txtPorcVenta4.Text.Trim()); }
+                catch { porcventa4 = 0; }
+
+                try { porcventa5 = Convert.ToDecimal(txtPorcVenta5.Text.Trim()); }
+                catch { porcventa5 = 0; }
+
+                try { porcventa6 = Convert.ToDecimal(txtPorcVenta6.Text.Trim()); }
+                catch { porcventa6 = 0; }
+
+                try { porcventa7 = Convert.ToDecimal(txtPorcVenta7.Text.Trim()); }
+                catch { porcventa7 = 0; }
+
+                try { porcventa8 = Convert.ToDecimal(txtPorcVenta8.Text.Trim()); }
+                catch { porcventa8 = 0; }
+
+                try { porcventa9 = Convert.ToDecimal(txtPorcVenta9.Text.Trim()); }
+                catch { porcventa9 = 0; }
+
+                try { porcventa10 = Convert.ToDecimal(txtPorcVenta10.Text.Trim()); }
+                catch { porcventa10 = 0; }
+
+                if (porccompra1 <= 0)
+                {
+                    Mensaje += String.Format("Ingrese Porcentaje de Compra 1 \r");
+                    lValidado = false;
+                }
+
+                if (porcventa1 <= 0)
+                {
+                    Mensaje += String.Format("Ingrese Porcentaje de Venta 1 \r");
+                    lValidado = false;
+                }
+
+                if (porccompra2 > 0)
+                    if (porcventa2 <= 0)
+                    {
+                        Mensaje += String.Format("Ingrese Porcentaje de Venta 2 \r");
+                        lValidado = false;
+                    }
+
+                if (porccompra3 > 0)
+                    if (porcventa3 <= 0)
+                    {
+                        Mensaje += String.Format("Ingrese Porcentaje de Venta 3 \r");
+                        lValidado = false;
+                    }
+
+                if (porccompra4 > 0)
+                    if (porcventa4 <= 0)
+                    {
+                        Mensaje += String.Format("Ingrese Porcentaje de Venta 4 \r");
+                        lValidado = false;
+                    }
+
+                if (porccompra5 > 0)
+                    if (porcventa5 <= 0)
+                    {
+                        Mensaje += String.Format("Ingrese Porcentaje de Venta 5 \r");
+                        lValidado = false;
+                    }
+
+                if (porccompra6 > 0)
+                    if (porcventa6 <= 0)
+                    {
+                        Mensaje += String.Format("Ingrese Porcentaje de Venta 6 \r");
+                        lValidado = false;
+                    }
+
+                if (porccompra7 > 0)
+                    if (porcventa7 <= 0)
+                    {
+                        Mensaje += String.Format("Ingrese Porcentaje de Venta 7 \r");
+                        lValidado = false;
+                    }
+
+                if (porccompra8 > 0)
+                    if (porcventa8 <= 0)
+                    {
+                        Mensaje += String.Format("Ingrese Porcentaje de Venta 8 \r");
+                        lValidado = false;
+                    }
+
+                if (porccompra9 > 0)
+                    if (porcventa9 <= 0)
+                    {
+                        Mensaje += String.Format("Ingrese Porcentaje de Venta 9 \r");
+                        lValidado = false;
+                    }
+
+                if (porccompra10 > 0)
+                    if (porcventa10 <= 0)
+                    {
+                        Mensaje += String.Format("Ingrese Porcentaje de Venta 10 \r");
+                        lValidado = false;
+                    }
+
+                if (lValidado == false)
+                {
+                    MessageBox.Show(Mensaje, "Solicitud del Sistema", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                    return;
+                }
+
+                if (MessageBox.Show("Datos Correctos ?", "Solicitud del Sistema", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == System.Windows.Forms.DialogResult.No)
+                {
+                    return;
+                }
+                try
+                {
+                    using (MySqlConnection cone = new MySqlConnection(conexion))
+                    {
+                        cone.Open();
+                        sentencia = string.Format("Update Ruedas Set PorcCompra1 =  @PorcCompra1, PorcVenta1 =   @PorcVenta1, PorcCompra2 =  @PorcCompra2," +
+                                                                    "PorcVenta2 =   @PorcVenta2, PorcCompra3 =  @PorcCompra3, PorcVenta3 =   @PorcVenta3," +
+                                                                    "PorcCompra4 =  @PorcCompra4, PorcVenta4 =  @PorcVenta4, PorcCompra5 =  @PorcCompra5," +
+                                                                    "PorcVenta5 =   @PorcVenta5, PorcCompra6 =  @PorcCompra6, PorcVenta6 =   @PorcVenta6, " +
+                                                                    "PorcCompra7 =  @PorcCompra7, PorcVenta7 =   @PorcVenta7, PorcCompra8 =  @PorcCompra8," +
+                                                                    "PorcVenta8 =   @PorcVenta8, PorcCompra9 =  @PorcCompra9, PorcVenta9 =   @PorcVenta9," +
+                                                                    "PorcCompra10 = @PorcCompra10, PorcVenta10 =  @PorcVenta10 " +
+                                                                    "Where IdRueda = @IdRueda");
+
+                        MySqlCommand comando = new MySqlCommand(sentencia, cone);
+                        comando.Parameters.AddWithValue("@PorcCompra1", porccompra1);
+                        comando.Parameters.AddWithValue("@PorcVenta1", porcventa1);
+                        comando.Parameters.AddWithValue("@PorcCompra2", porccompra2);
+                        comando.Parameters.AddWithValue("@PorcVenta2", porcventa2);
+                        comando.Parameters.AddWithValue("@PorcCompra3", porccompra3);
+                        comando.Parameters.AddWithValue("@PorcVenta3", porcventa3);
+                        comando.Parameters.AddWithValue("@PorcCompra4", porccompra4);
+                        comando.Parameters.AddWithValue("@PorcVenta4", porcventa4);
+                        comando.Parameters.AddWithValue("@PorcCompra5", porccompra5);
+                        comando.Parameters.AddWithValue("@PorcVenta5", porcventa5);
+                        comando.Parameters.AddWithValue("@PorcCompra6", porccompra6);
+                        comando.Parameters.AddWithValue("@PorcVenta6", porcventa6);
+                        comando.Parameters.AddWithValue("@PorcCompra7", porccompra7);
+                        comando.Parameters.AddWithValue("@PorcVenta7", porcventa7);
+                        comando.Parameters.AddWithValue("@PorcCompra8", porccompra8);
+                        comando.Parameters.AddWithValue("@PorcVenta8", porcventa8);
+                        comando.Parameters.AddWithValue("@PorcCompra9", porccompra9);
+                        comando.Parameters.AddWithValue("@PorcVenta9", porcventa9);
+                        comando.Parameters.AddWithValue("@PorcCompra10", porccompra10);
+                        comando.Parameters.AddWithValue("@PorcVenta10", porcventa10);
+                        comando.Parameters.AddWithValue("@IdRueda", IdRueda);
+                        comando.ExecuteNonQuery();
+                        cone.Close();
+                        MessageBox.Show("Simulador Actualizado con Exito", "Información del Sistema", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                }
+                catch (MySqlException ex)
+                {
+                    MessageBox.Show(ex.Message + " - " + ex.ErrorCode.ToString(), "Informe de Errores", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                }
             }
-
-            if (porcventa1 <= 0)
-            {
-                Mensaje += String.Format("Ingrese Porcentaje de Venta 1 \r");
-                lValidado = false;
-            }
-
-            if (porccompra2 > 0)
-                if (porcventa2 <= 0)
-                {
-                    Mensaje += String.Format("Ingrese Porcentaje de Venta 2 \r");
-                    lValidado = false;
-                }
-
-            if (porccompra3 > 0)
-                if (porcventa3 <= 0)
-                {
-                    Mensaje += String.Format("Ingrese Porcentaje de Venta 3 \r");
-                    lValidado = false;
-                }
-
-            if (porccompra4 > 0)
-                if (porcventa4 <= 0)
-                {
-                    Mensaje += String.Format("Ingrese Porcentaje de Venta 4 \r");
-                    lValidado = false;
-                }
-
-            if (porccompra5 > 0)
-                if (porcventa5 <= 0)
-                {
-                    Mensaje += String.Format("Ingrese Porcentaje de Venta 5 \r");
-                    lValidado = false;
-                }
-
-            if (porccompra6 > 0)
-                if (porcventa6 <= 0)
-                {
-                    Mensaje += String.Format("Ingrese Porcentaje de Venta 6 \r");
-                    lValidado = false;
-                }
-
-            if (porccompra7 > 0)
-                if (porcventa7 <= 0)
-                {
-                    Mensaje += String.Format("Ingrese Porcentaje de Venta 7 \r");
-                    lValidado = false;
-                }
-
-            if (porccompra8 > 0)
-                if (porcventa8 <= 0)
-                {
-                    Mensaje += String.Format("Ingrese Porcentaje de Venta 8 \r");
-                    lValidado = false;
-                }
-
-            if (porccompra9 > 0)
-                if (porcventa9 <= 0)
-                {
-                    Mensaje += String.Format("Ingrese Porcentaje de Venta 9 \r");
-                    lValidado = false;
-                }
-
-            if (porccompra10 > 0)
-                if (porcventa10 <= 0)
-                {
-                    Mensaje += String.Format("Ingrese Porcentaje de Venta 10 \r");
-                    lValidado = false;
-                }
-
-            if (lValidado == false)
-            {
-                MessageBox.Show(Mensaje, "Solicitud del Sistema", MessageBoxButtons.OK, MessageBoxIcon.Stop);
-                return;
-            }
-
-            if (MessageBox.Show("Datos Correctos ?", "Solicitud del Sistema", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == System.Windows.Forms.DialogResult.No)
-            {
-                return;
-            }
-            try
-            {
-                using (MySqlConnection cone = new MySqlConnection(conexion))
-                {
-                    cone.Open();
-                    sentencia = string.Format("Update Ruedas Set PorcCompra1 =  @PorcCompra1, PorcVenta1 =   @PorcVenta1, PorcCompra2 =  @PorcCompra2," +
-                                                                "PorcVenta2 =   @PorcVenta2, PorcCompra3 =  @PorcCompra3, PorcVenta3 =   @PorcVenta3," +
-                                                                "PorcCompra4 =  @PorcCompra4, PorcVenta4 =  @PorcVenta4, PorcCompra5 =  @PorcCompra5," +
-                                                                "PorcVenta5 =   @PorcVenta5, PorcCompra6 =  @PorcCompra6, PorcVenta6 =   @PorcVenta6, " +
-                                                                "PorcCompra7 =  @PorcCompra7, PorcVenta7 =   @PorcVenta7, PorcCompra8 =  @PorcCompra8," +
-                                                                "PorcVenta8 =   @PorcVenta8, PorcCompra9 =  @PorcCompra9, PorcVenta9 =   @PorcVenta9," +
-                                                                "PorcCompra10 = @PorcCompra10, PorcVenta10 =  @PorcVenta10 " +
-                                                                "Where IdRueda = @IdRueda");
-
-                    MySqlCommand comando = new MySqlCommand(sentencia, cone);
-                    comando.Parameters.AddWithValue("@PorcCompra1", porccompra1);
-                    comando.Parameters.AddWithValue("@PorcVenta1", porcventa1);
-                    comando.Parameters.AddWithValue("@PorcCompra2", porccompra2);
-                    comando.Parameters.AddWithValue("@PorcVenta2", porcventa2);
-                    comando.Parameters.AddWithValue("@PorcCompra3", porccompra3);
-                    comando.Parameters.AddWithValue("@PorcVenta3", porcventa3);
-                    comando.Parameters.AddWithValue("@PorcCompra4", porccompra4);
-                    comando.Parameters.AddWithValue("@PorcVenta4", porcventa4);
-                    comando.Parameters.AddWithValue("@PorcCompra5", porccompra5);
-                    comando.Parameters.AddWithValue("@PorcVenta5", porcventa5);
-                    comando.Parameters.AddWithValue("@PorcCompra6", porccompra6);
-                    comando.Parameters.AddWithValue("@PorcVenta6", porcventa6);
-                    comando.Parameters.AddWithValue("@PorcCompra7", porccompra7);
-                    comando.Parameters.AddWithValue("@PorcVenta7", porcventa7);
-                    comando.Parameters.AddWithValue("@PorcCompra8", porccompra8);
-                    comando.Parameters.AddWithValue("@PorcVenta8", porcventa8);
-                    comando.Parameters.AddWithValue("@PorcCompra9", porccompra9);
-                    comando.Parameters.AddWithValue("@PorcVenta9", porcventa9);
-                    comando.Parameters.AddWithValue("@PorcCompra10", porccompra10);
-                    comando.Parameters.AddWithValue("@PorcVenta10", porcventa10);
-                    comando.Parameters.AddWithValue("@IdRueda", txtIdRueda.Text.Trim());
-                    comando.ExecuteNonQuery();
-                    cone.Close();
-                    MessageBox.Show("Simulador Actualizado con Exito", "Información del Sistema", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                }
-            }
-            catch (MySqlException ex)
-            {
-                MessageBox.Show(ex.Message + " - " + ex.ErrorCode.ToString(), "Informe de Errores", MessageBoxButtons.OK, MessageBoxIcon.Stop);
-            }
-            ActualizarSimuladores();
         }
 
         private void btnCerrarRueda_Click(object sender, EventArgs e)
         {
-            if (MessageBox.Show("Desea Realizar el Cierre de la Rueda", "Pregunta del Sistema", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) == DialogResult.Yes)
+            int IdRueda = 0;
+            try { IdRueda = Convert.ToInt32(txtIdRueda.Text.Trim()); }
+            catch { IdRueda = 0; }
+            if (IdRueda > 0)
             {
-                MySqlConnection coneRuedaFinalizada = new MySqlConnection(conexion);
-                string sentencia = string.Format("Select * From Ruedas Where IdRueda = {0} And Estado = 1", txtIdRueda.Text.Trim());
-                MySqlDataAdapter daRuedaFinalizada = new MySqlDataAdapter(sentencia, coneRuedaFinalizada);
-                DataTable dsRuedaFinalizada = new DataTable();
-                int regRuedaFinalizada = daRuedaFinalizada.Fill(dsRuedaFinalizada);
-                coneRuedaFinalizada.Close();
-                if (regRuedaFinalizada == 1)
+                if (MessageBox.Show("Desea Realizar el Cierre de la Rueda", "Pregunta del Sistema", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) == DialogResult.Yes)
                 {
-                    // Almacenamos el cierre de la rueda
-                    using (MySqlConnection cone = new MySqlConnection(conexion))
+                    MySqlConnection coneRuedaFinalizada = new MySqlConnection(conexion);
+                    string sentencia = string.Format("Select * From Ruedas Where IdRueda = {0} And Estado = 1", txtIdRueda.Text.Trim());
+                    MySqlDataAdapter daRuedaFinalizada = new MySqlDataAdapter(sentencia, coneRuedaFinalizada);
+                    DataTable dsRuedaFinalizada = new DataTable();
+                    int regRuedaFinalizada = daRuedaFinalizada.Fill(dsRuedaFinalizada);
+                    coneRuedaFinalizada.Close();
+                    if (regRuedaFinalizada == 1)
                     {
-                        sentencia = string.Format("Update Ruedas Set Estado = 2 Where IdRueda = {0}", txtIdRueda.Text.Trim());
-                        cone.Open();
-                        MySqlCommand comandoApertura = new MySqlCommand(sentencia, cone);
-                        comandoApertura.ExecuteNonQuery();
-                        cone.Close();
-                    }
-
-                    // Borrar tabla de InformeDeSimuladores
-                    using (MySqlConnection coneEliminar = new MySqlConnection(conexion))
-                    {
-                        sentencia = "Delete From InformeFinal";
-                        coneEliminar.Open();
-                        MySqlCommand comando = new MySqlCommand(sentencia, coneEliminar);
-                        comando.CommandType = CommandType.Text;
-                        comando.ExecuteNonQuery();
-                        coneEliminar.Close();
-                    }
-
-                    // Cargo todas las acciones
-                    sentencia = string.Format("Select Simbolo From Acciones Order By Simbolo");
-                    MySqlConnection coneAcciones = new MySqlConnection(conexion);
-                    MySqlDataAdapter daAcciones = new MySqlDataAdapter(sentencia, coneAcciones);
-                    DataTable dsAcciones = new DataTable();
-                    daAcciones.Fill(dsAcciones);
-
-                    if (dsAcciones.Rows.Count > 0)
-                    {
-                        foreach (DataRow fila in dsAcciones.Rows)
+                        // Almacenamos el cierre de la rueda
+                        using (MySqlConnection cone = new MySqlConnection(conexion))
                         {
-                            string simbolo = fila["Simbolo"].ToString();
+                            sentencia = string.Format("Update Ruedas Set Estado = 2 Where IdRueda = {0}", txtIdRueda.Text.Trim());
+                            cone.Open();
+                            MySqlCommand comandoApertura = new MySqlCommand(sentencia, cone);
+                            comandoApertura.ExecuteNonQuery();
+                            cone.Close();
+                        }
 
-                            using (MySqlConnection coneActualizar = new MySqlConnection(conexion))
+                        // Borrar tabla de InformeDeSimuladores
+                        using (MySqlConnection coneEliminar = new MySqlConnection(conexion))
+                        {
+                            sentencia = "Delete From InformeFinal";
+                            coneEliminar.Open();
+                            MySqlCommand comando = new MySqlCommand(sentencia, coneEliminar);
+                            comando.CommandType = CommandType.Text;
+                            comando.ExecuteNonQuery();
+                            coneEliminar.Close();
+                        }
+
+                        // Cargo todas las acciones
+                        sentencia = string.Format("Select Simbolo From Acciones Order By Simbolo");
+                        MySqlConnection coneAcciones = new MySqlConnection(conexion);
+                        MySqlDataAdapter daAcciones = new MySqlDataAdapter(sentencia, coneAcciones);
+                        DataTable dsAcciones = new DataTable();
+                        daAcciones.Fill(dsAcciones);
+
+                        if (dsAcciones.Rows.Count > 0)
+                        {
+                            foreach (DataRow fila in dsAcciones.Rows)
                             {
-                                sentencia = String.Format("Insert Into InformeFinal (Simbolo, IdRueda) Values('{0}',{1})", simbolo, txtIdRueda.Text.Trim());
-                                coneActualizar.Open();
-                                MySqlCommand comando = new MySqlCommand(sentencia, coneActualizar);
-                                comando.CommandType = CommandType.Text;
-                                comando.ExecuteNonQuery();
-                                coneActualizar.Close();
+                                string simbolo = fila["Simbolo"].ToString();
+
+                                using (MySqlConnection coneActualizar = new MySqlConnection(conexion))
+                                {
+                                    sentencia = String.Format("Insert Into InformeFinal (Simbolo, IdRueda) Values('{0}',{1})", simbolo, txtIdRueda.Text.Trim());
+                                    coneActualizar.Open();
+                                    MySqlCommand comando = new MySqlCommand(sentencia, coneActualizar);
+                                    comando.CommandType = CommandType.Text;
+                                    comando.ExecuteNonQuery();
+                                    coneActualizar.Close();
+                                }
                             }
                         }
-                    }
 
-                    // Cargo toda la info de la rueda
-                    sentencia = string.Format("Select * From RuedasDetalleSimulador Where IdRuedaActual = {0} And Estado = 'Vendido'", txtIdRueda.Text.Trim());
-                    MySqlConnection coneRuedas = new MySqlConnection(conexion);
-                    MySqlDataAdapter daRuedas = new MySqlDataAdapter(sentencia, coneRuedas);
-                    DataTable dsRuedas = new DataTable();
-                    daRuedas.Fill(dsRuedas);
+                        // Cargo toda la info de la rueda
+                        sentencia = string.Format("Select * From RuedasDetalleSimulador Where IdRuedaActual = {0} And Estado = 'Vendido'", txtIdRueda.Text.Trim());
+                        MySqlConnection coneRuedas = new MySqlConnection(conexion);
+                        MySqlDataAdapter daRuedas = new MySqlDataAdapter(sentencia, coneRuedas);
+                        DataTable dsRuedas = new DataTable();
+                        daRuedas.Fill(dsRuedas);
 
-                    if (dsRuedas.Rows.Count > 0)
-                    {
-                        foreach (DataRow fila in dsRuedas.Rows)
+                        if (dsRuedas.Rows.Count > 0)
                         {
-                            string simbolo = fila["Simbolo"].ToString();
-                            int simulador = Convert.ToInt16(fila["IdSimulacion"]);
-                            decimal variacion = Convert.ToDecimal(fila["VariacionEnPorcentajes"]);
-
-                            using (MySqlConnection coneActualizar = new MySqlConnection(conexion))
+                            foreach (DataRow fila in dsRuedas.Rows)
                             {
-                                sentencia = String.Format("Update InformeFinal Set Variacion{0}Diaria = Variacion{0}Diaria + {1} " +
-                                    " Where IdRueda = {2} And Simbolo = '{3}'",
-                                    simulador, variacion, txtIdRueda.Text.Trim(), simbolo);
-                                coneActualizar.Open();
-                                MySqlCommand comando = new MySqlCommand(sentencia, coneActualizar);
-                                comando.CommandType = CommandType.Text;
-                                comando.ExecuteNonQuery();
-                                coneActualizar.Close();
+                                string simbolo = fila["Simbolo"].ToString();
+                                int simulador = Convert.ToInt16(fila["IdSimulacion"]);
+                                decimal variacion = Convert.ToDecimal(fila["VariacionEnPorcentajes"]);
+
+                                using (MySqlConnection coneActualizar = new MySqlConnection(conexion))
+                                {
+                                    sentencia = String.Format("Update InformeFinal Set Variacion{0}Diaria = Variacion{0}Diaria + {1} " +
+                                        " Where IdRueda = {2} And Simbolo = '{3}'",
+                                        simulador, variacion, txtIdRueda.Text.Trim(), simbolo);
+                                    coneActualizar.Open();
+                                    MySqlCommand comando = new MySqlCommand(sentencia, coneActualizar);
+                                    comando.CommandType = CommandType.Text;
+                                    comando.ExecuteNonQuery();
+                                    coneActualizar.Close();
+                                }
                             }
                         }
+                        MessageBox.Show("Rueda cerrada Exitosamente", "Información del Sistema", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
                 }
             }
-
         }
 
         private void ValidacionNumerica(KeyPressEventArgs e)
@@ -1872,14 +1736,108 @@ namespace IOL
             foreach (DataGridViewRow fila in dgvAcciones.Rows)
             {
                 if (fila.Cells["Estado"].Value.ToString().Trim().ToUpper() == "COMPRADO")
-                    fila.DefaultCellStyle.BackColor = System.Drawing.Color.Red;
-                else
                     fila.DefaultCellStyle.BackColor = System.Drawing.Color.Green;
+                else
+                    fila.DefaultCellStyle.BackColor = System.Drawing.Color.Red;
             }
         }
 
         private void btnActualizarRueda_Click(object sender, EventArgs e)
         {
+            bool lValidado = true;
+            string Mensaje = string.Empty;
+
+            string sentencia = string.Empty;
+
+            decimal porcCompra, porcVenta, porcComisionIOL, porcPuntaCompradora, porcPuntaVendedora;
+
+            int IdRueda = 0;
+            try { IdRueda = Convert.ToInt32(txtIdRueda.Text.Trim()); }
+            catch { IdRueda = 0; }
+
+            if (IdRueda > 0)
+            {
+                try { porcCompra = Convert.ToDecimal(txtPorcCompra.Text.Trim()); }
+                catch { porcCompra = 0; }
+
+                try { porcVenta = Convert.ToDecimal(txtPorcVenta.Text.Trim()); }
+                catch { porcVenta = 0; }
+
+                try { porcComisionIOL = Convert.ToDecimal(txtPorcComisionIOL.Text.Trim()); }
+                catch { porcComisionIOL = 0; }
+
+                try { porcPuntaCompradora = Convert.ToDecimal(txtPorcPuntaCompradora.Text.Trim()); }
+                catch { porcPuntaCompradora = 0; }
+
+                try { porcPuntaVendedora = Convert.ToDecimal(txtPorcPuntaVendedora.Text.Trim()); }
+                catch { porcPuntaVendedora = 0; }
+
+                if (porcCompra < 0)
+                {
+                    Mensaje += String.Format("Ingrese Porcentaje de Compra \r");
+                    lValidado = false;
+                }
+
+                if (porcVenta < 0)
+                {
+                    Mensaje += String.Format("Ingrese Porcentaje de Venta \r");
+                    lValidado = false;
+                }
+
+                if (porcComisionIOL < 0)
+                {
+                    Mensaje += String.Format("Ingrese Porcentaje de Comisión IOL \r");
+                    lValidado = false;
+                }
+
+                if (porcPuntaCompradora < 0)
+                {
+                    Mensaje += String.Format("Ingrese Porcentaje de Punta Compradora \r");
+                    lValidado = false;
+                }
+
+                if (porcPuntaVendedora < 0)
+                {
+                    Mensaje += String.Format("Ingrese Porcentaje de Punta Vendedora \r");
+                    lValidado = false;
+                }
+
+                if (lValidado == false)
+                {
+                    MessageBox.Show(Mensaje, "Solicitud del Sistema", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                    return;
+                }
+
+                if (MessageBox.Show("Datos Correctos ?", "Solicitud del Sistema", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == System.Windows.Forms.DialogResult.No)
+                {
+                    return;
+                }
+                try
+                {
+                    using (MySqlConnection cone = new MySqlConnection(conexion))
+                    {
+                        cone.Open();
+                        sentencia = string.Format("Update Ruedas Set PorcCompra = @PorcCompra, PorcVenta =  @PorcVenta, PorcComisionIOL = @PorcComisionIOL," +
+                                                                    "PorcPuntaCompradora = @PorcPuntaCompradora, PorcPuntaVendedora = @PorcPuntaVendedora " +
+                                                                    "Where IdRueda = @IdRueda");
+
+                        MySqlCommand comando = new MySqlCommand(sentencia, cone);
+                        comando.Parameters.AddWithValue("@PorcCompra", porcCompra);
+                        comando.Parameters.AddWithValue("@PorcVenta", porcVenta);
+                        comando.Parameters.AddWithValue("@PorcComisionIOL", porcComisionIOL);
+                        comando.Parameters.AddWithValue("@PorcPuntaCompradora", porcPuntaCompradora);
+                        comando.Parameters.AddWithValue("@PorcPuntaVendedora", porcPuntaVendedora);
+                        comando.Parameters.AddWithValue("@IdRueda", IdRueda);
+                        comando.ExecuteNonQuery();
+                        cone.Close();
+                        MessageBox.Show("Simulador Actualizado con Exito", "Información del Sistema", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                }
+                catch (MySqlException ex)
+                {
+                    MessageBox.Show(ex.Message + " - " + ex.ErrorCode.ToString(), "Informe de Errores", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                }
+            }
         }
 
         private double ObtenerPorcVentaSimulador(int rueda, int simulador)
@@ -1887,7 +1845,7 @@ namespace IOL
             double auxPorcVenta = 0;
             using (MySqlConnection coneSimulador = new MySqlConnection(conexion))
             {
-                string sentencia = string.Format("Select PorcVenta{0} as PorcVenta From Ruedas Where IdRueda = {1} And IdSimulacion = {0}", simulador, rueda);
+                string sentencia = string.Format("Select PorcVenta{0} as PorcVenta From Ruedas Where IdRueda = {1}", simulador, rueda);
                 MySqlDataAdapter da = new MySqlDataAdapter(sentencia, coneSimulador);
                 DataTable ds = new DataTable();
                 da.Fill(ds);
@@ -1903,7 +1861,7 @@ namespace IOL
             double auxPorcCompra = 0;
             using (MySqlConnection coneSimulador = new MySqlConnection(conexion))
             {
-                string sentencia = string.Format("Select PorcCompra{0} as PorcCompra From Ruedas Where IdRueda = {1} And IdSimulacion = {0}", simulador, rueda);
+                string sentencia = string.Format("Select PorcCompra{0} as PorcCompra From Ruedas Where IdRueda = {1}", simulador, rueda);
                 MySqlDataAdapter da = new MySqlDataAdapter(sentencia, coneSimulador);
                 DataTable ds = new DataTable();
                 da.Fill(ds);
@@ -1913,6 +1871,86 @@ namespace IOL
                 }
             }
             return auxPorcCompra;
+        }
+
+        private decimal ObtenerDisponibleParaOperar(int simulador)
+        {
+            decimal disponible = 0;
+            using (MySqlConnection cone = new MySqlConnection(conexion))
+            {
+                string sentencia = string.Format("Select * From TenenciaSimulador Where IdSimulacion = {0} Order By IdSimulacion", simulador);
+                MySqlDataAdapter daSimulador = new MySqlDataAdapter(sentencia, cone);
+                DataTable dsSimulador = new DataTable();
+                int nSimuladores = daSimulador.Fill(dsSimulador);
+                if (nSimuladores > 0)
+                {
+                    disponible = Convert.ToDecimal(dsSimulador.Rows[0]["DisponibleParaOperar"]);
+                }
+                cone.Close();
+            }
+            return disponible;
+        }
+
+        private decimal ObtenerActivosValorizados(int simulador)
+        {
+            decimal activos = 0;
+            using (MySqlConnection cone = new MySqlConnection(conexion))
+            {
+                string sentencia = string.Format("Select * From TenenciaSimulador Where IdSimulacion = {0} Order By IdSimulacion", simulador);
+                MySqlDataAdapter daSimulador = new MySqlDataAdapter(sentencia, cone);
+                DataTable dsSimulador = new DataTable();
+                int nSimuladores = daSimulador.Fill(dsSimulador);
+                if (nSimuladores > 0)
+                {
+                    activos = Convert.ToDecimal(dsSimulador.Rows[0]["ActivosValorizados"]);
+                }
+                cone.Close();
+            }
+            return activos;
+        }
+        private decimal ObtenerTotalTenencia(int simulador)
+        {
+            decimal totaltenencia = 0;
+            using (MySqlConnection cone = new MySqlConnection(conexion))
+            {
+                string sentencia = string.Format("Select * From TenenciaSimulador Where IdSimulacion = {0} Order By IdSimulacion", simulador);
+                MySqlDataAdapter daSimulador = new MySqlDataAdapter(sentencia, cone);
+                DataTable dsSimulador = new DataTable();
+                int nSimuladores = daSimulador.Fill(dsSimulador);
+                if (nSimuladores > 0)
+                {
+                    totaltenencia = Convert.ToDecimal(dsSimulador.Rows[0]["TotalTenencia"]);
+                }
+                cone.Close();
+            }
+            return totaltenencia;
+        }
+        private void ActualizarCompraSimulador(int simulador, double importe)
+        {
+            using (MySqlConnection coneSimulador = new MySqlConnection(conexion))
+            {
+                string sentencia = string.Format("Update TenenciaSimulador Set DisponibleParaOperar = DisponibleParaOperar - {0}, ActivosValorizados = ActivosValorizados + {0}," +
+                    " TotalTenencia = TotalTenencia - {0}, Fecha = Now() Where IdSimulacion = {1}", importe, simulador);
+                coneSimulador.Open();
+                MySqlCommand comando = new MySqlCommand(sentencia, coneSimulador);
+                comando.CommandType = CommandType.Text;
+                comando.ExecuteNonQuery();
+                coneSimulador.Close();
+            }
+        }
+
+        private void ActualizarVentaSimulador(int simulador, double importe)
+        {
+            using (MySqlConnection coneSimulador = new MySqlConnection(conexion))
+            {
+                string sentencia = string.Format("Update TenenciaSimulador Set DisponibleParaOperar = DisponibleParaOperar + {0}, ActivosValorizados = ActivosValorizados - {0}," +
+                    " TotalTenencia = TotalTenencia + {0}, Fecha = Now() Where IdSimulacion = {1}", importe, simulador);
+                coneSimulador.Open();
+                MySqlCommand comando = new MySqlCommand(sentencia, coneSimulador);
+                comando.CommandType = CommandType.Text;
+                comando.ExecuteNonQuery();
+                coneSimulador.Close();
+            }
         }
     }
 }

@@ -817,6 +817,17 @@ namespace IOL
 
                 comando.ExecuteNonQuery();
                 cone.Close();
+
+                using (MySqlConnection coneSimulador = new MySqlConnection(conexion))
+                {
+                    sentencia = "ActualizarTenenciasSimulador";
+                    coneSimulador.Open();
+                    MySqlCommand comandoSimulador = new MySqlCommand(sentencia, coneSimulador);
+                    comandoSimulador.CommandType = CommandType.StoredProcedure;
+                    comandoSimulador.Parameters.AddWithValue("IdRueda", txtIdRueda.Text.Trim());
+                    comandoSimulador.ExecuteNonQuery();
+                    coneSimulador.Close();
+                }
             }
             Close();
         }

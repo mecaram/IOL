@@ -21,7 +21,6 @@ C:\Sistemas\IOL\IOL\bin\Debug\Google.Protobuf.xml
 C:\Sistemas\IOL\IOL\bin\Debug\MySql.Data.xml
 C:\Sistemas\IOL\IOL\bin\Debug\Renci.SshNet.xml
 C:\Sistemas\IOL\IOL\bin\Debug\RestSharp.xml
-C:\Sistemas\IOL\IOL\obj\Debug\IOL.csprojAssemblyReference.cache
 C:\Sistemas\IOL\IOL\obj\Debug\Interop.WinHttp.dll
 C:\Sistemas\IOL\IOL\obj\Debug\IOL.csproj.ResolveComReference.cache
 C:\Sistemas\IOL\IOL\obj\Debug\IOL.frmAcciones.resources

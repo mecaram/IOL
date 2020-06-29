@@ -282,6 +282,7 @@
             // tsbRuedas
             // 
             this.tsbRuedas.AutoSize = false;
+            this.tsbRuedas.Enabled = false;
             this.tsbRuedas.Image = ((System.Drawing.Image)(resources.GetObject("tsbRuedas.Image")));
             this.tsbRuedas.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.tsbRuedas.ImageTransparentColor = System.Drawing.Color.Magenta;
@@ -289,6 +290,7 @@
             this.tsbRuedas.Size = new System.Drawing.Size(80, 60);
             this.tsbRuedas.Text = "Ruedas";
             this.tsbRuedas.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
+            this.tsbRuedas.Visible = false;
             this.tsbRuedas.Click += new System.EventHandler(this.tsbRuedas_Click);
             // 
             // tsbSimulador
