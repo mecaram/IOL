@@ -412,10 +412,10 @@ namespace IOL
                     porcpuntavendedora = 0,
                     comprarhasta = 0;
 
-                    if (operar == 1)
+            if (operar == 1)
             {
                 try
-                { saldoaretirar = Convert.ToDecimal(txtSaldoARetirar.Text.Trim().Replace("$",""));}
+                { saldoaretirar = Convert.ToDecimal(txtSaldoARetirar.Text.Trim().Replace("$", "")); }
                 catch
                 { saldoaretirar = 0; }
 
@@ -425,7 +425,7 @@ namespace IOL
                 { cantacciones = 0; }
 
                 try
-                { porccomisionIOL = Convert.ToDecimal(txtPorcComisionIOL.Text.Trim());}
+                { porccomisionIOL = Convert.ToDecimal(txtPorcComisionIOL.Text.Trim()); }
                 catch
                 { porccomisionIOL = 0; }
 
@@ -747,6 +747,15 @@ namespace IOL
                 comando.CommandType = CommandType.Text;
                 comando.ExecuteNonQuery();
                 cone.Close();
+
+                MySqlConnection coneUltimaRueda = new MySqlConnection(conexion);
+                MySqlDataAdapter daUltimaRueda = new MySqlDataAdapter("Select * from Ruedas Order By IdRueda Desc", coneUltimaRueda);
+                DataTable dsUltimaRueda = new DataTable();
+                int regRueda = daUltimaRueda.Fill(dsUltimaRueda);
+                if (regRueda > 0)
+                {
+                    txtIdRueda.Text = Convert.ToString(dsUltimaRueda.Rows[0]["IdRueda"]);
+                }
             }
             else
             {
@@ -817,17 +826,17 @@ namespace IOL
 
                 comando.ExecuteNonQuery();
                 cone.Close();
+            }
 
-                using (MySqlConnection coneSimulador = new MySqlConnection(conexion))
-                {
-                    sentencia = "ActualizarTenenciasSimulador";
-                    coneSimulador.Open();
-                    MySqlCommand comandoSimulador = new MySqlCommand(sentencia, coneSimulador);
-                    comandoSimulador.CommandType = CommandType.StoredProcedure;
-                    comandoSimulador.Parameters.AddWithValue("IdRueda", txtIdRueda.Text.Trim());
-                    comandoSimulador.ExecuteNonQuery();
-                    coneSimulador.Close();
-                }
+            using (MySqlConnection ConeActualizarSimulador = new MySqlConnection(conexion))
+            {
+                sentencia = "ActualizarTenenciasSimulador";
+                ConeActualizarSimulador.Open();
+                MySqlCommand comandoSimulador = new MySqlCommand(sentencia, ConeActualizarSimulador);
+                comandoSimulador.CommandType = CommandType.StoredProcedure;
+                comandoSimulador.Parameters.AddWithValue("rueda", txtIdRueda.Text.Trim());
+                comandoSimulador.ExecuteNonQuery();
+                ConeActualizarSimulador.Close();
             }
             Close();
         }
