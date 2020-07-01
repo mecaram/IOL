@@ -154,14 +154,14 @@ namespace IOL
         {
             MySqlConnection cone = new MySqlConnection(conexion);
             string sentencia = string.Empty;
-            sentencia = string.Format("Update Ruedas Set AccesosIOL = AccesosIOL + 1 Where IdRueda = {0}", txtIdRueda.Text.Trim());
+            sentencia = $"Update Ruedas Set AccesosIOL = AccesosIOL + 1 Where IdRueda = {txtIdRueda.Text.Trim()}";
             cone.Open();
             MySqlCommand comando = new MySqlCommand(sentencia, cone);
             comando.CommandType = CommandType.Text;
             comando.ExecuteNonQuery();
             cone.Close();
 
-            sentencia = string.Format("Select * From Ruedas Where IdRueda = {0}", txtIdRueda.Text.Trim());
+            sentencia = $"Select * From Ruedas Where IdRueda = {txtIdRueda.Text.Trim()}";
             MySqlConnection coneRuedas = new MySqlConnection(conexion);
             MySqlDataAdapter daRuedas = new MySqlDataAdapter(sentencia, coneRuedas);
             DataTable dsRuedas = new DataTable();
@@ -374,8 +374,7 @@ namespace IOL
                         // Almacenamos la apertura de la rueda
                         using (MySqlConnection cone = new MySqlConnection(conexion))
                         {
-                            sentencia = "Update Ruedas Set Estado = 1 ";
-                            sentencia += string.Format("Where Ruedas.IdRueda = {0}", idrueda);
+                            sentencia = $"Update Ruedas Set Estado = 1 Where Ruedas.IdRueda = {idrueda}";
                             cone.Open();
                             MySqlCommand comandoApertura = new MySqlCommand(sentencia, cone);
                             comandoApertura.ExecuteNonQuery();
@@ -386,9 +385,8 @@ namespace IOL
                         // a la rueda actual
                         using (MySqlConnection coneAperturaRueda = new MySqlConnection(conexion))
                         {
-                            sentencia = "UPDATE RuedasDetalleSimulador ";
-                            sentencia += string.Format("SET IdRuedaActual = {0} ", idrueda);
-                            sentencia += string.Format("Where Estado = 'Comprado' And IdRuedaActual != {0} And IdRuedaActual = IdRuedaCompra ", idrueda);
+                            sentencia = $"UPDATE RuedasDetalleSimulador SET IdRuedaActual = {idrueda} " +
+                                        $" Where Estado = 'Comprado' And IdRuedaActual != {idrueda} And IdRuedaActual = IdRuedaCompra ";
                             coneAperturaRueda.Open();
                             MySqlCommand comandoAperturaRueda = new MySqlCommand(sentencia, coneAperturaRueda);
                             comandoAperturaRueda.ExecuteNonQuery();
@@ -456,12 +454,9 @@ namespace IOL
                                 using (MySqlConnection cone = new MySqlConnection(conexion))
                                 {
                                     cone.Open();
-                                    sentencia = string.Format("Update RuedasDetalleSimulador Set UltimoPrecio = {0}," +
-                                                              " FechaUltimoPrecio = str_to_date('{1}','%d/%m/%Y %H:%i:%s') " +
-                                                              " Where IdRuedaActual = {2} And Simbolo = '{3}' And Estado = 'Comprado'",
-                                                                UltimoPrecio,
-                                                                DateTime.Now,
-                                                                idrueda, simbolo);
+                                    sentencia = $"Update RuedasDetalleSimulador Set UltimoPrecio = {UltimoPrecio}," +
+                                                              $" FechaUltimoPrecio = str_to_date('{DateTime.Now}','%d/%m/%Y %H:%i:%s') " +
+                                                              $" Where IdRuedaActual = {idrueda} And Simbolo = '{simbolo}' And Estado = 'Comprado'";
                                     MySqlCommand comando = new MySqlCommand(sentencia, cone);
                                     comando.CommandType = CommandType.Text;
                                     comando.ExecuteNonQuery();
@@ -472,10 +467,11 @@ namespace IOL
                             using (MySqlConnection cone = new MySqlConnection(conexion))
                             {
                                 cone.Open();
-                                sentencia = string.Format("Update RuedasDetalleSimulador Set " +
-                                                          "VariacionenPesos = (UltimoPrecio - PrecioCompra) * cantidad," +
-                                                          "VariacionenPorcentajes = ((UltimoPrecio / preciocompra) - 1) * 100 " +
-                                                          "Where IdRuedaActual = {0} And Estado = 'Comprado' And UltimoPrecio > 0", idrueda);
+                                sentencia = $"Update RuedasDetalleSimulador Set " +
+                                            $"VariacionenPesos = (UltimoPrecio - PrecioCompra) * cantidad," +
+                                            $"VariacionenPorcentajes = ((UltimoPrecio / preciocompra) - 1) * 100 " +
+                                            $"Where IdRuedaActual = {idrueda} And Estado = 'Comprado' And UltimoPrecio > 0";
+
                                 MySqlCommand comando = new MySqlCommand(sentencia, cone);
                                 comando.CommandType = CommandType.Text;
                                 comando.ExecuteNonQuery();
@@ -485,10 +481,10 @@ namespace IOL
                             using (MySqlConnection cone = new MySqlConnection(conexion))
                             {
                                 cone.Open();
-                                sentencia = string.Format("Update RuedasDetalleSimulador Set " +
-                                                          "VariacionenPesos = 0, " +
-                                                          "VariacionenPorcentajes = 0 " +
-                                                          "Where IdRuedaActual = {0} And Estado = 'Comprado' And Simbolo = '{1}' And UltimoPrecio = 0", idrueda, simbolo);
+                                sentencia = $"Update RuedasDetalleSimulador Set " +
+                                            $"VariacionenPesos = 0, " +
+                                            $"VariacionenPorcentajes = 0 " +
+                                            $"Where IdRuedaActual = {idrueda} And Estado = 'Comprado' And Simbolo = '{simbolo}' And UltimoPrecio = 0";
                                 MySqlCommand comando = new MySqlCommand(sentencia, cone);
                                 comando.CommandType = CommandType.Text;
                                 comando.ExecuteNonQuery();
@@ -498,10 +494,10 @@ namespace IOL
                             using (MySqlConnection cone = new MySqlConnection(conexion))
                             {
                                 cone.Open();
-                                sentencia = string.Format("Update RuedasDetalleSimulador Set " +
-                                                          "VariacionenPesos = (PrecioVenta - PrecioCompra) * cantidad," +
-                                                          "VariacionenPorcentajes = ((PrecioVenta / PrecioCompra) - 1) * 100 " +
-                                                          "Where IdRuedaActual = {0} And Estado = 'Vendido'", idrueda);
+                                sentencia = $"Update RuedasDetalleSimulador Set " +
+                                            $"VariacionenPesos = (PrecioVenta - PrecioCompra) * cantidad," +
+                                            $"VariacionenPorcentajes = ((PrecioVenta / PrecioCompra) - 1) * 100 " +
+                                            $" Where IdRuedaActual = {idrueda} And Estado = 'Vendido'";
                                 MySqlCommand comando = new MySqlCommand(sentencia, cone);
                                 comando.CommandType = CommandType.Text;
                                 comando.ExecuteNonQuery();
@@ -546,24 +542,18 @@ namespace IOL
                             using (MySqlConnection cone = new MySqlConnection(conexion))
                             {
                                 cone.Open();
-                                sentencia = string.Format("Insert Into PanelPrincipal(IdRueda, Simbolo," +
-                                                          "VariacionPorcentual, Apertura, Maximo, Minimo," +
-                                                          "UltimoCierre, Volumen, CantidadDeOperaciones, Fecha," +
-                                                          "mercado, Moneda," +
-                                                          "PuntaCompradoraP, PuntaVendedoraP," +
-                                                          "PuntaCompradoraC, PuntaVendedoraC, UltimoPrecio, IdPanel)" +
-                                                          " Values ({0}, '{1}'," +
-                                                          "{2}, {3}, {4}, {5}," +
-                                                          "{6}, {7}, {8},'{9}'," +
-                                                          "'{10}', '{11}'," +
-                                                          "{12}, {13}," +
-                                                          "{14}, {15}, {16}, {17})",
-                                                          idrueda, simbolo,
-                                                          _VariacionPorcentual, _Apertura, _Maximo, _Minimo,
-                                                          _UltimoCierre, _Volumen, _CantidadOperaciones, _Fecha,
-                                                          _Mercado, _Moneda,
-                                                          _PrecioCompra, _PrecioVenta,
-                                                          _CantidadCompra, _CantidadVenta, _UltimoPrecio, nIdPanel);
+                                sentencia = $"Insert Into PanelPrincipal(IdRueda, Simbolo," +
+                                                          $"VariacionPorcentual, Apertura, Maximo, Minimo," +
+                                                          $"UltimoCierre, Volumen, CantidadDeOperaciones, Fecha," +
+                                                          $"mercado, Moneda," +
+                                                          $"PuntaCompradoraP, PuntaVendedoraP," +
+                                                          $"PuntaCompradoraC, PuntaVendedoraC, UltimoPrecio, IdPanel)" +
+                                                          $" Values ({idrueda}, '{simbolo}'," +
+                                                          $"{_VariacionPorcentual}, {_Apertura}, {_Maximo}, {_Minimo}," +
+                                                          $"{_UltimoCierre}, {_Volumen}, {_CantidadOperaciones},'{_Fecha}'," +
+                                                          $"'{_Mercado}', '{_Moneda}'," +
+                                                          $"{_PrecioCompra}, {_PrecioVenta}," +
+                                                          $"{_CantidadCompra}, {_CantidadVenta}, {_UltimoPrecio}, {nIdPanel})";
                                 MySqlCommand comando = new MySqlCommand(sentencia, cone);
                                 comando.CommandType = CommandType.Text;
                                 comando.ExecuteNonQuery();
@@ -633,13 +623,10 @@ namespace IOL
                         using (MySqlConnection cone = new MySqlConnection(conexion))
                         {
                             cone.Open();
-                            sentencia = string.Format("Update RuedasDetalleSimulador Set " +
-                                                      " PrecioVenta = {0}, ImporteVenta = {1}, FechaVenta = str_to_date('{2}','%d/%m/%Y %H:%i:%s') , Estado = 'Vendido'," +
-                                                      "UltimoPrecio = {3}, FechaUltimoPrecio = str_to_date('{4}','%d/%m/%Y %H:%i:%s')," +
-                                                      "IdRuedaVenta = {5}  Where IdRuedaDetalle = {6}",
-                                                      precioventa, Importe, DateTime.Now,
-                                                      precioventa, DateTime.Now,
-                                                      IdRueda, iddetalle);
+                            sentencia = $"Update RuedasDetalleSimulador Set " +
+                                        $" PrecioVenta = {precioventa}, ImporteVenta = {Importe}, FechaVenta = str_to_date('{DateTime.Now}','%d/%m/%Y %H:%i:%s') , Estado = 'Vendido'," +
+                                        $"UltimoPrecio = {precioventa}, FechaUltimoPrecio = str_to_date('{DateTime.Now}','%d/%m/%Y %H:%i:%s')," +
+                                        $"IdRuedaVenta = {IdRueda}  Where IdRuedaDetalle = {iddetalle}";
                             MySqlCommand comando = new MySqlCommand(sentencia, cone);
                             comando.CommandType = CommandType.Text;
                             comando.ExecuteNonQuery();
@@ -729,21 +716,16 @@ namespace IOL
                                     using (MySqlConnection cone = new MySqlConnection(conexion))
                                     {
                                         cone.Open();
-                                        sentencia = string.Format("Insert Into RuedasDetalleSimulador(IdRuedaActual, IdRuedaCompra, IdSimulacion, " +
-                                                                  "FechaCompra, Simbolo, Cantidad, " +
-                                                                  "PrecioCompra, ImporteCompra, UltimoPrecio," +
-                                                                  "FechaUltimoPrecio," +
-                                                                  "Estado, PorcComisionIOL, ImporteComisionIOL, IdPanel) " +
-                                                                  "Values({0}, {1}, {2}, " +
-                                                                  "str_to_date('{3}','%d/%m/%Y %H:%i:%s'),'{4}',{5}, " +
-                                                                  "{6},{7},{8}," +
-                                                                  "str_to_date('{9}','%d/%m/%Y %H:%i:%s')," +
-                                                                  "'{10}',{11},{12},{13})",
-                                                                   IdRueda, IdRueda, Simulador,
-                                                                   DateTime.Now, Simbolo, cantidadcomprada,
-                                                                   preciocompra, importe, precioactual,
-                                                                   DateTime.Now,
-                                                                   "Comprado", txtPorcComisionIOL.Text.Trim(), comisionIOL, IdPanel);
+                                        sentencia = $"Insert Into RuedasDetalleSimulador(IdRuedaActual, IdRuedaCompra, IdSimulacion, " +
+                                                                  $"FechaCompra, Simbolo, Cantidad, " +
+                                                                  $"PrecioCompra, ImporteCompra, UltimoPrecio," +
+                                                                  $"FechaUltimoPrecio," +
+                                                                  $"Estado, PorcComisionIOL, ImporteComisionIOL, IdPanel) " +
+                                                                  $"Values({IdRueda}, {IdRueda}, {Simulador}, " +
+                                                                  $"str_to_date('{DateTime.Now}','%d/%m/%Y %H:%i:%s'),'{Simbolo}',{cantidadcomprada}, " +
+                                                                  $"{preciocompra},{Importe},{precioactual}," +
+                                                                  $"str_to_date('{DateTime.Now}','%d/%m/%Y %H:%i:%s')," +
+                                                                  $"'Comprado',{txtPorcComisionIOL.Text.Trim()},{comisionIOL},{IdPanel})";
                                         MySqlCommand comando = new MySqlCommand(sentencia, cone);
                                         comando.CommandType = CommandType.Text;
                                         comando.ExecuteNonQuery();
@@ -839,13 +821,11 @@ namespace IOL
                             using (MySqlConnection cone = new MySqlConnection(conexion))
                             {
                                 cone.Open();
-                                sentencia = string.Format("Update RuedasDetalleSimulador Set " +
-                                                          " PrecioVenta = {0}, ImporteVenta = {1}, FechaVenta = str_to_date('{2}','%d/%m/%Y %H:%i:%s') , Estado = 'Vendido'," +
-                                                          "UltimoPrecio = {3}, FechaUltimoPrecio = str_to_date('{4}','%d/%m/%Y %H:%i:%s')," +
-                                                          "IdRuedaVenta = {5}  Where IdRuedaDetalle = {6}",
-                                                          precioventa, Importe, DateTime.Now,
-                                                          precioventa, DateTime.Now,
-                                                          IdRueda, iddetalle);
+                                sentencia = $"Update RuedasDetalleSimulador Set " +
+                                                    $" PrecioVenta = {precioventa}, ImporteVenta = {Importe}, FechaVenta = str_to_date('{DateTime.Now}','%d/%m/%Y %H:%i:%s') , Estado = 'Vendido'," +
+                                                    $"UltimoPrecio = {precioventa}, FechaUltimoPrecio = str_to_date('{DateTime.Now}','%d/%m/%Y %H:%i:%s')," +
+                                                    $"IdRuedaVenta = {IdRueda}  Where IdRuedaDetalle = {iddetalle}";
+
                                 MySqlCommand comando = new MySqlCommand(sentencia, cone);
                                 comando.CommandType = CommandType.Text;
                                 comando.ExecuteNonQuery();
@@ -942,21 +922,17 @@ namespace IOL
                                     using (MySqlConnection cone = new MySqlConnection(conexion))
                                     {
                                         cone.Open();
-                                        sentencia = string.Format("Insert Into RuedasDetalleSimulador(IdRuedaActual, IdRuedaCompra, IdSimulacion, " +
-                                                                  "FechaCompra, Simbolo, Cantidad, " +
-                                                                  "PrecioCompra, ImporteCompra, UltimoPrecio," +
-                                                                  "FechaUltimoPrecio," +
-                                                                  "Estado, PorcComisionIOL, ImporteComisionIOL, IdPanel) " +
-                                                                  "Values({0}, {1}, {2}, " +
-                                                                  "str_to_date('{3}','%d/%m/%Y %H:%i:%s'),'{4}',{5}, " +
-                                                                  "{6},{7},{8}," +
-                                                                  "str_to_date('{9}','%d/%m/%Y %H:%i:%s')," +
-                                                                  "'{10}',{11},{12},{13})",
-                                                                   IdRueda, IdRueda, Simulador,
-                                                                   DateTime.Now, Simbolo, cantidadcomprada,
-                                                                   preciocompra, importe, precioactual,
-                                                                   DateTime.Now,
-                                                                   "Comprado", txtPorcComisionIOL.Text.Trim(), comisionIOL, IdPanel);
+                                        sentencia = $"Insert Into RuedasDetalleSimulador(IdRuedaActual, IdRuedaCompra, IdSimulacion, " +
+                                                                  $"FechaCompra, Simbolo, Cantidad, " +
+                                                                  $"PrecioCompra, ImporteCompra, UltimoPrecio," +
+                                                                  $"FechaUltimoPrecio," +
+                                                                  $"Estado, PorcComisionIOL, ImporteComisionIOL, IdPanel) " +
+                                                                  $"Values({IdRueda}, {IdRueda}, {Simulador}, " +
+                                                                  $"str_to_date('{DateTime.Now}','%d/%m/%Y %H:%i:%s'),'{Simbolo}',{cantidadcomprada}, " +
+                                                                  $"{preciocompra},{importe},{precioactual}," +
+                                                                  $"str_to_date('{DateTime.Now}','%d/%m/%Y %H:%i:%s')," +
+                                                                  $"'Comprado',{txtPorcComisionIOL.Text.Trim()},{comisionIOL},{IdPanel})";
+
                                         MySqlCommand comando = new MySqlCommand(sentencia, cone);
                                         comando.CommandType = CommandType.Text;
                                         comando.ExecuteNonQuery();
@@ -1501,37 +1477,15 @@ namespace IOL
                     using (MySqlConnection cone = new MySqlConnection(conexion))
                     {
                         cone.Open();
-                        sentencia = string.Format("Update Ruedas Set PorcCompra1 =  @PorcCompra1, PorcVenta1 =   @PorcVenta1, PorcCompra2 =  @PorcCompra2," +
-                                                                    "PorcVenta2 =   @PorcVenta2, PorcCompra3 =  @PorcCompra3, PorcVenta3 =   @PorcVenta3," +
-                                                                    "PorcCompra4 =  @PorcCompra4, PorcVenta4 =  @PorcVenta4, PorcCompra5 =  @PorcCompra5," +
-                                                                    "PorcVenta5 =   @PorcVenta5, PorcCompra6 =  @PorcCompra6, PorcVenta6 =   @PorcVenta6, " +
-                                                                    "PorcCompra7 =  @PorcCompra7, PorcVenta7 =   @PorcVenta7, PorcCompra8 =  @PorcCompra8," +
-                                                                    "PorcVenta8 =   @PorcVenta8, PorcCompra9 =  @PorcCompra9, PorcVenta9 =   @PorcVenta9," +
-                                                                    "PorcCompra10 = @PorcCompra10, PorcVenta10 =  @PorcVenta10 " +
-                                                                    "Where IdRueda = @IdRueda");
-
+                        sentencia = $"Update Ruedas Set PorcCompra1 =  {porccompra1}, PorcVenta1 =   {porcventa1}, PorcCompra2 =  {porccompra2}," +
+                                                                    $"PorcVenta2 =   {porcventa2}, PorcCompra3 =  {porccompra3}, PorcVenta3 =   {porcventa3}," +
+                                                                    $"PorcCompra4 =  {porccompra4}, PorcVenta4 =  {porcventa4}, PorcCompra5 =  {porccompra5}," +
+                                                                    $"PorcVenta5 =   {porcventa5}, PorcCompra6 =  {porccompra6}, PorcVenta6 =   {porcventa6}, " +
+                                                                    $"PorcCompra7 =  {porccompra7}, PorcVenta7 =   {porcventa7}, PorcCompra8 =  {porccompra8}," +
+                                                                    $"PorcVenta8 =   {porcventa8}, PorcCompra9 =  {porccompra9}, PorcVenta9 =  {porcventa9}," +
+                                                                    $"PorcCompra10 = {porccompra10}, PorcVenta10 =  {porcventa10} " +
+                                                                    $" Where IdRueda = {IdRueda}";
                         MySqlCommand comando = new MySqlCommand(sentencia, cone);
-                        comando.Parameters.AddWithValue("@PorcCompra1", porccompra1);
-                        comando.Parameters.AddWithValue("@PorcVenta1", porcventa1);
-                        comando.Parameters.AddWithValue("@PorcCompra2", porccompra2);
-                        comando.Parameters.AddWithValue("@PorcVenta2", porcventa2);
-                        comando.Parameters.AddWithValue("@PorcCompra3", porccompra3);
-                        comando.Parameters.AddWithValue("@PorcVenta3", porcventa3);
-                        comando.Parameters.AddWithValue("@PorcCompra4", porccompra4);
-                        comando.Parameters.AddWithValue("@PorcVenta4", porcventa4);
-                        comando.Parameters.AddWithValue("@PorcCompra5", porccompra5);
-                        comando.Parameters.AddWithValue("@PorcVenta5", porcventa5);
-                        comando.Parameters.AddWithValue("@PorcCompra6", porccompra6);
-                        comando.Parameters.AddWithValue("@PorcVenta6", porcventa6);
-                        comando.Parameters.AddWithValue("@PorcCompra7", porccompra7);
-                        comando.Parameters.AddWithValue("@PorcVenta7", porcventa7);
-                        comando.Parameters.AddWithValue("@PorcCompra8", porccompra8);
-                        comando.Parameters.AddWithValue("@PorcVenta8", porcventa8);
-                        comando.Parameters.AddWithValue("@PorcCompra9", porccompra9);
-                        comando.Parameters.AddWithValue("@PorcVenta9", porcventa9);
-                        comando.Parameters.AddWithValue("@PorcCompra10", porccompra10);
-                        comando.Parameters.AddWithValue("@PorcVenta10", porcventa10);
-                        comando.Parameters.AddWithValue("@IdRueda", IdRueda);
                         comando.ExecuteNonQuery();
                         cone.Close();
                         MessageBox.Show("Simulador Actualizado con Exito", "Información del Sistema", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -1564,7 +1518,7 @@ namespace IOL
                         // Almacenamos el cierre de la rueda
                         using (MySqlConnection cone = new MySqlConnection(conexion))
                         {
-                            sentencia = string.Format("Update Ruedas Set Estado = 2 Where IdRueda = {0}", txtIdRueda.Text.Trim());
+                            sentencia = $"Update Ruedas Set Estado = 2 Where IdRueda = {txtIdRueda.Text.Trim()}";
                             cone.Open();
                             MySqlCommand comandoApertura = new MySqlCommand(sentencia, cone);
                             comandoApertura.ExecuteNonQuery();
@@ -1597,7 +1551,7 @@ namespace IOL
 
                                 using (MySqlConnection coneActualizar = new MySqlConnection(conexion))
                                 {
-                                    sentencia = String.Format("Insert Into InformeFinal (Simbolo, IdRueda) Values('{0}',{1})", simbolo, txtIdRueda.Text.Trim());
+                                    sentencia = $"Insert Into InformeFinal (Simbolo, IdRueda) Values('{simbolo}',{txtIdRueda.Text.Trim()})";
                                     coneActualizar.Open();
                                     MySqlCommand comando = new MySqlCommand(sentencia, coneActualizar);
                                     comando.CommandType = CommandType.Text;
@@ -1608,7 +1562,7 @@ namespace IOL
                         }
 
                         // Cargo toda la info de la rueda
-                        sentencia = string.Format("Select * From RuedasDetalleSimulador Where IdRuedaActual = {0} And Estado = 'Vendido'", txtIdRueda.Text.Trim());
+                        sentencia = $"Select * From RuedasDetalleSimulador Where IdRuedaActual = {txtIdRueda.Text.Trim()} And Estado = 'Vendido'";
                         MySqlConnection coneRuedas = new MySqlConnection(conexion);
                         MySqlDataAdapter daRuedas = new MySqlDataAdapter(sentencia, coneRuedas);
                         DataTable dsRuedas = new DataTable();
@@ -1624,9 +1578,8 @@ namespace IOL
 
                                 using (MySqlConnection coneActualizar = new MySqlConnection(conexion))
                                 {
-                                    sentencia = String.Format("Update InformeFinal Set Variacion{0}Diaria = Variacion{0}Diaria + {1} " +
-                                        " Where IdRueda = {2} And Simbolo = '{3}'",
-                                        simulador, variacion, txtIdRueda.Text.Trim(), simbolo);
+                                    sentencia = $"Update InformeFinal Set Variacion{simulador}Diaria = Variacion{simulador}Diaria + {variacion} " +
+                                        $" Where IdRueda = {txtIdRueda.Text.Trim()} And Simbolo = '{simbolo}'";
                                     coneActualizar.Open();
                                     MySqlCommand comando = new MySqlCommand(sentencia, coneActualizar);
                                     comando.CommandType = CommandType.Text;
@@ -1817,17 +1770,11 @@ namespace IOL
                     using (MySqlConnection cone = new MySqlConnection(conexion))
                     {
                         cone.Open();
-                        sentencia = string.Format("Update Ruedas Set PorcCompra = @PorcCompra, PorcVenta =  @PorcVenta, PorcComisionIOL = @PorcComisionIOL," +
-                                                                    "PorcPuntaCompradora = @PorcPuntaCompradora, PorcPuntaVendedora = @PorcPuntaVendedora " +
-                                                                    "Where IdRueda = @IdRueda");
+                        sentencia = $"Update Ruedas Set PorcCompra = {porcCompra}, PorcVenta =  {porcVenta}, PorcComisionIOL = {porcComisionIOL}," +
+                                                                    $"PorcPuntaCompradora = {porcPuntaCompradora}, PorcPuntaVendedora = {porcPuntaVendedora} " +
+                                                                    $" Where IdRueda = {IdRueda}";
 
                         MySqlCommand comando = new MySqlCommand(sentencia, cone);
-                        comando.Parameters.AddWithValue("@PorcCompra", porcCompra);
-                        comando.Parameters.AddWithValue("@PorcVenta", porcVenta);
-                        comando.Parameters.AddWithValue("@PorcComisionIOL", porcComisionIOL);
-                        comando.Parameters.AddWithValue("@PorcPuntaCompradora", porcPuntaCompradora);
-                        comando.Parameters.AddWithValue("@PorcPuntaVendedora", porcPuntaVendedora);
-                        comando.Parameters.AddWithValue("@IdRueda", IdRueda);
                         comando.ExecuteNonQuery();
                         cone.Close();
                         MessageBox.Show("Simulador Actualizado con Exito", "Información del Sistema", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -1929,8 +1876,8 @@ namespace IOL
         {
             using (MySqlConnection coneSimulador = new MySqlConnection(conexion))
             {
-                string sentencia = string.Format("Update TenenciaSimulador Set DisponibleParaOperar = DisponibleParaOperar - {0}, ActivosValorizados = ActivosValorizados + {0}," +
-                    " TotalTenencia = TotalTenencia - {0}, Fecha = Now() Where IdSimulacion = {1}", importe, simulador);
+                string sentencia = $"Update TenenciaSimulador Set DisponibleParaOperar = DisponibleParaOperar - {importe}, ActivosValorizados = ActivosValorizados + {importe}," +
+                                   $" TotalTenencia = TotalTenencia - {importe}, Fecha = Now() Where IdSimulacion = {simulador}";
                 coneSimulador.Open();
                 MySqlCommand comando = new MySqlCommand(sentencia, coneSimulador);
                 comando.CommandType = CommandType.Text;
@@ -1943,8 +1890,8 @@ namespace IOL
         {
             using (MySqlConnection coneSimulador = new MySqlConnection(conexion))
             {
-                string sentencia = string.Format("Update TenenciaSimulador Set DisponibleParaOperar = DisponibleParaOperar + {0}, ActivosValorizados = ActivosValorizados - {0}," +
-                    " TotalTenencia = TotalTenencia + {0}, Fecha = Now() Where IdSimulacion = {1}", importe, simulador);
+                string sentencia = $"Update TenenciaSimulador Set DisponibleParaOperar = DisponibleParaOperar + {importe}, ActivosValorizados = ActivosValorizados - {importe}," +
+                                   $" TotalTenencia = TotalTenencia + {importe}, Fecha = Now() Where IdSimulacion = {simulador}";
                 coneSimulador.Open();
                 MySqlCommand comando = new MySqlCommand(sentencia, coneSimulador);
                 comando.CommandType = CommandType.Text;

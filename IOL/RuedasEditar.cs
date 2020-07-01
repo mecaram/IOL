@@ -720,29 +720,22 @@ namespace IOL
             cone.Open();
             if (operacion == 1)
             {
-                sentencia = string.Format("Insert Into Ruedas(FechaRueda, DiaRueda, SaldoARetirar," +
-                                          "PorcComisionIOL, Operar, PorcCompra, PorcVenta, PorcCompra1, PorcVenta1," +
-                                          "PorcCompra2, PorcVenta2, PorcCompra3, PorcVenta3," +
-                                          "PorcCompra4, PorcVenta4, PorcCompra5, PorcVenta5," +
-                                          "PorcCompra6, PorcVenta6, PorcCompra7, PorcVenta7," +
-                                          "PorcCompra8, PorcVenta8, PorcCompra9, PorcVenta9," +
-                                          "PorcCompra10, PorcVenta10," +
-                                          "CantAcciones, PorcPuntaCompradora, PorcPuntaVendedora, ComprarHasta, Comitente)" +
-                                          " Values(str_to_date('{0}','%d/%m/%y'),{1},{2}," +
-                                          "{3},{4},{5},{6},{7},{8}," +
-                                          "{9},{10},{11},{12}," +
-                                          "{13},{14},{15},{16}," +
-                                          "{17},{18},{19},{20}," +
-                                          "{21},{22}," +
-                                          "{23},{24},{25},{26},{27},{28},{29},{30},{31})",
-                                          fecha.Value.ToString("dd/MM/yy"), diarueda, saldoaretirar,
-                                          porccomisionIOL, operar, porccompra, porcventa, porccompra1, porcventa1,
-                                          porccompra2, porcventa2, porccompra3, porcventa3,
-                                          porccompra4, porcventa4, porccompra5, porcventa5,
-                                          porccompra6, porcventa6, porccompra7, porcventa7,
-                                          porccompra8, porcventa8, porccompra9, porcventa9,
-                                          porccompra10, porcventa10,
-                                          cantacciones, porcpuntacompradora, porcpuntavendedora, comprarhasta, comitente);
+                sentencia = $"Insert Into Ruedas(FechaRueda, DiaRueda, SaldoARetirar," +
+                                                $"PorcComisionIOL, Operar, PorcCompra, PorcVenta, PorcCompra1, PorcVenta1," +
+                                                $"PorcCompra2, PorcVenta2, PorcCompra3, PorcVenta3," +
+                                                $"PorcCompra4, PorcVenta4, PorcCompra5, PorcVenta5," +
+                                                $"PorcCompra6, PorcVenta6, PorcCompra7, PorcVenta7," +
+                                                $"PorcCompra8, PorcVenta8, PorcCompra9, PorcVenta9," +
+                                                $"PorcCompra10, PorcVenta10," +
+                                                $"CantAcciones, PorcPuntaCompradora, PorcPuntaVendedora, ComprarHasta, Comitente)" +
+                                                $" Values(str_to_date('fecha.Value.ToString('dd / MM / yy')','%d/%m/%y'),{diarueda},{saldoaretirar}," +
+                                                $"{porccomisionIOL},{operar},{porccompra},{porcventa},{porccompra1},{porcventa1}," +
+                                                $"{porccompra2},{porcventa2},{porccompra3},{porcventa3}," +
+                                                $"{porccompra4},{porcventa4},{porccompra5},{porcventa5}," +
+                                                $"{porccompra6},{porcventa6},{porccompra7},{porcventa7}," +
+                                                $"{porccompra8},{porcventa8}," +
+                                                $"{porccompra9},{porcventa9},{porccompra10},{porcventa10},{cantacciones},{porcpuntacompradora},{porcpuntavendedora},{comprarhasta},{comitente})";
+
                 MySqlCommand comando = new MySqlCommand(sentencia, cone);
                 comando.CommandType = CommandType.Text;
                 comando.ExecuteNonQuery();
@@ -759,68 +752,24 @@ namespace IOL
             }
             else
             {
-                sentencia = string.Format("Update Ruedas Set SaldoARetirar = {0}," +
-                                                            "PorcComisionIOL =  {1}," +
-                                                            "Operar =  {2}," +
-                                                            "PorcCompra =  {3}," +
-                                                            "PorcVenta =  {4}," +
-                                                            "PorcCompra1 =  {5}," +
-                                                            "PorcVenta1 =  {6}," +
-                                                            "PorcCompra2 =  {7}," +
-                                                            "PorcVenta2 =  {8}," +
-                                                            "PorcCompra3 =  {9}," +
-                                                            "PorcVenta3 =  {10}," +
-                                                            "PorcCompra4 =  {11}," +
-                                                            "PorcVenta4 =  {12}," +
-                                                            "PorcCompra5 =  {13}," +
-                                                            "PorcVenta5 =  {14}," +
-                                                            "PorcCompra6 =  {15}," +
-                                                            "PorcVenta6 =  {16}," +
-                                                            "PorcCompra7 =  {17}," +
-                                                            "PorcVenta7 =  {18}," +
-                                                            "PorcCompra8 =  {19}," +
-                                                            "PorcVenta8 =  {20}," +
-                                                            "PorcCompra9 =  {21}," +
-                                                            "PorcVenta9 =  {22}," +
-                                                            "PorcCompra10 =  {23}," +
-                                                            "PorcVenta10 =  {24}," +
-                                                            "CantAcciones =  {25}," +
-                                                            "PorcPuntaCompradora =  {26}," +
-                                                            "PorcPuntaVendedora =  {27}," +
-                                                            "ComprarHasta =  {28}," +
-                                                            "Comitente =  {29} " +
-                                                            " Where IdRueda = {30}",
-                                                            saldoaretirar,
-                                                            porccomisionIOL,
-                                                            operar,
-                                                            porccompra,
-                                                            porcventa,
-                                                            porccompra1,
-                                                            porcventa1,
-                                                            porccompra2,
-                                                            porcventa2,
-                                                            porccompra3,
-                                                            porcventa3,
-                                                            porccompra4,
-                                                            porcventa4,
-                                                            porccompra5,
-                                                            porcventa5,
-                                                            porccompra6,
-                                                            porcventa6,
-                                                            porccompra7,
-                                                            porcventa7,
-                                                            porccompra8,
-                                                            porcventa8,
-                                                            porccompra9,
-                                                            porcventa9,
-                                                            porccompra10,
-                                                            porcventa10,
-                                                            cantacciones,
-                                                            porcpuntacompradora,
-                                                            porcpuntavendedora,
-                                                            comprarhasta,
-                                                            comitente,
-                                                            txtIdRueda.Text.Trim());
+                sentencia = $"Update Ruedas Set SaldoARetirar = {saldoaretirar}," +
+                                                            $"PorcComisionIOL =  {porccomisionIOL}, Operar =  {operar}," +
+                                                            $"PorcCompra =  {porccompra},  PorcVenta =  {porcventa}," +
+                                                            $"PorcCompra1 =  {porccompra1}, PorcVenta1 =  {porcventa1}," +
+                                                            $"PorcCompra2 =  {porccompra2}, PorcVenta2 =  {porcventa2}," +
+                                                            $"PorcCompra3 =  {porccompra3}, PorcVenta3 =  {porcventa3}," +
+                                                            $"PorcCompra4 =  {porccompra4}, PorcVenta4 =  {porcventa4}," +
+                                                            $"PorcCompra5 =  {porccompra5}, PorcVenta5 =  {porcventa5}," +
+                                                            $"PorcCompra6 =  {porccompra6}, PorcVenta6 =  {porcventa6}," +
+                                                            $"PorcCompra7 =  {porccompra7}, PorcVenta7 =  {porcventa7}," +
+                                                            $"PorcCompra8 =  {porccompra8}, PorcVenta8 =  {porcventa8}," +
+                                                            $"PorcCompra9 =  {porccompra9}, PorcVenta9 =  {porcventa9}," +
+                                                            $"PorcCompra10 =  {porccompra10}, PorcVenta10 =  {porcventa10}," +
+                                                            $"CantAcciones =  {cantacciones}," +
+                                                            $"PorcPuntaCompradora =  {porcpuntacompradora}, PorcPuntaVendedora =  {porcpuntavendedora}," +
+                                                            $"ComprarHasta =  {comprarhasta}, Comitente =  {comitente} " +
+                                                            $" Where IdRueda = {txtIdRueda.Text.Trim()}";
+
                 MySqlCommand comando = new MySqlCommand(sentencia, cone);
                 comando.CommandType = CommandType.Text;
 
