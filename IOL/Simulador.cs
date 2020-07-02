@@ -1508,7 +1508,7 @@ namespace IOL
                 if (MessageBox.Show("Desea Realizar el Cierre de la Rueda", "Pregunta del Sistema", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) == DialogResult.Yes)
                 {
                     MySqlConnection coneRuedaFinalizada = new MySqlConnection(conexion);
-                    string sentencia = string.Format("Select * From Ruedas Where IdRueda = {0} And Estado = 1", txtIdRueda.Text.Trim());
+                    string sentencia = string.Format("Select * From Ruedas Where IdRueda = {0} And Estado = 0", txtIdRueda.Text.Trim());
                     MySqlDataAdapter daRuedaFinalizada = new MySqlDataAdapter(sentencia, coneRuedaFinalizada);
                     DataTable dsRuedaFinalizada = new DataTable();
                     int regRuedaFinalizada = daRuedaFinalizada.Fill(dsRuedaFinalizada);
@@ -1518,7 +1518,7 @@ namespace IOL
                         // Almacenamos el cierre de la rueda
                         using (MySqlConnection cone = new MySqlConnection(conexion))
                         {
-                            sentencia = $"Update Ruedas Set Estado = 2 Where IdRueda = {txtIdRueda.Text.Trim()}";
+                            sentencia = $"Update Ruedas Set Estado = 1 Where IdRueda = {txtIdRueda.Text.Trim()}";
                             cone.Open();
                             MySqlCommand comandoApertura = new MySqlCommand(sentencia, cone);
                             comandoApertura.ExecuteNonQuery();
