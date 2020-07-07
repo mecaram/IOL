@@ -18,7 +18,6 @@ namespace IOL
     {
         string conexion = ConfigurationManager.ConnectionStrings["conexion"].ToString();
         public int comitente = 0;  // Nro. de Comitente
-        bool estado = false;  // Estado de la Rueda: Abierta o Cerrada. 
         bool comprar = false;  // Comprar establece si se puede seguir comprando
         const int simulaciones = 11;
 
@@ -61,7 +60,7 @@ namespace IOL
                 txtIdRueda.Text = Fila["IdRueda"].ToString();
                 txtFecha.Text = fecha.Value.Date.ToShortDateString();
                 txtHora.Text = string.Format("{0:00}:{1:00}", DateTime.Now.Hour, DateTime.Now.Minute);
-                txtEstado.Text = (estado) ? "Abierto" : "Cerrado";
+                txtEstado.Text = ObtenerEstadoRueda(Convert.ToInt32(txtIdRueda.Text.Trim()));
                 this.Refresh();
                 AgregarAccesoIOL();
                 txtPorcCompra.Text = string.Format("{0:00.00}", Convert.ToDecimal(Fila["PorcCompra"]));
@@ -184,7 +183,7 @@ namespace IOL
             {
                 using (MySqlConnection coneDetalle = new MySqlConnection(cone))
                 {
-                    string sentencia = string.Format("Select Simbolo, FechaCompra, Cantidad, PrecioCompra, ImporteComisionIOL, ImporteCompra, UltimoPrecio, FechaUltimoPrecio, VariacionEnPesos, VariacionEnPorcentajes, Estado, IdRuedaActual, IdPanel, PrecioVenta, ImporteVenta, IdRuedaDetalle, IdRuedaCompra, IdRuedaVenta, IdSimulacion, FechaVenta, PorcComisionIOL From RuedasDetalleSimulador Where IdRuedaActual = {0} And IdSimulacion = {1}", txtIdRueda.Text.Trim(), IdSimulacion);
+                    string sentencia = string.Format("Select Simbolo, VariacionEnPorcentajes, VariacionEnPesos, FechaCompra, Cantidad, PrecioCompra, ImporteComisionIOL, ImporteCompra, UltimoPrecio, FechaUltimoPrecio, Estado, IdRuedaActual, IdPanel, PrecioVenta, ImporteVenta, IdRuedaDetalle, IdRuedaCompra, IdRuedaVenta, IdSimulacion, FechaVenta, PorcComisionIOL From RuedasDetalleSimulador Where IdRuedaActual = {0} And IdSimulacion = {1}", txtIdRueda.Text.Trim(), IdSimulacion);
 
                     MySqlDataAdapter da = new MySqlDataAdapter(sentencia, coneDetalle);
                     DataTable ds = new DataTable();
@@ -225,13 +224,13 @@ namespace IOL
                         dgvAcciones.Columns["Estado"].HeaderText = "Estado";
 
                         dgvAcciones.Columns["Simbolo"].Width = 100;
-                        dgvAcciones.Columns["FechaCompra"].Width = 120;
+                        dgvAcciones.Columns["FechaCompra"].Width = 150;
                         dgvAcciones.Columns["Cantidad"].Width = 90;
                         dgvAcciones.Columns["PrecioCompra"].Width = 120;
                         dgvAcciones.Columns["ImporteComisionIOL"].Width = 120;
                         dgvAcciones.Columns["ImporteCompra"].Width = 100;
                         dgvAcciones.Columns["UltimoPrecio"].Width = 120;
-                        dgvAcciones.Columns["FechaUltimoPrecio"].Width = 120;
+                        dgvAcciones.Columns["FechaUltimoPrecio"].Width = 150;
                         dgvAcciones.Columns["VariacionEnPesos"].Width = 90;
                         dgvAcciones.Columns["VariacionEnPorcentajes"].Width = 100;
                         dgvAcciones.Columns["Estado"].Width = 100;
@@ -354,7 +353,6 @@ namespace IOL
             int idrueda = 0;
             try { idrueda = Convert.ToInt32(txtIdRueda.Text.Trim()); }
             catch { idrueda = 0; }
-            estado = false;
 
             if (idrueda > 0)
             {
@@ -366,15 +364,15 @@ namespace IOL
                     comprar = true;  // OJO BORRAR
 
                     // Verificamos se realizo la apertura de la rueda
-                    if (estado == false)
+                    if (ObtenerEstadoRueda(idrueda).Trim().Length == 0)
                     {
-                        estado = true;
-                        txtEstado.Text = (estado) ? "Abierto" : "Cerrado";
+                        AbrirEstadoRueda(Convert.ToInt32(txtIdRueda.Text.Trim()));
+                        txtEstado.Text = ObtenerEstadoRueda(idrueda);
 
                         // Almacenamos la apertura de la rueda
                         using (MySqlConnection cone = new MySqlConnection(conexion))
                         {
-                            sentencia = $"Update Ruedas Set Estado = 1 Where Ruedas.IdRueda = {idrueda}";
+                            sentencia = $"Update Ruedas Set Estado = 'Abierto' Where Ruedas.IdRueda = {idrueda}";
                             cone.Open();
                             MySqlCommand comandoApertura = new MySqlCommand(sentencia, cone);
                             comandoApertura.ExecuteNonQuery();
@@ -565,7 +563,7 @@ namespace IOL
                     ActualizarAcciones(); // Actualiza la grilla de acciones compradas
                 }
             }
-            txtEstado.Text = (estado) ? "Abierto" : "Cerrado";
+            txtEstado.Text = ObtenerEstadoRueda(idrueda);
             this.Refresh();
         }
 
@@ -597,7 +595,7 @@ namespace IOL
             {
                 // Calcular
                 // SI(PrecioCompra+(PrecioCompra*0,7%) < PrecioActual;"VENTA";"NEUTRO")
-                double resultado = 0, cantidadvendida = 0;
+                double resultado = 0, cantidadvendida = CantidadComprada;
 
                 resultado = PrecioCompra + (PrecioCompra * ObtenerPorcVentaSimulador(IdRueda, Simulador) / 100);
 
@@ -692,7 +690,7 @@ namespace IOL
                                 catch { porcomisionIOL = 0; }
 
                                 // Calcular el Importe total para comprar acciones incluyendo Comision
-                                double importe = ObtenerPorcVentaSimulador(IdRueda, Simulador) / CantRestantes;
+                                double importe = ObtenerDisponibleParaOperar(Simulador) / CantRestantes;
 
                                 // Calcular la comision de Invertir Online
                                 double comisionIOL = importe * porcomisionIOL / 100;
@@ -723,7 +721,7 @@ namespace IOL
                                                                   $"Estado, PorcComisionIOL, ImporteComisionIOL, IdPanel) " +
                                                                   $"Values({IdRueda}, {IdRueda}, {Simulador}, " +
                                                                   $"str_to_date('{DateTime.Now}','%d/%m/%Y %H:%i:%s'),'{Simbolo}',{cantidadcomprada}, " +
-                                                                  $"{preciocompra},{Importe},{precioactual}," +
+                                                                  $"{preciocompra},{importe},{precioactual}," +
                                                                   $"str_to_date('{DateTime.Now}','%d/%m/%Y %H:%i:%s')," +
                                                                   $"'Comprado',{txtPorcComisionIOL.Text.Trim()},{comisionIOL},{IdPanel})";
                                         MySqlCommand comando = new MySqlCommand(sentencia, cone);
@@ -898,7 +896,7 @@ namespace IOL
                                 catch { porcomisionIOL = 0; }
 
                                 // Calcular el Importe total para comprar acciones incluyendo Comision
-                                double importe = ObtenerPorcVentaSimulador(IdRueda, Simulador) / CantRestantes;
+                                double importe = ObtenerDisponibleParaOperar(Simulador) / CantRestantes;
 
                                 // Calcular la comision de Invertir Online
                                 double comisionIOL = importe * porcomisionIOL / 100;
@@ -1515,15 +1513,8 @@ namespace IOL
                     coneRuedaFinalizada.Close();
                     if (regRuedaFinalizada == 1)
                     {
-                        // Almacenamos el cierre de la rueda
-                        using (MySqlConnection cone = new MySqlConnection(conexion))
-                        {
-                            sentencia = $"Update Ruedas Set Estado = 1 Where IdRueda = {txtIdRueda.Text.Trim()}";
-                            cone.Open();
-                            MySqlCommand comandoApertura = new MySqlCommand(sentencia, cone);
-                            comandoApertura.ExecuteNonQuery();
-                            cone.Close();
-                        }
+
+                        CerrarEstadoRueda(IdRueda);
 
                         // Borrar tabla de InformeDeSimuladores
                         using (MySqlConnection coneEliminar = new MySqlConnection(conexion))
@@ -1689,9 +1680,9 @@ namespace IOL
             foreach (DataGridViewRow fila in dgvAcciones.Rows)
             {
                 if (fila.Cells["Estado"].Value.ToString().Trim().ToUpper() == "COMPRADO")
-                    fila.DefaultCellStyle.BackColor = System.Drawing.Color.Green;
+                    fila.DefaultCellStyle.ForeColor = System.Drawing.Color.Green;
                 else
-                    fila.DefaultCellStyle.BackColor = System.Drawing.Color.Red;
+                    fila.DefaultCellStyle.ForeColor = System.Drawing.Color.Red;
             }
         }
 
@@ -1820,9 +1811,9 @@ namespace IOL
             return auxPorcCompra;
         }
 
-        private decimal ObtenerDisponibleParaOperar(int simulador)
+        private double ObtenerDisponibleParaOperar(int simulador)
         {
-            decimal disponible = 0;
+            double disponible = 0;
             using (MySqlConnection cone = new MySqlConnection(conexion))
             {
                 string sentencia = string.Format("Select * From TenenciaSimulador Where IdSimulacion = {0} Order By IdSimulacion", simulador);
@@ -1831,16 +1822,16 @@ namespace IOL
                 int nSimuladores = daSimulador.Fill(dsSimulador);
                 if (nSimuladores > 0)
                 {
-                    disponible = Convert.ToDecimal(dsSimulador.Rows[0]["DisponibleParaOperar"]);
+                    disponible = Convert.ToDouble(dsSimulador.Rows[0]["DisponibleParaOperar"]);
                 }
                 cone.Close();
             }
             return disponible;
         }
 
-        private decimal ObtenerActivosValorizados(int simulador)
+        private double ObtenerActivosValorizados(int simulador)
         {
-            decimal activos = 0;
+            double activos = 0;
             using (MySqlConnection cone = new MySqlConnection(conexion))
             {
                 string sentencia = string.Format("Select * From TenenciaSimulador Where IdSimulacion = {0} Order By IdSimulacion", simulador);
@@ -1849,15 +1840,15 @@ namespace IOL
                 int nSimuladores = daSimulador.Fill(dsSimulador);
                 if (nSimuladores > 0)
                 {
-                    activos = Convert.ToDecimal(dsSimulador.Rows[0]["ActivosValorizados"]);
+                    activos = Convert.ToDouble(dsSimulador.Rows[0]["ActivosValorizados"]);
                 }
                 cone.Close();
             }
             return activos;
         }
-        private decimal ObtenerTotalTenencia(int simulador)
+        private double ObtenerTotalTenencia(int simulador)
         {
-            decimal totaltenencia = 0;
+            double totaltenencia = 0;
             using (MySqlConnection cone = new MySqlConnection(conexion))
             {
                 string sentencia = string.Format("Select * From TenenciaSimulador Where IdSimulacion = {0} Order By IdSimulacion", simulador);
@@ -1866,7 +1857,7 @@ namespace IOL
                 int nSimuladores = daSimulador.Fill(dsSimulador);
                 if (nSimuladores > 0)
                 {
-                    totaltenencia = Convert.ToDecimal(dsSimulador.Rows[0]["TotalTenencia"]);
+                    totaltenencia = Convert.ToDouble(dsSimulador.Rows[0]["TotalTenencia"]);
                 }
                 cone.Close();
             }
@@ -1897,6 +1888,47 @@ namespace IOL
                 comando.CommandType = CommandType.Text;
                 comando.ExecuteNonQuery();
                 coneSimulador.Close();
+            }
+        }
+        private string ObtenerEstadoRueda(int rueda)
+        {
+            string estado = string.Empty;
+            using (MySqlConnection cone = new MySqlConnection(conexion))
+            {
+                string sentencia = string.Format("Select Estado From Ruedas Where IdRueda = {0} ", rueda);
+                MySqlDataAdapter daEstadoRueda = new MySqlDataAdapter(sentencia, cone);
+                DataTable dsEstadoRueda = new DataTable();
+                int nEstados = daEstadoRueda.Fill(dsEstadoRueda);
+                if (nEstados > 0)
+                {
+                    estado = Convert.ToString(dsEstadoRueda.Rows[0]["Estado"]);
+                }
+                cone.Close();
+            }
+            return estado;
+        }
+
+        private void CerrarEstadoRueda(int rueda)
+        {
+            using (MySqlConnection cone = new MySqlConnection(conexion))
+            {
+                string sentencia = $"Update Ruedas Set Estado = 'Cerrado' Where IdRueda = {rueda}";
+                cone.Open();
+                MySqlCommand comandoApertura = new MySqlCommand(sentencia, cone);
+                comandoApertura.ExecuteNonQuery();
+                cone.Close();
+            }
+        }
+
+        private void AbrirEstadoRueda(int rueda)
+        {
+            using (MySqlConnection cone = new MySqlConnection(conexion))
+            {
+                string sentencia = $"Update Ruedas Set Estado = 'Abierto' Where IdRueda = {rueda}";
+                cone.Open();
+                MySqlCommand comandoApertura = new MySqlCommand(sentencia, cone);
+                comandoApertura.ExecuteNonQuery();
+                cone.Close();
             }
         }
     }

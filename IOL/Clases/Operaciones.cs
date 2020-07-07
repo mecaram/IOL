@@ -37,7 +37,7 @@ namespace IOL
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "Información del Sistema", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+               // MessageBox.Show(ex.Message, "Información del Sistema", MessageBoxButtons.OK, MessageBoxIcon.Stop);
                 return null;
             }
         }
@@ -107,7 +107,7 @@ namespace IOL
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "Información del Sistema", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                //MessageBox.Show(ex.Message, "Información del Sistema", MessageBoxButtons.OK, MessageBoxIcon.Stop);
                 return null;
             }
         }
@@ -132,12 +132,12 @@ namespace IOL
                 for(int indice = 0; indice < jsonVector.Count; indice++)
                 {
                     dynamic registro = JObject.Parse(jsonVector[indice].ToString());
-                    MessageBox.Show(string.Format("Ultimo Precio:{0}{1}variacion:{2}", registro.ultimoPrecio, Environment.NewLine, registro.variacion));
+                  //  MessageBox.Show(string.Format("Ultimo Precio:{0}{1}variacion:{2}", registro.ultimoPrecio, Environment.NewLine, registro.variacion));
                 }
                 return true;
             }
             catch (Exception ex)            {
-                MessageBox.Show(ex.Message, "Información del Sistema", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                //MessageBox.Show(ex.Message, "Información del Sistema", MessageBoxButtons.OK, MessageBoxIcon.Stop);
                 return false;
             }
         }
