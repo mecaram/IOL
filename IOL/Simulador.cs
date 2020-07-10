@@ -1,16 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Configuration;
-using MySql.Data;
 using MySql.Data.MySqlClient;
 using System.Data;
-using DocumentFormat.OpenXml.Spreadsheet;
 
 namespace IOL
 {
@@ -18,8 +11,6 @@ namespace IOL
     {
         string conexion = ConfigurationManager.ConnectionStrings["conexion"].ToString();
         public int comitente = 0;  // Nro. de Comitente
-        bool comprar = false;  // Comprar establece si se puede seguir comprando
-        const int simulaciones = 11;
 
         Token permisoIOL = null; // Token para acceder a IOL
         public Simulador()
@@ -359,10 +350,6 @@ namespace IOL
                 // Verificamos que este en horario Bursatil
                 if (HoraActual >= 11 && HoraActual < 17)
                 {
-                    // La variable comprar nos indica si estamos en horario para comprar
-                    comprar = (HoraActual >= 16 && HoraActual < 17) ? false : true;
-                    comprar = true;  // OJO BORRAR
-
                     // Verificamos se realizo la apertura de la rueda
                     if (ObtenerEstadoRueda(idrueda).Trim().Length == 0)
                     {
@@ -636,7 +623,7 @@ namespace IOL
             }
             else // Ultima Operacion fue la venta de acciones o ninguna acción.
             {
-                if (comprar) // Si esta en horario de compra de acciones
+                if (SeguirComprando(Convert.ToInt32(txtIdRueda.Text)))  // Si esta en horario de compra de acciones
                 {
                     // Calcular
                     // =+SI(PROMEDIO(Ultimos tres precios)-(PROMEDIO(Ultimos tres precios)* SimuladorCompra%) > PrecioActual;"COMPRA";"NEUTRO")
@@ -837,7 +824,7 @@ namespace IOL
             }
             else // Ultima Operacion fue la venta de acciones o ninguna acción.
             {
-                if (comprar) // Si esta en horario de compra de acciones
+                if (SeguirComprando(IdRueda)) // Si esta en horario de compra de acciones
                 {
                     // Calcular
                     // SI PrecioActual > (PrecioAnterior + (PrecioAnterior * 0.05%)) Y (PrecioActual < PrecioAnterior) Entonces COMPRAR
@@ -1506,7 +1493,7 @@ namespace IOL
                 if (MessageBox.Show("Desea Realizar el Cierre de la Rueda", "Pregunta del Sistema", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) == DialogResult.Yes)
                 {
                     MySqlConnection coneRuedaFinalizada = new MySqlConnection(conexion);
-                    string sentencia = string.Format("Select * From Ruedas Where IdRueda = {0} And Estado = 0", txtIdRueda.Text.Trim());
+                    string sentencia = string.Format("Select * From Ruedas Where IdRueda = {0} And Estado = 'Abierto'", txtIdRueda.Text.Trim());
                     MySqlDataAdapter daRuedaFinalizada = new MySqlDataAdapter(sentencia, coneRuedaFinalizada);
                     DataTable dsRuedaFinalizada = new DataTable();
                     int regRuedaFinalizada = daRuedaFinalizada.Fill(dsRuedaFinalizada);
@@ -1516,70 +1503,45 @@ namespace IOL
 
                         CerrarEstadoRueda(IdRueda);
 
-                        // Borrar tabla de InformeDeSimuladores
-                        using (MySqlConnection coneEliminar = new MySqlConnection(conexion))
+                        // Agrego el Informe Final
+                        sentencia = "InformeFinalAgregar";
+                        using (MySqlConnection coneAcciones = new MySqlConnection(conexion))
                         {
-                            sentencia = "Delete From InformeFinal";
-                            coneEliminar.Open();
-                            MySqlCommand comando = new MySqlCommand(sentencia, coneEliminar);
-                            comando.CommandType = CommandType.Text;
-                            comando.ExecuteNonQuery();
-                            coneEliminar.Close();
+                            coneAcciones.Open();
+                            var comandoAcciones = new MySqlCommand(sentencia, coneAcciones);
+                            comandoAcciones.CommandType = CommandType.StoredProcedure;
+                            comandoAcciones.Parameters.AddWithValue("Rueda", IdRueda);
+                            comandoAcciones.ExecuteNonQuery();
+                            coneAcciones.Close();
                         }
 
-                        // Cargo todas las acciones
-                        sentencia = string.Format("Select Simbolo From Acciones Order By Simbolo");
-                        MySqlConnection coneAcciones = new MySqlConnection(conexion);
-                        MySqlDataAdapter daAcciones = new MySqlDataAdapter(sentencia, coneAcciones);
-                        DataTable dsAcciones = new DataTable();
-                        daAcciones.Fill(dsAcciones);
-
-                        if (dsAcciones.Rows.Count > 0)
+                        using (MySqlConnection coneMostrarRuedas = new MySqlConnection(conexion))
                         {
-                            foreach (DataRow fila in dsAcciones.Rows)
+                            sentencia = "Select IdRueda From Ruedas Order IdRueda Desc";
+                            MySqlDataAdapter daMostrarRuedas = new MySqlDataAdapter(sentencia, coneMostrarRuedas);
+                            DataTable dsMostrarRuedas = new DataTable();
+                            int regUltimasRuedas = daMostrarRuedas.Fill(dsMostrarRuedas);
+                            coneMostrarRuedas.Close();
+                            if (regUltimasRuedas > 5)
                             {
-                                string simbolo = fila["Simbolo"].ToString();
-
-                                using (MySqlConnection coneActualizar = new MySqlConnection(conexion))
+                                for (int x = 5; x < dsMostrarRuedas.Rows.Count; x++)
                                 {
-                                    sentencia = $"Insert Into InformeFinal (Simbolo, IdRueda) Values('{simbolo}',{txtIdRueda.Text.Trim()})";
-                                    coneActualizar.Open();
-                                    MySqlCommand comando = new MySqlCommand(sentencia, coneActualizar);
-                                    comando.CommandType = CommandType.Text;
-                                    comando.ExecuteNonQuery();
-                                    coneActualizar.Close();
+                                    DataRow fila = dsMostrarRuedas.Rows[x];
+                                    // Eliminar Ruedas
+                                    sentencia = "EliminarRuedas";
+                                    using (MySqlConnection coneEliminarRuedas = new MySqlConnection(conexion))
+                                    {
+                                        coneEliminarRuedas.Open();
+                                        var comandoEliminarRuedas = new MySqlCommand(sentencia, coneEliminarRuedas);
+                                        comandoEliminarRuedas.CommandType = CommandType.StoredProcedure;
+                                        comandoEliminarRuedas.Parameters.AddWithValue("Rueda", Convert.ToInt32(fila["IdRueda"]));
+                                        comandoEliminarRuedas.ExecuteNonQuery();
+                                        coneEliminarRuedas.Close();
+                                    }
                                 }
                             }
+                            MessageBox.Show("Rueda cerrada Exitosamente", "Información del Sistema", MessageBoxButtons.OK, MessageBoxIcon.Information);
                         }
-
-                        // Cargo toda la info de la rueda
-                        sentencia = $"Select * From RuedasDetalleSimulador Where IdRuedaActual = {txtIdRueda.Text.Trim()} And Estado = 'Vendido'";
-                        MySqlConnection coneRuedas = new MySqlConnection(conexion);
-                        MySqlDataAdapter daRuedas = new MySqlDataAdapter(sentencia, coneRuedas);
-                        DataTable dsRuedas = new DataTable();
-                        daRuedas.Fill(dsRuedas);
-
-                        if (dsRuedas.Rows.Count > 0)
-                        {
-                            foreach (DataRow fila in dsRuedas.Rows)
-                            {
-                                string simbolo = fila["Simbolo"].ToString();
-                                int simulador = Convert.ToInt16(fila["IdSimulacion"]);
-                                decimal variacion = Convert.ToDecimal(fila["VariacionEnPorcentajes"]);
-
-                                using (MySqlConnection coneActualizar = new MySqlConnection(conexion))
-                                {
-                                    sentencia = $"Update InformeFinal Set Variacion{simulador}Diaria = Variacion{simulador}Diaria + {variacion} " +
-                                        $" Where IdRueda = {txtIdRueda.Text.Trim()} And Simbolo = '{simbolo}'";
-                                    coneActualizar.Open();
-                                    MySqlCommand comando = new MySqlCommand(sentencia, coneActualizar);
-                                    comando.CommandType = CommandType.Text;
-                                    comando.ExecuteNonQuery();
-                                    coneActualizar.Close();
-                                }
-                            }
-                        }
-                        MessageBox.Show("Rueda cerrada Exitosamente", "Información del Sistema", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
                 }
             }
@@ -1912,7 +1874,7 @@ namespace IOL
         {
             using (MySqlConnection cone = new MySqlConnection(conexion))
             {
-                string sentencia = $"Update Ruedas Set Estado = 'Cerrado' Where IdRueda = {rueda}";
+                string sentencia = $"Update Ruedas Set Estado = 'Finalizado' Where IdRueda = {rueda}";
                 cone.Open();
                 MySqlCommand comandoApertura = new MySqlCommand(sentencia, cone);
                 comandoApertura.ExecuteNonQuery();
@@ -1930,6 +1892,27 @@ namespace IOL
                 comandoApertura.ExecuteNonQuery();
                 cone.Close();
             }
+        }
+        private bool SeguirComprando(int rueda)
+        {
+            int horaActual = DateTime.Now.Hour;
+            int horaHasta = 17;
+            bool comprar = false;
+
+            using (MySqlConnection cone = new MySqlConnection(conexion))
+            {
+                string sentencia = string.Format("Select ComprarHasta From Ruedas Where IdRueda = {0} ", rueda);
+                MySqlDataAdapter daComprar = new MySqlDataAdapter(sentencia, cone);
+                DataTable dsComprar = new DataTable();
+                int nEstados = daComprar.Fill(dsComprar);
+                if (nEstados > 0)
+                {
+                    horaHasta = Convert.ToInt32(dsComprar.Rows[0]["ComprarHasta"]);
+                    comprar = horaActual >= 11 && horaActual < horaHasta;
+                }
+                cone.Close();
+            }
+            return comprar;
         }
     }
 }
