@@ -4,6 +4,7 @@ using System.Windows.Forms;
 using System.Configuration;
 using MySql.Data.MySqlClient;
 using System.Data;
+using System.Linq;
 
 namespace IOL
 {
@@ -1503,7 +1504,7 @@ namespace IOL
 
                         CerrarEstadoRueda(IdRueda);
 
-                        // Agrego el Informe Final
+                        // Agregar Informe Final
                         sentencia = "InformeFinalAgregar";
                         using (MySqlConnection coneAcciones = new MySqlConnection(conexion))
                         {
@@ -1515,6 +1516,7 @@ namespace IOL
                             coneAcciones.Close();
                         }
 
+                        // Eliminar Ruedas
                         using (MySqlConnection coneMostrarRuedas = new MySqlConnection(conexion))
                         {
                             sentencia = "Select IdRueda From Ruedas Order IdRueda Desc";
@@ -1527,7 +1529,6 @@ namespace IOL
                                 for (int x = 5; x < dsMostrarRuedas.Rows.Count; x++)
                                 {
                                     DataRow fila = dsMostrarRuedas.Rows[x];
-                                    // Eliminar Ruedas
                                     sentencia = "EliminarRuedas";
                                     using (MySqlConnection coneEliminarRuedas = new MySqlConnection(conexion))
                                     {
@@ -1540,7 +1541,48 @@ namespace IOL
                                     }
                                 }
                             }
-                            MessageBox.Show("Rueda cerrada Exitosamente", "Información del Sistema", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                            // Cerrar Informe Final
+                            using (MySqlConnection coneMostrarInforme = new MySqlConnection(conexion))
+                            {
+                                sentencia = $"Select IdRueda, Variacion1Diaria, Variacion2Diaria, Variacion3Diaria," +
+                                    $" Variacion4Diaria,Variacion5Diaria,Variacion6Diaria," +
+                                    $"Variacion7Diaria,Variacion8Diaria,Variacion9Diaria," +
+                                    $"Variacion10Diaria, Simbolo From InformeFinal Where IdRueda = {IdRueda}";
+                                MySqlDataAdapter daMostrarInforme = new MySqlDataAdapter(sentencia, coneMostrarInforme);
+                                DataTable dsMostrarInforme = new DataTable();
+                                int regInformes = daMostrarInforme.Fill(dsMostrarInforme);
+                                coneMostrarInforme.Close();
+                                foreach (DataRow fila in dsMostrarInforme.Rows)
+                                {
+                                    string simbolo = fila["Simbolo"].ToString();
+
+                                    decimal[] Variacion = { 0 , (decimal)fila[1], (decimal)fila[2], (decimal)fila[3],
+                                                                (decimal)fila[4],(decimal)fila[5],(decimal)fila[6],
+                                                                (decimal)fila[7],(decimal)fila[7],(decimal)fila[9],(decimal)fila[10]};
+                                    decimal maxVariacion = Variacion[1];
+                                    int maxSimulador = 1;
+                                    for (int x = 2; x < Variacion.Length; x++)
+                                    {
+                                        if (Variacion[x] > maxVariacion)
+                                        {
+                                            maxVariacion = Variacion[x];
+                                            maxSimulador = x;
+                                        }
+                                    }
+
+                                    sentencia = $"Update InformeFinal Set MejorVariacionDiaria = {maxVariacion}, MejorVariacionDiariaSimulador = {maxSimulador} " +
+                                                $" Where IdRueda = {IdRueda} And Simbolo = '{simbolo}'";
+                                    using (MySqlConnection coneCerrarInformeFinal = new MySqlConnection(conexion))
+                                    {
+                                        coneCerrarInformeFinal.Open();
+                                        var comandoCerrarInformeFinal = new MySqlCommand(sentencia, coneCerrarInformeFinal);
+                                        comandoCerrarInformeFinal.ExecuteNonQuery();
+                                        coneCerrarInformeFinal.Close();
+                                    }
+                                }
+                                MessageBox.Show("Rueda cerrada Exitosamente", "Información del Sistema", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            }
                         }
                     }
                 }
