@@ -1056,7 +1056,6 @@ namespace IOL
             ValidacionNumerica(e);
         }
 
-
         private void txtPorcCompra1_Leave(object sender, EventArgs e)
         {
             FormatoPorcentaje(sender);
@@ -1579,6 +1578,45 @@ namespace IOL
                                         var comandoCerrarInformeFinal = new MySqlCommand(sentencia, coneCerrarInformeFinal);
                                         comandoCerrarInformeFinal.ExecuteNonQuery();
                                         coneCerrarInformeFinal.Close();
+                                    }
+                                }
+
+                                // Cerrar Informe Final
+                                using (MySqlConnection coneCerrarInforme = new MySqlConnection(conexion))
+                                {
+                                    sentencia = "Select* From" +
+                                                " (Select simbolo," +
+                                                " MejorVariacionDiariaSimulador as Simulador," +
+                                                " ROW_NUMBER() Over(Partition By Simbolo Order By MejorVariacionDiariaSimulador desc) as orden," +
+                                                " Count(MejorVariacionDiariaSimulador) as MejorVariacionSemanalSimulador," +
+                                                " Sum(MejorVariacionDiaria) / Count(MejorVariacionDiariaSimulador) as MejorVariacionSimuladorPromedio" +
+                                                " From bdiol.informefinal" +
+                                                " group by Simbolo, MejorVariacionDiariaSimulador) T1" +
+                                                " Where orden = 1";
+
+                                    MySqlDataAdapter daCerrarInforme = new MySqlDataAdapter(sentencia, coneCerrarInforme);
+                                    DataTable dsCerrarInforme = new DataTable();
+                                    int regCerrarInformes = daCerrarInforme.Fill(dsCerrarInforme);
+                                    coneCerrarInforme.Close();
+
+                                    if (regCerrarInformes > 0)
+                                    {
+                                        foreach (DataRow fila in dsCerrarInforme.Rows)
+                                        {
+                                            string simbolo = fila["Simbolo"].ToString().Trim();
+                                            int simulacion = Convert.ToInt32(fila["Simulador"]);
+                                            decimal variacion = Convert.ToInt32(fila["MejorVariacionSemanalSimulador"]);
+
+                                            sentencia = $"Update InformeFinal Set MejorVariacionSemanal = {variacion}, MejorVariacionSemanalSimulador = {simulacion} " +
+                                                        $" Where IdRueda = {IdRueda} And Simbolo = '{simbolo}'";
+                                            using (MySqlConnection coneCerrar = new MySqlConnection(conexion))
+                                            {
+                                                coneCerrar.Open();
+                                                var comandoCerrarInformeFinal = new MySqlCommand(sentencia, coneCerrar);
+                                                comandoCerrarInformeFinal.ExecuteNonQuery();
+                                                coneCerrar.Close();
+                                            }
+                                        }
                                     }
                                 }
                                 MessageBox.Show("Rueda cerrada Exitosamente", "Información del Sistema", MessageBoxButtons.OK, MessageBoxIcon.Information);
