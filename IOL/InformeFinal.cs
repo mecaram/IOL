@@ -96,7 +96,7 @@ namespace IOL
                     dgvSimuladores.Columns["Variacion10Diaria"].HeaderText = "VarD10";
                     dgvSimuladores.Columns["MejorVariacionDiaria"].HeaderText = "VarMD";
                     dgvSimuladores.Columns["MejorVariacionDiariaSimulador"].HeaderText = "VarMD#";
-                    dgvSimuladores.Columns["VariacionSemanal"].HeaderText = "VarMS";
+                    dgvSimuladores.Columns["MejorVariacionSemanal"].HeaderText = "VarMS";
                     dgvSimuladores.Columns["MejorVariacionSemanalSimulador"].HeaderText = "VarMS#";
 
                     dgvSimuladores.Columns["Variacion1Diaria"].Width = 100;
@@ -111,7 +111,7 @@ namespace IOL
                     dgvSimuladores.Columns["Variacion10Diaria"].Width = 100;
                     dgvSimuladores.Columns["MejorVariacionDiaria"].Width = 100;
                     dgvSimuladores.Columns["MejorVariacionDiariaSimulador"].Width = 100;
-                    dgvSimuladores.Columns["VariacionSemanal"].Width = 100;
+                    dgvSimuladores.Columns["MejorVariacionSemanal"].Width = 100;
                     dgvSimuladores.Columns["MejorVariacionSemanalSimulador"].Width = 100;
 
                     dgvSimuladores.Columns["Variacion1Diaria"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
@@ -126,7 +126,7 @@ namespace IOL
                     dgvSimuladores.Columns["Variacion10Diaria"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
                     dgvSimuladores.Columns["MejorVariacionDiaria"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
                     dgvSimuladores.Columns["MejorVariacionDiariaSimulador"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
-                    dgvSimuladores.Columns["VariacionSemanal"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                    dgvSimuladores.Columns["MejorVariacionSemanal"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
                     dgvSimuladores.Columns["MejorVariacionSemanalSimulador"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
 
                     dgvSimuladores.Columns["Variacion1Diaria"].DefaultCellStyle.Format = "#00.00 %";
@@ -141,7 +141,7 @@ namespace IOL
                     dgvSimuladores.Columns["Variacion10Diaria"].DefaultCellStyle.Format = "#00.00 %";
                     dgvSimuladores.Columns["MejorVariacionDiaria"].DefaultCellStyle.Format = "#00.00 %";
                     dgvSimuladores.Columns["MejorVariacionDiariaSimulador"].DefaultCellStyle.Format = "#00.00 %";
-                    dgvSimuladores.Columns["VariacionSemanal"].DefaultCellStyle.Format = "#00.00 %";
+                    dgvSimuladores.Columns["MejorVariacionSemanal"].DefaultCellStyle.Format = "#00.00 %";
                     dgvSimuladores.Columns["MejorVariacionSemanalSimulador"].DefaultCellStyle.Format = "00";
 
                     dgvSimuladores.Columns["Variacion1Diaria"].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
@@ -156,7 +156,7 @@ namespace IOL
                     dgvSimuladores.Columns["Variacion10Diaria"].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
                     dgvSimuladores.Columns["MejorVariacionDiaria"].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
                     dgvSimuladores.Columns["MejorVariacionDiariaSimulador"].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
-                    dgvSimuladores.Columns["VariacionSemanal"].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                    dgvSimuladores.Columns["MejorVariacionSemanal"].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
                     dgvSimuladores.Columns["MejorVariacionSemanalSimulador"].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
 
 

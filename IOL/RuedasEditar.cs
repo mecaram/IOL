@@ -728,7 +728,7 @@ namespace IOL
                                                 $"PorcCompra8, PorcVenta8, PorcCompra9, PorcVenta9," +
                                                 $"PorcCompra10, PorcVenta10," +
                                                 $"CantAcciones, PorcPuntaCompradora, PorcPuntaVendedora, ComprarHasta, Comitente)" +
-                                                $" Values(str_to_date('{fecha.Value}','%d/%m/%Y %H:%i:%s'),{diarueda},{saldoaretirar},'Cerrado'," +
+                                                $" Values(str_to_date('{fecha.Value}','%d/%m/%Y %H:%i:%s'),{diarueda},{saldoaretirar},''," +
                                                 $"{porccomisionIOL},{operar},{porccompra},{porcventa},{porccompra1},{porcventa1}," +
                                                 $"{porccompra2},{porcventa2},{porccompra3},{porcventa3}," +
                                                 $"{porccompra4},{porcventa4},{porccompra5},{porcventa5}," +

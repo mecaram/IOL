@@ -354,18 +354,6 @@ namespace IOL
                     // Verificamos se realizo la apertura de la rueda
                     if (ObtenerEstadoRueda(idrueda).Trim().Length == 0)
                     {
-                        AbrirEstadoRueda(Convert.ToInt32(txtIdRueda.Text.Trim()));
-                        txtEstado.Text = ObtenerEstadoRueda(idrueda);
-
-                        // Almacenamos la apertura de la rueda
-                        using (MySqlConnection cone = new MySqlConnection(conexion))
-                        {
-                            sentencia = $"Update Ruedas Set Estado = 'Abierto' Where Ruedas.IdRueda = {idrueda}";
-                            cone.Open();
-                            MySqlCommand comandoApertura = new MySqlCommand(sentencia, cone);
-                            comandoApertura.ExecuteNonQuery();
-                            cone.Close();
-                        }
 
                         // Almacenamos todas las acciones compradas de la rueda del dia anterior
                         // a la rueda actual
@@ -379,6 +367,9 @@ namespace IOL
                             coneAperturaRueda.Close();
                         }
                     }
+
+                    AbrirEstadoRueda(idrueda);
+                    txtEstado.Text = ObtenerEstadoRueda(idrueda);
 
                     // Obtengo el Panel Principal de Acciones con las correspondientes puntas
                     // y las almaceno en un vector de paneles
@@ -1515,10 +1506,44 @@ namespace IOL
                             coneAcciones.Close();
                         }
 
+                        // Calcular Variacion diaria
+                        MySqlConnection coneVariacionDiaria = new MySqlConnection(conexion);
+                        sentencia = string.Format("Select * From InformeFinal Where IdRueda = {0}", txtIdRueda.Text.Trim());
+                        MySqlDataAdapter daVariacionDiaria = new MySqlDataAdapter(sentencia, coneVariacionDiaria);
+                        DataTable dsVariacionDiaria = new DataTable();
+                        int regVariacionDiaria = daVariacionDiaria.Fill(dsVariacionDiaria);
+                        coneVariacionDiaria.Close();
+                        if (regVariacionDiaria > 1)
+                        {
+                            foreach (DataRow filaInforme in dsVariacionDiaria.Rows)
+                            {
+                                for (int sim = 1; sim < 11; sim++)
+                                {
+                                    sentencia = $"Update InformeFinal Set Variacion{sim}Diaria = (Select Sum(variacionenporcentajes) " +
+                                                $" From RuedasDetalleSimulador " +
+                                                $" Where RuedasDetalleSimulador.IdRuedaVenta = {Convert.ToInt32(filaInforme["IdRueda"])} " +
+                                                $" And RuedasDetalleSimulador.Simbolo = '{filaInforme["Simbolo"].ToString()}'" +
+                                                $" And RuedasDetalleSimulador.IdRuedaVenta = {Convert.ToInt32(filaInforme["IdRueda"])} " +
+                                                $" And RuedasDetalleSimulador.Estado = 'Vendido' " +
+                                                $" And RuedasDetalleSimulador.IdSimulacion = {sim}) " +
+                                                $" Where InformeFinal.IdRueda = {Convert.ToInt32(filaInforme["IdRueda"])} And InformeFinal.Simbolo = '{filaInforme["Simbolo"].ToString()}'";
+
+                                    using (MySqlConnection coneActualizarInforme = new MySqlConnection(conexion))
+                                    {
+                                        coneActualizarInforme.Open();
+                                        var comandoActualizarInforme = new MySqlCommand(sentencia, coneActualizarInforme);
+                                        comandoActualizarInforme.CommandType = CommandType.Text;
+                                        comandoActualizarInforme.ExecuteNonQuery();
+                                        coneActualizarInforme.Close();
+                                    }
+                                }
+                            }
+                        }
+                        //
                         // Eliminar Ruedas
                         using (MySqlConnection coneMostrarRuedas = new MySqlConnection(conexion))
                         {
-                            sentencia = "Select IdRueda From Ruedas Order IdRueda Desc";
+                            sentencia = "Select IdRueda From Ruedas Order By IdRueda Desc";
                             MySqlDataAdapter daMostrarRuedas = new MySqlDataAdapter(sentencia, coneMostrarRuedas);
                             DataTable dsMostrarRuedas = new DataTable();
                             int regUltimasRuedas = daMostrarRuedas.Fill(dsMostrarRuedas);
@@ -1555,10 +1580,50 @@ namespace IOL
                                 foreach (DataRow fila in dsMostrarInforme.Rows)
                                 {
                                     string simbolo = fila["Simbolo"].ToString();
+                                    
+                                    decimal var1;
+                                    try { var1 = Convert.ToDecimal(fila[1]);}
+                                    catch { var1 = 0; }
 
-                                    decimal[] Variacion = { 0 , (decimal)fila[1], (decimal)fila[2], (decimal)fila[3],
-                                                                (decimal)fila[4],(decimal)fila[5],(decimal)fila[6],
-                                                                (decimal)fila[7],(decimal)fila[7],(decimal)fila[9],(decimal)fila[10]};
+                                    decimal var2;
+                                    try { var2 = Convert.ToDecimal(fila[2]); }
+                                    catch { var2 = 0; }
+
+                                    decimal var3;
+                                    try { var3 = Convert.ToDecimal(fila[3]); }
+                                    catch { var3 = 0; }
+
+                                    decimal var4;
+                                    try { var4 = Convert.ToDecimal(fila[4]); }
+                                    catch { var4 = 0; }
+
+                                    decimal var5;
+                                    try { var5 = Convert.ToDecimal(fila[5]); }
+                                    catch { var5 = 0; }
+
+                                    decimal var6;
+                                    try { var6 = Convert.ToDecimal(fila[6]); }
+                                    catch { var6 = 0; }
+
+                                    decimal var7;
+                                    try { var7 = Convert.ToDecimal(fila[7]); }
+                                    catch { var7 = 0; }
+
+                                    decimal var8;
+                                    try { var8 = Convert.ToDecimal(fila[8]); }
+                                    catch { var8 = 0; }
+
+                                    decimal var9;
+                                    try { var9 = Convert.ToDecimal(fila[9]); }
+                                    catch { var9 = 0; }
+
+                                    decimal var10;
+                                    try { var10 = Convert.ToDecimal(fila[10]); }
+                                    catch { var10 = 0; }
+
+                                    decimal[] Variacion = { 0 , var1, var2, var3,
+                                                                var4, var5, var6,
+                                                                var7, var8, var9, var10 };
                                     decimal maxVariacion = Variacion[1];
                                     int maxSimulador = 1;
                                     for (int x = 2; x < Variacion.Length; x++)
@@ -1620,6 +1685,7 @@ namespace IOL
                                     }
                                 }
                                 MessageBox.Show("Rueda cerrada Exitosamente", "Información del Sistema", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                                Close();
                             }
                         }
                     }
