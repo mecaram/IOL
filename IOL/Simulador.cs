@@ -724,7 +724,7 @@ namespace IOL
 
             int iddetalle = 0;
             string ultimaoperacion = string.Empty;
-            double PrecioCompra = 0, CantidadVendida = 0, Importe = 0;
+            double PrecioCompra = PrecioActualCompra, CantidadVendida = 0, Importe = 0;
 
             double precioanterior = 0, precioanteriorA = 0, precioanteriorAA = 0, resultado1 = 0, resultado2 = 0, resultado3 = 0;
             double precioactual = 0;
@@ -769,9 +769,9 @@ namespace IOL
                     try { precioanteriorAA = Convert.ToDouble(dsUltimosPreciosVenta.Rows[0]["Precio"]); }
                     catch { precioanteriorAA = 0; }
 
-                    resultado1 = PrecioCompra + (PrecioCompra * .0007);
-                    resultado2 = precioanterior - (precioanterior * ObtenerPorcCompraSimulador(IdRueda, Simulador) / 100);
-                    resultado3 = precioanteriorA - (precioanteriorA * ObtenerPorcCompraSimulador(IdRueda, Simulador) / 100);
+                    resultado1 = PrecioCompra + (PrecioCompra * .007);
+                    resultado2 = precioanterior - (precioanterior * ObtenerPorcVentaSimulador(IdRueda, Simulador) / 100);
+                    resultado3 = precioanteriorA - (precioanteriorA * ObtenerPorcVentaSimulador(IdRueda, Simulador) / 100);
 
                     bool lvender1 = precioactual > resultado1 && precioactual < resultado2 && precioanterior > precioanteriorA;
                     bool lvender2 = precioactual > resultado1 && precioactual < resultado3 && precioanteriorA > precioanteriorAA;
