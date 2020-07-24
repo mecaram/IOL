@@ -1220,55 +1220,55 @@
             // 
             // txtTotalAccionesCompradas
             // 
-            this.txtTotalAccionesCompradas.Enabled = false;
             this.txtTotalAccionesCompradas.Font = new System.Drawing.Font("Times New Roman", 14.25F, System.Drawing.FontStyle.Bold);
             this.txtTotalAccionesCompradas.ForeColor = System.Drawing.Color.Green;
             this.txtTotalAccionesCompradas.Location = new System.Drawing.Point(461, 431);
             this.txtTotalAccionesCompradas.Name = "txtTotalAccionesCompradas";
+            this.txtTotalAccionesCompradas.ReadOnly = true;
             this.txtTotalAccionesCompradas.Size = new System.Drawing.Size(83, 29);
             this.txtTotalAccionesCompradas.TabIndex = 197;
             this.txtTotalAccionesCompradas.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // txtTotalCantidadCompradas
             // 
-            this.txtTotalCantidadCompradas.Enabled = false;
             this.txtTotalCantidadCompradas.Font = new System.Drawing.Font("Times New Roman", 14.25F, System.Drawing.FontStyle.Bold);
             this.txtTotalCantidadCompradas.ForeColor = System.Drawing.Color.Green;
             this.txtTotalCantidadCompradas.Location = new System.Drawing.Point(547, 431);
             this.txtTotalCantidadCompradas.Name = "txtTotalCantidadCompradas";
+            this.txtTotalCantidadCompradas.ReadOnly = true;
             this.txtTotalCantidadCompradas.Size = new System.Drawing.Size(83, 29);
             this.txtTotalCantidadCompradas.TabIndex = 198;
             this.txtTotalCantidadCompradas.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // txtTotalImporteCompra
             // 
-            this.txtTotalImporteCompra.Enabled = false;
             this.txtTotalImporteCompra.Font = new System.Drawing.Font("Times New Roman", 14.25F, System.Drawing.FontStyle.Bold);
             this.txtTotalImporteCompra.ForeColor = System.Drawing.Color.Green;
             this.txtTotalImporteCompra.Location = new System.Drawing.Point(746, 431);
             this.txtTotalImporteCompra.Name = "txtTotalImporteCompra";
+            this.txtTotalImporteCompra.ReadOnly = true;
             this.txtTotalImporteCompra.Size = new System.Drawing.Size(110, 29);
             this.txtTotalImporteCompra.TabIndex = 199;
             this.txtTotalImporteCompra.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // txtTotalVariacionEnPesosComp
             // 
-            this.txtTotalVariacionEnPesosComp.Enabled = false;
             this.txtTotalVariacionEnPesosComp.Font = new System.Drawing.Font("Times New Roman", 14.25F, System.Drawing.FontStyle.Bold);
             this.txtTotalVariacionEnPesosComp.ForeColor = System.Drawing.Color.Green;
             this.txtTotalVariacionEnPesosComp.Location = new System.Drawing.Point(859, 431);
             this.txtTotalVariacionEnPesosComp.Name = "txtTotalVariacionEnPesosComp";
+            this.txtTotalVariacionEnPesosComp.ReadOnly = true;
             this.txtTotalVariacionEnPesosComp.Size = new System.Drawing.Size(110, 29);
             this.txtTotalVariacionEnPesosComp.TabIndex = 200;
             this.txtTotalVariacionEnPesosComp.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // txtTotalVariacionEnPorcentajesCompra
             // 
-            this.txtTotalVariacionEnPorcentajesCompra.Enabled = false;
             this.txtTotalVariacionEnPorcentajesCompra.Font = new System.Drawing.Font("Times New Roman", 14.25F, System.Drawing.FontStyle.Bold);
             this.txtTotalVariacionEnPorcentajesCompra.ForeColor = System.Drawing.Color.Green;
             this.txtTotalVariacionEnPorcentajesCompra.Location = new System.Drawing.Point(972, 431);
             this.txtTotalVariacionEnPorcentajesCompra.Name = "txtTotalVariacionEnPorcentajesCompra";
+            this.txtTotalVariacionEnPorcentajesCompra.ReadOnly = true;
             this.txtTotalVariacionEnPorcentajesCompra.Size = new System.Drawing.Size(110, 29);
             this.txtTotalVariacionEnPorcentajesCompra.TabIndex = 201;
             this.txtTotalVariacionEnPorcentajesCompra.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
@@ -1354,77 +1354,77 @@
             // 
             // txtImporteComisionCompradas
             // 
-            this.txtImporteComisionCompradas.Enabled = false;
             this.txtImporteComisionCompradas.Font = new System.Drawing.Font("Times New Roman", 14.25F, System.Drawing.FontStyle.Bold);
             this.txtImporteComisionCompradas.ForeColor = System.Drawing.Color.Green;
             this.txtImporteComisionCompradas.Location = new System.Drawing.Point(633, 431);
             this.txtImporteComisionCompradas.Name = "txtImporteComisionCompradas";
+            this.txtImporteComisionCompradas.ReadOnly = true;
             this.txtImporteComisionCompradas.Size = new System.Drawing.Size(110, 29);
             this.txtImporteComisionCompradas.TabIndex = 207;
             this.txtImporteComisionCompradas.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // txtImporteComisionVendidas
             // 
-            this.txtImporteComisionVendidas.Enabled = false;
             this.txtImporteComisionVendidas.Font = new System.Drawing.Font("Times New Roman", 14.25F, System.Drawing.FontStyle.Bold);
             this.txtImporteComisionVendidas.ForeColor = System.Drawing.Color.Red;
             this.txtImporteComisionVendidas.Location = new System.Drawing.Point(633, 462);
             this.txtImporteComisionVendidas.Name = "txtImporteComisionVendidas";
+            this.txtImporteComisionVendidas.ReadOnly = true;
             this.txtImporteComisionVendidas.Size = new System.Drawing.Size(110, 29);
             this.txtImporteComisionVendidas.TabIndex = 214;
             this.txtImporteComisionVendidas.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // txtTotalVariacionEnPorcentajesVenta
             // 
-            this.txtTotalVariacionEnPorcentajesVenta.Enabled = false;
             this.txtTotalVariacionEnPorcentajesVenta.Font = new System.Drawing.Font("Times New Roman", 14.25F, System.Drawing.FontStyle.Bold);
             this.txtTotalVariacionEnPorcentajesVenta.ForeColor = System.Drawing.Color.Red;
             this.txtTotalVariacionEnPorcentajesVenta.Location = new System.Drawing.Point(972, 462);
             this.txtTotalVariacionEnPorcentajesVenta.Name = "txtTotalVariacionEnPorcentajesVenta";
+            this.txtTotalVariacionEnPorcentajesVenta.ReadOnly = true;
             this.txtTotalVariacionEnPorcentajesVenta.Size = new System.Drawing.Size(110, 29);
             this.txtTotalVariacionEnPorcentajesVenta.TabIndex = 213;
             this.txtTotalVariacionEnPorcentajesVenta.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // txtTotalVariacionEnPesosVent
             // 
-            this.txtTotalVariacionEnPesosVent.Enabled = false;
             this.txtTotalVariacionEnPesosVent.Font = new System.Drawing.Font("Times New Roman", 14.25F, System.Drawing.FontStyle.Bold);
             this.txtTotalVariacionEnPesosVent.ForeColor = System.Drawing.Color.Red;
             this.txtTotalVariacionEnPesosVent.Location = new System.Drawing.Point(859, 462);
             this.txtTotalVariacionEnPesosVent.Name = "txtTotalVariacionEnPesosVent";
+            this.txtTotalVariacionEnPesosVent.ReadOnly = true;
             this.txtTotalVariacionEnPesosVent.Size = new System.Drawing.Size(110, 29);
             this.txtTotalVariacionEnPesosVent.TabIndex = 212;
             this.txtTotalVariacionEnPesosVent.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // txtTotalImporteVenta
             // 
-            this.txtTotalImporteVenta.Enabled = false;
             this.txtTotalImporteVenta.Font = new System.Drawing.Font("Times New Roman", 14.25F, System.Drawing.FontStyle.Bold);
             this.txtTotalImporteVenta.ForeColor = System.Drawing.Color.Red;
             this.txtTotalImporteVenta.Location = new System.Drawing.Point(746, 462);
             this.txtTotalImporteVenta.Name = "txtTotalImporteVenta";
+            this.txtTotalImporteVenta.ReadOnly = true;
             this.txtTotalImporteVenta.Size = new System.Drawing.Size(110, 29);
             this.txtTotalImporteVenta.TabIndex = 211;
             this.txtTotalImporteVenta.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // txtTotalCantidadVendidas
             // 
-            this.txtTotalCantidadVendidas.Enabled = false;
             this.txtTotalCantidadVendidas.Font = new System.Drawing.Font("Times New Roman", 14.25F, System.Drawing.FontStyle.Bold);
             this.txtTotalCantidadVendidas.ForeColor = System.Drawing.Color.Red;
             this.txtTotalCantidadVendidas.Location = new System.Drawing.Point(547, 462);
             this.txtTotalCantidadVendidas.Name = "txtTotalCantidadVendidas";
+            this.txtTotalCantidadVendidas.ReadOnly = true;
             this.txtTotalCantidadVendidas.Size = new System.Drawing.Size(83, 29);
             this.txtTotalCantidadVendidas.TabIndex = 210;
             this.txtTotalCantidadVendidas.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // txtTotalAccionesVendidas
             // 
-            this.txtTotalAccionesVendidas.Enabled = false;
             this.txtTotalAccionesVendidas.Font = new System.Drawing.Font("Times New Roman", 14.25F, System.Drawing.FontStyle.Bold);
             this.txtTotalAccionesVendidas.ForeColor = System.Drawing.Color.Red;
             this.txtTotalAccionesVendidas.Location = new System.Drawing.Point(461, 462);
             this.txtTotalAccionesVendidas.Name = "txtTotalAccionesVendidas";
+            this.txtTotalAccionesVendidas.ReadOnly = true;
             this.txtTotalAccionesVendidas.Size = new System.Drawing.Size(83, 29);
             this.txtTotalAccionesVendidas.TabIndex = 209;
             this.txtTotalAccionesVendidas.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;

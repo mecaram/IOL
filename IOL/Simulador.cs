@@ -4,7 +4,6 @@ using System.Windows.Forms;
 using System.Configuration;
 using MySql.Data.MySqlClient;
 using System.Data;
-using System.Linq;
 
 namespace IOL
 {
@@ -138,8 +137,6 @@ namespace IOL
                 }
             }
         }
-
-
 
         private int AgregarAccesoIOL()
         {
@@ -724,9 +721,9 @@ namespace IOL
 
             int iddetalle = 0;
             string ultimaoperacion = string.Empty;
-            double PrecioCompra = PrecioActualCompra, CantidadVendida = 0, Importe = 0;
+            double PrecioCompra = 0, CantidadVendida = 0, Importe = 0;
 
-            double precioanterior = 0, precioanteriorA = 0, precioanteriorAA = 0, resultado1 = 0, resultado2 = 0, resultado3 = 0;
+            double precioanterior, precioanteriorA, precioanteriorAA, resultado1, resultado2, resultado3;
             double precioactual = 0;
 
             MySqlConnection coneUltimaOperacion = new MySqlConnection(conexion);
@@ -746,6 +743,7 @@ namespace IOL
 
             if (ultimaoperacion == "Compra") // Ultima operacion fue la compra de acciones
             {
+                precioactual = PrecioActualVenta;
                 // Calcular
                 // =+SI(O(Y(D14>$B$4+($B$4*0.7%);D14<D13-(D13*0.25%);D13>D12);Y(D14>$B$4+($B$4*0.7%);D14<D12-(D12*0.25%);D12>D11));"VENTA";"NEUTRO")
                 // SI (PrecioActual > PrecioCompra + (PrecioCompra * 0.7 %); PrecioActual < PrecioAnterior - (PrecioAnterior * 0.25 %); PrecioAnterior > PrecioAnteriorA) ENTONCES VENDER
@@ -769,7 +767,7 @@ namespace IOL
                     try { precioanteriorAA = Convert.ToDouble(dsUltimosPreciosVenta.Rows[0]["Precio"]); }
                     catch { precioanteriorAA = 0; }
 
-                    resultado1 = PrecioCompra + (PrecioCompra * .007);
+                    resultado1 = PrecioCompra + (PrecioCompra * 0.7 / 100);
                     resultado2 = precioanterior - (precioanterior * ObtenerPorcVentaSimulador(IdRueda, Simulador) / 100);
                     resultado3 = precioanteriorA - (precioanteriorA * ObtenerPorcVentaSimulador(IdRueda, Simulador) / 100);
 
@@ -783,7 +781,7 @@ namespace IOL
                         // VENDER
 
                         // Obtener el porcentaje de incremento para la Venta
-                        double porcincremento = 0;
+                        double porcincremento;
                         try { porcincremento = Convert.ToDouble(txtPorcPuntaVendedora.Text); }
                         catch { porcincremento = 0; }
 
@@ -935,7 +933,6 @@ namespace IOL
             decimal Inversion = Convert.ToDecimal(control.Text.Trim());
             control.Text = string.Format("$ {0:00.00}", Inversion);
         }
-
         private void txtInversionTotalSimulador_KeyPress(object sender, KeyPressEventArgs e)
         {
             ValidacionNumerica(e);
@@ -946,157 +943,126 @@ namespace IOL
             control.SelectionStart = 0;
             control.SelectionLength = control.MaxLength;
         }
-
         private void txtPorcCompra1_Click(object sender, EventArgs e)
         {
             SeleccionarTexto(sender);
         }
-
         private void txtPorcVenta1_Click(object sender, EventArgs e)
         {
             SeleccionarTexto(sender);
         }
-
         private void txtPorcCompra2_Click(object sender, EventArgs e)
         {
             SeleccionarTexto(sender);
         }
-
         private void txtPorcVenta2_Click(object sender, EventArgs e)
         {
             SeleccionarTexto(sender);
         }
-
         private void txtPorcCompra3_Click(object sender, EventArgs e)
         {
             SeleccionarTexto(sender);
         }
-
         private void txtPorcVenta3_Click(object sender, EventArgs e)
         {
             SeleccionarTexto(sender);
         }
-
         private void txtPorcCompra4_Click(object sender, EventArgs e)
         {
             SeleccionarTexto(sender);
         }
-
         private void txtPorcVenta4_Click(object sender, EventArgs e)
         {
             SeleccionarTexto(sender);
         }
-
         private void txtPorcCompra5_Click(object sender, EventArgs e)
         {
             SeleccionarTexto(sender);
         }
-
         private void txtPorcVenta5_Click(object sender, EventArgs e)
         {
             SeleccionarTexto(sender);
         }
-
         private void txtPorcCompra1_KeyPress(object sender, KeyPressEventArgs e)
         {
             ValidacionNumerica(e);
         }
-
         private void txtPorcVenta1_KeyPress(object sender, KeyPressEventArgs e)
         {
             ValidacionNumerica(e);
         }
-
         private void txtPorcCompra2_KeyPress(object sender, KeyPressEventArgs e)
         {
             ValidacionNumerica(e);
         }
-
         private void txtPorcVenta2_KeyPress(object sender, KeyPressEventArgs e)
         {
             ValidacionNumerica(e);
         }
-
         private void txtPorcCompra3_KeyPress(object sender, KeyPressEventArgs e)
         {
             ValidacionNumerica(e);
         }
-
         private void txtPorcVenta3_KeyPress(object sender, KeyPressEventArgs e)
         {
             ValidacionNumerica(e);
         }
-
         private void txtPorcCompra4_KeyPress(object sender, KeyPressEventArgs e)
         {
             ValidacionNumerica(e);
         }
-
         private void txtPorcVenta4_KeyPress(object sender, KeyPressEventArgs e)
         {
             ValidacionNumerica(e);
         }
-
         private void txtPorcCompra5_KeyPress(object sender, KeyPressEventArgs e)
         {
             ValidacionNumerica(e);
         }
-
         private void txtPorcVenta5_KeyPress(object sender, KeyPressEventArgs e)
         {
             ValidacionNumerica(e);
         }
-
         private void txtPorcCompra1_Leave(object sender, EventArgs e)
         {
             FormatoPorcentaje(sender);
         }
-
         private void txtPorcVenta1_Leave(object sender, EventArgs e)
         {
             FormatoPorcentaje(sender);
         }
-
         private void txtPorcCompra2_Leave(object sender, EventArgs e)
         {
             FormatoPorcentaje(sender);
         }
-
         private void txtPorcVenta2_Leave(object sender, EventArgs e)
         {
             FormatoPorcentaje(sender);
         }
-
         private void txtPorcCompra3_Leave(object sender, EventArgs e)
         {
             FormatoPorcentaje(sender);
         }
-
         private void txtPorcVenta3_Leave(object sender, EventArgs e)
         {
             FormatoPorcentaje(sender);
         }
-
         private void txtPorcCompra4_Leave(object sender, EventArgs e)
         {
             FormatoPorcentaje(sender);
         }
-
         private void txtPorcVenta4_Leave(object sender, EventArgs e)
         {
             FormatoPorcentaje(sender);
         }
-
         private void txtPorcCompra5_Leave(object sender, EventArgs e)
         {
             FormatoPorcentaje(sender);
         }
-
         private void txtPorcVenta5_Leave(object sender, EventArgs e)
         {
             FormatoPorcentaje(sender);
         }
-
         private void dgvAccionesCompradas_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
         {
             dgvAcciones.Columns["IdRuedaActual"].Visible = false;
@@ -1110,157 +1076,126 @@ namespace IOL
             dgvAcciones.Columns["FechaVenta"].Visible = false;
             dgvAcciones.Columns["PorcComisionIOL"].Visible = false;
         }
-
         private void txtPorcCompra6_Click(object sender, EventArgs e)
         {
             SeleccionarTexto(sender);
         }
-
         private void txtPorcCompra7_Click(object sender, EventArgs e)
         {
             SeleccionarTexto(sender);
         }
-
         private void txtPorcCompra8_Click(object sender, EventArgs e)
         {
             SeleccionarTexto(sender);
         }
-
         private void txtPorcCompra9_Click(object sender, EventArgs e)
         {
             SeleccionarTexto(sender);
         }
-
         private void txtPorcCompra10_Click(object sender, EventArgs e)
         {
             SeleccionarTexto(sender);
         }
-
         private void txtPorcVenta6_Click(object sender, EventArgs e)
         {
             SeleccionarTexto(sender);
         }
-
         private void txtPorcVenta7_Click(object sender, EventArgs e)
         {
             SeleccionarTexto(sender);
         }
-
         private void txtPorcVenta8_Click(object sender, EventArgs e)
         {
             SeleccionarTexto(sender);
         }
-
         private void txtPorcVenta9_Click(object sender, EventArgs e)
         {
             SeleccionarTexto(sender);
         }
-
         private void txtPorcVenta10_Click(object sender, EventArgs e)
         {
             SeleccionarTexto(sender);
         }
-
         private void txtPorcCompra6_KeyPress(object sender, KeyPressEventArgs e)
         {
             ValidacionNumerica(e);
         }
-
         private void txtPorcCompra7_KeyPress(object sender, KeyPressEventArgs e)
         {
             ValidacionNumerica(e);
         }
-
         private void txtPorcCompra8_KeyPress(object sender, KeyPressEventArgs e)
         {
             ValidacionNumerica(e);
         }
-
         private void txtPorcCompra9_KeyPress(object sender, KeyPressEventArgs e)
         {
             ValidacionNumerica(e);
         }
-
         private void txtPorcCompra10_KeyPress(object sender, KeyPressEventArgs e)
         {
             ValidacionNumerica(e);
         }
-
         private void txtPorcVenta6_KeyPress(object sender, KeyPressEventArgs e)
         {
             ValidacionNumerica(e);
         }
-
         private void txtPorcVenta7_KeyPress(object sender, KeyPressEventArgs e)
         {
             ValidacionNumerica(e);
         }
-
         private void txtPorcVenta8_KeyPress(object sender, KeyPressEventArgs e)
         {
             ValidacionNumerica(e);
         }
-
         private void txtPorcVenta9_KeyPress(object sender, KeyPressEventArgs e)
         {
             ValidacionNumerica(e);
         }
-
         private void txtPorcVenta10_KeyPress(object sender, KeyPressEventArgs e)
         {
             ValidacionNumerica(e);
         }
-
         private void txtPorcCompra6_Leave(object sender, EventArgs e)
         {
             FormatoPorcentaje(sender);
         }
-
         private void txtPorcCompra7_Leave(object sender, EventArgs e)
         {
             FormatoPorcentaje(sender);
         }
-
         private void txtPorcCompra8_Leave(object sender, EventArgs e)
         {
             FormatoPorcentaje(sender);
         }
-
         private void txtPorcCompra9_Leave(object sender, EventArgs e)
         {
             FormatoPorcentaje(sender);
         }
-
         private void txtPorcCompra10_Leave(object sender, EventArgs e)
         {
             FormatoPorcentaje(sender);
         }
-
         private void txtPorcVenta6_Leave(object sender, EventArgs e)
         {
             FormatoPorcentaje(sender);
         }
-
         private void txtPorcVenta7_Leave(object sender, EventArgs e)
         {
             FormatoPorcentaje(sender);
         }
-
         private void txtPorcVenta8_Leave(object sender, EventArgs e)
         {
             FormatoPorcentaje(sender);
         }
-
         private void txtPorcVenta9_Leave(object sender, EventArgs e)
         {
             FormatoPorcentaje(sender);
         }
-
         private void txtPorcVenta10_Leave(object sender, EventArgs e)
         {
             FormatoPorcentaje(sender);
         }
-
         private void FormatoPorcentaje(object sender)
         {
             TextBox control = (TextBox)sender;
@@ -1271,7 +1206,6 @@ namespace IOL
 
             control.Text = string.Format("{0:00.00}", Porcentaje);
         }
-
         private void nudSimulador_ValueChanged(object sender, EventArgs e)
         {
             ActualizarAcciones();
@@ -1284,7 +1218,6 @@ namespace IOL
             else
                 lnkEstrategia.Text = "Estrategia Dos";
         }
-
         private void btnActualizarSimulador_Click(object sender, EventArgs e)
         {
             bool lValidado = true;
@@ -1473,7 +1406,6 @@ namespace IOL
                 }
             }
         }
-
         private void btnCerrarRueda_Click(object sender, EventArgs e)
         {
             int IdRueda = 0;
@@ -1692,7 +1624,6 @@ namespace IOL
                 }
             }
         }
-
         private void ValidacionNumerica(KeyPressEventArgs e)
         {
             if (char.IsDigit(e.KeyChar) || e.KeyChar == Convert.ToChar(Keys.Delete) || e.KeyChar == Convert.ToChar(Keys.Back))
@@ -1702,87 +1633,70 @@ namespace IOL
             else
                 e.Handled = true;
         }
-
         private void txtPorcCompra_Click(object sender, EventArgs e)
         {
             SeleccionarTexto(sender);
         }
-
         private void txtPorcVenta_Click(object sender, EventArgs e)
         {
             SeleccionarTexto(sender);
         }
-
         private void txtPorcComisionIOL_Click(object sender, EventArgs e)
         {
             SeleccionarTexto(sender);
         }
-
         private void txtPorcPuntaCompradora_Click(object sender, EventArgs e)
         {
             SeleccionarTexto(sender);
         }
-
         private void txtPorcPuntaVendedora_Click(object sender, EventArgs e)
         {
             SeleccionarTexto(sender);
         }
-
         private void txtPorcCompra_Leave(object sender, EventArgs e)
         {
             FormatoPorcentaje(sender);
         }
-
         private void txtPorcVenta_Leave(object sender, EventArgs e)
         {
             FormatoPorcentaje(sender);
         }
-
         private void txtPorcComisionIOL_Leave(object sender, EventArgs e)
         {
             FormatoPorcentaje(sender);
         }
-
         private void txtPorcPuntaCompradora_Leave(object sender, EventArgs e)
         {
             FormatoPorcentaje(sender);
         }
-
         private void txtPorcPuntaVendedora_Leave(object sender, EventArgs e)
         {
             FormatoPorcentaje(sender);
         }
-
         private void txtPorcCompra_KeyPress(object sender, KeyPressEventArgs e)
         {
             ValidacionNumerica(e);
         }
-
         private void txtPorcVenta_KeyPress(object sender, KeyPressEventArgs e)
         {
             ValidacionNumerica(e);
         }
-
         private void txtPorcComisionIOL_KeyPress(object sender, KeyPressEventArgs e)
         {
             ValidacionNumerica(e);
         }
-
         private void txtPorcPuntaCompradora_KeyPress(object sender, KeyPressEventArgs e)
         {
             ValidacionNumerica(e);
         }
-
         private void txtPorcPuntaVendedora_KeyPress(object sender, KeyPressEventArgs e)
         {
             ValidacionNumerica(e);
         }
-
         private void txtTotalVariacionEnPorcentajes_TextChanged(object sender, EventArgs e)
         {
 
         }
-
         private void dgvAcciones_RowPrePaint(object sender, DataGridViewRowPrePaintEventArgs e)
         {
             foreach (DataGridViewRow fila in dgvAcciones.Rows)
@@ -1793,7 +1707,6 @@ namespace IOL
                     fila.DefaultCellStyle.ForeColor = System.Drawing.Color.Red;
             }
         }
-
         private void btnActualizarRueda_Click(object sender, EventArgs e)
         {
             bool lValidado = true;
@@ -1984,7 +1897,6 @@ namespace IOL
                 coneSimulador.Close();
             }
         }
-
         private void ActualizarVentaSimulador(int simulador, double importe)
         {
             using (MySqlConnection coneSimulador = new MySqlConnection(conexion))
@@ -2015,7 +1927,6 @@ namespace IOL
             }
             return estado;
         }
-
         private void CerrarEstadoRueda(int rueda)
         {
             using (MySqlConnection cone = new MySqlConnection(conexion))
@@ -2027,7 +1938,6 @@ namespace IOL
                 cone.Close();
             }
         }
-
         private void AbrirEstadoRueda(int rueda)
         {
             using (MySqlConnection cone = new MySqlConnection(conexion))
