@@ -66,6 +66,7 @@
         public int IdFeriado { get; set; }
         public DateTime Fecha { get; set; }
         public string Motivo { get; set; }
+        public virtual Ruedas ruedas { get; set; }
     }
     public class InformeFinal
     {
@@ -132,6 +133,7 @@
         public virtual RuedasDetalle ruedasDetalle { get; set; }
         public virtual RuedasDetalleSimulador ruedasDetalleSimulador { get; set; }
         public virtual RuedasDatosSimulador ruedasDatosSimulador { get; set; }
+        public virtual Feriados feriados { get; set; }
     }
     public class RuedasDatosSimulador
     {

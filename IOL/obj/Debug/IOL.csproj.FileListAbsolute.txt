@@ -68,7 +68,6 @@ C:\Sistemas\IOL\IOL\IOL\bin\Debug\EntityFramework.dll
 C:\Sistemas\IOL\IOL\IOL\bin\Debug\EntityFramework.SqlServer.dll
 C:\Sistemas\IOL\IOL\IOL\bin\Debug\EntityFramework.xml
 C:\Sistemas\IOL\IOL\IOL\bin\Debug\EntityFramework.SqlServer.xml
-C:\Sistemas\IOL\IOL\IOL\obj\Debug\IOL.csprojAssemblyReference.cache
 C:\Sistemas\IOL\IOL\IOL\bin\Debug\mysql.data.entity.EF6.dll
 C:\Sistemas\IOL\IOL\IOL\bin\Debug\ClosedXML.pdb
 C:\Sistemas\IOL\IOL\IOL\bin\Debug\Google.Protobuf.pdb

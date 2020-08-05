@@ -255,6 +255,11 @@
     <Compile Include="RuedasEditar.Designer.cs">
       <DependentUpon>RuedasEditar.cs</DependentUpon>
     </Compile>
+    <Compile Include="Servicios\ServiciosAccion.cs" />
+    <Compile Include="Servicios\ServiciosComitente.cs" />
+    <Compile Include="Servicios\ServiciosFeriado.cs" />
+    <Compile Include="Servicios\ServiciosInformeFinal.cs" />
+    <Compile Include="Servicios\ServiciosTenenciaSimulador.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="Simulador.cs">
       <SubType>Form</SubType>
