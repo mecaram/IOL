@@ -1,21 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Configuration;
-using MySql.Data;
 using MySql.Data.MySqlClient;
+using IOL.EntityFrameWork;
+using IOL.Servicios;
 
 namespace IOL
 {
     public partial class FeriadosEditar : Form
     {
-        string conexion = ConfigurationManager.ConnectionStrings["conexion"].ToString();
+        private readonly ServiciosFeriado _service = new ServiciosFeriado();
+
         public int operacion = 0;
 
         public FeriadosEditar()
@@ -25,80 +21,59 @@ namespace IOL
 
         private void FeriadosEditar_Load(object sender, EventArgs e)
         {
+            int id;
+            try { id = Convert.ToInt32(txtIdFeriado.Text.Trim()); }
+            catch { id = 0; }
+
+            var feriado = _service.GetById(id);
+
+            if (feriado != null)
+            {
+                txtIdFeriado.Text = feriado.IdFeriado.ToString();
+                txtFecha.Text = feriado.Fecha.ToShortDateString();
+                txtMotivo.Text = feriado.Motivo.Trim();
+            }
+            else
+            {
+                txtIdFeriado.Text = "0";
+                txtFecha.Text = DateTime.Now.ToShortDateString();
+                txtMotivo.Text = string.Empty;
+            }
+
             switch (operacion)
             {
                 case 1: //Agregar
-
                     tsbEliminar.Visible = false;
                     this.Text = "Agregar Feriado";
-
                     txtFecha.Focus();
                     break;
                 case 2: //Modificar
                     tsbEliminar.Visible = false;
-
-                    MySqlConnection coneModificar = new MySqlConnection(conexion);
-                    MySqlDataAdapter daModificar = new MySqlDataAdapter("Select * from Feriados Where IdFeriado = " + txtIdFeriado.Text.Trim(), coneModificar);
-                    DataTable dsModificar = new DataTable();
-                    daModificar.Fill(dsModificar);
-                    if (dsModificar.Rows.Count > 0)
-                    {
-                        txtIdFeriado.Text = dsModificar.Rows[0]["IdFeriado"].ToString();
-                        txtFecha.Text = dsModificar.Rows[0]["Fecha"].ToString();
-                        txtMotivo.Text = dsModificar.Rows[0]["Motivo"].ToString();
-
-                        this.Text = "Modificar Feriado";
-                        txtFecha.Focus();
-                    }
+                    txtFecha.Focus();
                     txtFecha.Enabled = false;
                     txtMotivo.Focus();
                     break;
                 case 3: //Eliminar
                     tsbEliminar.Visible = false;
+                    this.Text = "Eliminar Feriado";
+                    txtIdFeriado.Enabled = false;
+                    txtFecha.Enabled = false;
+                    txtMotivo.Enabled = false;
 
-                    MySqlConnection coneEliminar = new MySqlConnection(conexion);
-                    MySqlDataAdapter daEliminar = new MySqlDataAdapter("Select * from Feriados Where IdFeriado = " + txtIdFeriado.Text.Trim(), coneEliminar);
-                    DataTable dsEliminar = new DataTable();
-                    daEliminar.Fill(dsEliminar);
-                    if (dsEliminar.Rows.Count > 0)
-                    {
-                        txtIdFeriado.Text = dsEliminar.Rows[0]["IdFeriado"].ToString();
-                        txtFecha.Text = dsEliminar.Rows[0]["Fecha"].ToString();
-                        txtMotivo.Text = dsEliminar.Rows[0]["Motivo"].ToString();
-
-                        this.Text = "Eliminar Feriado";
-
-                        txtIdFeriado.Enabled = false;
-                        txtFecha.Enabled = false;
-                        txtMotivo.Enabled = false;
-
-                        tsbGuardar.Visible = false;
-                        tsbEliminar.Visible = true;
-                        tsbEliminar.Enabled = true;
-                    }
+                    tsbGuardar.Visible = false;
+                    tsbEliminar.Visible = true;
+                    tsbEliminar.Enabled = true;
                     break;
                 case 4: //Detalle
                     tsbEliminar.Visible = false;
+                    this.Text = "Detalle Feriado";
 
-                    MySqlConnection coneDetalle = new MySqlConnection(conexion);
-                    MySqlDataAdapter daDetalle = new MySqlDataAdapter("Select * from Feriados Where IdFeriado = " + txtIdFeriado.Text.Trim(), coneDetalle);
-                    DataTable dsDetalle = new DataTable();
-                    daDetalle.Fill(dsDetalle);
-                    if (dsDetalle.Rows.Count > 0)
-                    {
-                        txtIdFeriado.Text = dsDetalle.Rows[0]["IdFeriado"].ToString();
-                        txtFecha.Text = dsDetalle.Rows[0]["Fecha"].ToString();
-                        txtMotivo.Text = dsDetalle.Rows[0]["Motivo"].ToString();
+                    tsbGuardar.Visible = false;
+                    tsbEliminar.Visible = false;
 
-                        this.Text = "Detalle Feriado";
-
-                        tsbGuardar.Visible = false;
-                        tsbEliminar.Visible = false;
-
-                        tsbCancelar.Visible = true;
-                        tsbCancelar.Text = "&Aceptar";
-                        tsbCancelar.Image = tsbGuardar.Image;
-                    }
+                    tsbCancelar.Visible = true;
+                    tsbCancelar.Text = "&Aceptar";
+                    tsbCancelar.Image = tsbGuardar.Image;
                     break;
             }
         }
@@ -108,7 +83,6 @@ namespace IOL
             bool lValidado = true;
             string Mensaje = string.Empty;
 
-            MySqlConnection cone = new MySqlConnection(conexion);
             string sentencia = string.Empty;
 
             if (txtFecha.Text.Trim().Length == 0)
@@ -137,11 +111,8 @@ namespace IOL
                     lValidado = false;
                 }
 
-                sentencia = string.Format("Select IdFeriado From Feriados Where Date_format(fecha,'%d-%m-%y') = str_to_date('{0}','%d/%m/%y')", fecha.Value.ToString("dd/MM/yy"));
-                MySqlDataAdapter da = new MySqlDataAdapter(sentencia, cone);
-                DataTable dt = new DataTable();
-                int registros = da.Fill(dt);
-                if (registros > 0)
+                var feriadoexistente = _service.GetByFecha(fecha.Value); // Date_format(fecha,'%d-%m-%y')
+                if (feriadoexistente != null)
                 {
                     Mensaje += String.Format("Feriado Existente \r");
                     lValidado = false;
@@ -162,41 +133,30 @@ namespace IOL
                 }
             }
 
+            var feriado = new EntityFrameWork.Feriados();
 
-            cone.Open();
-            if (operacion == 1)
+            feriado.IdFeriado = Convert.ToInt32(txtIdFeriado.Text);
+            feriado.Fecha = (DateTime)fecha;
+            feriado.Motivo = txtMotivo.Text.Trim();
+
+            if (_service.Register(feriado))
             {
-                sentencia = string.Format("Insert Into Feriados(Fecha, Motivo) Values(str_to_date('{0}','%d/%m/%y'),'{1}')", fecha.Value.ToString("dd/MM/yy"), txtMotivo.Text.Trim());
-                MySqlCommand comando = new MySqlCommand(sentencia, cone);
-                comando.CommandType = CommandType.Text;
-                comando.ExecuteNonQuery();
-                cone.Close();
+                MessageBox.Show("Feriado actualizado con éxito", "Información del Sistema", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                Close();
             }
             else
-            {
-                sentencia = string.Format("Update Feriados Set Motivo = '{0}' Where IdFeriado = {1}", txtMotivo.Text.Trim(), txtIdFeriado.Text.Trim());
-                MySqlCommand comando = new MySqlCommand(sentencia, cone);
-                comando.CommandType = CommandType.Text;
-
-                comando.ExecuteNonQuery();
-                cone.Close();
-            }
-            Close();
+                MessageBox.Show("Feriado actualizado con éxito", "Información del Sistema", MessageBoxButtons.OK, MessageBoxIcon.Stop);
         }
 
         private void tsbEliminar_Click(object sender, EventArgs e)
         {
             if (MessageBox.Show("Desea realmente dar de baja este Feriado ?", "Solicitud del Sistema", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) == System.Windows.Forms.DialogResult.Yes)
             {
-                MySqlConnection coneEliminar = new MySqlConnection(conexion);
-                coneEliminar.Open();
+                int Id;
+                try { Id = Convert.ToInt32(txtIdFeriado.Text); }
+                catch { Id = 0; }
 
-                string sentencia = string.Format("Delete From Feriados Where IdFeriado = {0}", txtIdFeriado.Text.Trim());
-                MySqlCommand comando = new MySqlCommand(sentencia, coneEliminar);
-                comando.CommandType = CommandType.Text;
-
-                comando.ExecuteNonQuery();
-                coneEliminar.Close();
+                _service.Delete(Id);
                 Close();
             }
         }

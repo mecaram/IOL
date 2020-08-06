@@ -72,3 +72,4 @@ C:\Sistemas\IOL\IOL\IOL\bin\Debug\mysql.data.entity.EF6.dll
 C:\Sistemas\IOL\IOL\IOL\bin\Debug\ClosedXML.pdb
 C:\Sistemas\IOL\IOL\IOL\bin\Debug\Google.Protobuf.pdb
 C:\Sistemas\IOL\IOL\IOL\bin\Debug\System.IO.Packaging.xml
+C:\Sistemas\IOL\IOL\IOL\obj\Debug\IOL.csprojAssemblyReference.cache

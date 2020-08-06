@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace IOL.Servicios
 {
-    class ServiciosInformeFinal
+    public class ServiciosInformeFinal
     {
         private BD _context;
         public ServiciosInformeFinal()

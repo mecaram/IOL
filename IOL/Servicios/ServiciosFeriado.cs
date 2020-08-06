@@ -1,4 +1,5 @@
 ﻿using IOL.EntityFrameWork;
+using System;
 using System.Collections.Generic;
 using System.Data.Entity.Migrations;
 using System.Linq;
@@ -32,6 +33,12 @@ namespace IOL.Servicios
         {
             var feriado = _context.Feriados.Where(x => x.IdFeriado == id).SingleOrDefault();
 
+            return feriado;
+        }
+
+        public EntityFrameWork.Feriados GetByFecha(DateTime fecha)
+        {
+            var feriado = _context.Feriados.Where(x => x.Fecha == fecha).SingleOrDefault();
             return feriado;
         }
 
