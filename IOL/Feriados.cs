@@ -10,11 +10,13 @@ using System.Configuration;
 using MySql.Data;
 using MySql.Data.MySqlClient;
 using System.Data;
+using IOL.Servicios;
 
 namespace IOL
 {
     public partial class Feriados : Form
     {
+        private readonly ServiciosFeriado _service = new ServiciosFeriado();
         public Feriados()
         {
             InitializeComponent();
@@ -24,17 +26,13 @@ namespace IOL
         {
             string cone = ConfigurationManager.ConnectionStrings["conexion"].ToString();
 
-            MySqlConnection coneFeriados = new MySqlConnection(cone);
-            int Mes = Calendario.SelectionStart.Date.Month;
-            string sentencia = string.Format("Select IdFeriado, Fecha, Motivo From Feriados Where Month(Fecha) = {0} Order By Fecha", Mes);
-            MySqlDataAdapter da = new MySqlDataAdapter(sentencia, coneFeriados);
-            DataTable ds = new DataTable();
-            da.Fill(ds);
+            var feriados = _service.GetByMonth(Calendario.SelectionStart.Date);
 
-            lblTotalFeriados.Text = string.Format("Total listado: {0}", ds.Rows.Count);
-            if (ds.Rows.Count > 0)
+            if (feriados != null)
             {
-                dgvListado.DataSource = ds;
+                lblTotalFeriados.Text = string.Format("Total listado: {0}", feriados.Count);
+
+                dgvListado.DataSource = feriados;
 
                 DataGridViewCellStyle EstiloEncabezadoColumna = new DataGridViewCellStyle();
 
@@ -72,6 +70,7 @@ namespace IOL
             {
                 dgvListado.DataSource = null;
                 dgvListado.RefreshEdit();
+                lblTotalFeriados.Text = "Total listado: 0";
             }
         }
 
@@ -96,16 +95,14 @@ namespace IOL
 
             if (dgvListado.RowCount > 0)
             {
-                string feriado = dgvListado.CurrentRow.Cells["IdFeriado"].Value.ToString();
                 int fila = Convert.ToUInt16(dgvListado.CurrentRow.Index);
-                MySqlDataAdapter da = new MySqlDataAdapter("Select * From Feriados Where IdFeriado = " + feriado, cone);
-                DataTable dt = new DataTable();
-                da.Fill(dt);
+                int idFeriado = Convert.ToInt32(dgvListado.CurrentRow.Cells["IdFeriado"].Value);
+                var regFeriado = _service.GetById(idFeriado);
 
-                if (dt.Rows.Count > 0)
+                if (regFeriado != null)
                 {
-                    formulario.txtIdFeriado.Text = dt.Rows[0]["IdFeriado"].ToString();
-                    formulario.txtFecha.Text = dt.Rows[0]["Fecha"].ToString();
+                    formulario.txtIdFeriado.Text =  regFeriado.IdFeriado.ToString();
+                    formulario.txtFecha.Text = regFeriado.Fecha.ToString();
                 }
                 formulario.ShowDialog();
                 tsbVerTodos_Click(sender, e);
@@ -124,17 +121,13 @@ namespace IOL
 
             if (dgvListado.RowCount > 0)
             {
-                string feriado = dgvListado.CurrentRow.Cells["IdFeriado"].Value.ToString();
                 int fila = Convert.ToUInt16(dgvListado.CurrentRow.Index);
+                int idFeriado = Convert.ToInt32(dgvListado.CurrentRow.Cells["IdFeriado"].Value);
+                var regFeriado = _service.GetById(idFeriado);
 
-                MySqlDataAdapter da = new MySqlDataAdapter("Select * From Feriados Where IdFeriado = " + feriado, cone);
-                DataTable dt = new DataTable();
-                da.Fill(dt);
-
-                if (dt.Rows.Count > 0)
+                if (regFeriado != null)
                 {
-                    formulario.txtIdFeriado.Text = dt.Rows[0]["IdFeriado"].ToString();
-
+                    formulario.txtIdFeriado.Text = regFeriado.IdFeriado.ToString();
                     formulario.ShowDialog();
                     tsbVerTodos_Click(sender, e);
                     if (fila < dgvListado.Rows.Count)
@@ -154,17 +147,13 @@ namespace IOL
 
             if (dgvListado.RowCount > 0)
             {
-                string feriado = dgvListado.CurrentRow.Cells["IdFeriado"].Value.ToString();
                 int fila = Convert.ToUInt16(dgvListado.CurrentRow.Index);
+                int idFeriado = Convert.ToInt32(dgvListado.CurrentRow.Cells["IdFeriado"].Value);
+                var regFeriado = _service.GetById(idFeriado);
 
-                MySqlDataAdapter da = new MySqlDataAdapter("Select * From Feriados Where IdFeriado = " + feriado, cone);
-                DataTable dt = new DataTable();
-                da.Fill(dt);
-
-                if (dt.Rows.Count > 0)
+                if (regFeriado != null)
                 {
-                    formulario.txtIdFeriado.Text = dt.Rows[0]["IdFeriado"].ToString();
-
+                    formulario.txtIdFeriado.Text = regFeriado.IdFeriado.ToString();
                     formulario.ShowDialog();
                     tsbVerTodos_Click(sender, e);
                     if (fila < dgvListado.Rows.Count)
@@ -193,7 +182,6 @@ namespace IOL
         {
             if (dgvListado.RowCount > 0)
             {
-                string cone = ConfigurationManager.ConnectionStrings["conexion"].ToString();
                 Buscar fBuscar = new Buscar();
                 fBuscar.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
                 fBuscar.Text = "Busqueda de Feriados";
@@ -206,7 +194,7 @@ namespace IOL
                 fBuscar.ShowDialog(this);
                 if (fBuscar.DialogResult == System.Windows.Forms.DialogResult.OK)
                 {
-                    string cWhere = "";
+                    List<EntityFrameWork.Feriados> lstFeriados = null;
 
                     string tipobusqueda = fBuscar.cboBuscar.Text.Trim();
                     string cBuscar = fBuscar.rctBuscar.Text.Trim();
@@ -216,31 +204,28 @@ namespace IOL
                         switch (tipobusqueda)
                         {
                             case "Id.Feriado":
-                                cWhere += " Where IdFeriado = " + cBuscar;
+                                int id = Convert.ToInt32(cBuscar);
+                                lstFeriados.Add(_service.GetById(id));
                                 break;
                             case "Fecha":
-                                cWhere += " Where Date_format(fecha,'%y-%m-%d') = str_to_date('" + cBuscar + "','%d/%m/%y') ";
+                                DateTime fecha = Convert.ToDateTime(cBuscar);
+                                lstFeriados = _service.GetByDate(fecha);
                                 break;
                             case "Motivo":
-                                cWhere += " Where Motivo Like '%" + cBuscar + "%' Order By Motivo";
+                                lstFeriados = _service.GetByReason(cBuscar);
                                 break;
                         }
                     }
-                    MySqlConnection coneCuentas = new MySqlConnection(cone);
-                    string sqlComando = "Select IdFeriado, Feriado, Motivo From Feriados ";
-                    sqlComando += cWhere;
-                    MySqlDataAdapter da = new MySqlDataAdapter(sqlComando, coneCuentas);
-                    DataTable ds = new DataTable();
-                    da.Fill(ds);
 
-                    lblTotalFeriados.Text = string.Format("Total listado: {0}", ds.Rows.Count);
-                    if (ds.Rows.Count > 0)
+                    if (lstFeriados != null)
                     {
-                        dgvListado.DataSource = ds;
+                        lblTotalFeriados.Text = string.Format("Total listado: {0}", lstFeriados.Count);
+                        dgvListado.DataSource = lstFeriados;
                         dgvListado.RefreshEdit();
                     }
                     else
                     {
+                        lblTotalFeriados.Text = "Total listado: 0";
                         MessageBox.Show("Feriado Inexistente", "Información del Sistema", MessageBoxButtons.OK);
                         Feriados_Load(sender, e);
                     }

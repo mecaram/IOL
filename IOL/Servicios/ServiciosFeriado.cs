@@ -36,9 +36,20 @@ namespace IOL.Servicios
             return feriado;
         }
 
-        public EntityFrameWork.Feriados GetByFecha(DateTime fecha)
+        public List<EntityFrameWork.Feriados> GetByReason(string motivo)
         {
-            var feriado = _context.Feriados.Where(x => x.Fecha == fecha).SingleOrDefault();
+            var feriado = _context.Feriados.Where(x => x.Motivo.Contains(motivo)).OrderBy(x => x.Motivo).ToList();
+            return feriado;
+        }
+        public List<EntityFrameWork.Feriados> GetByDate(DateTime fecha)
+        {
+            var feriado = _context.Feriados.Where(x => x.Fecha == fecha).OrderBy(x => x.Fecha).ToList();
+            return feriado;
+        }
+
+        public List<EntityFrameWork.Feriados> GetByMonth(DateTime fecha)
+        {
+            var feriado = _context.Feriados.Where(x => x.Fecha.Year == fecha.Year && x.Fecha.Month == fecha.Month).OrderBy(x => x.Fecha).ToList();
             return feriado;
         }
 

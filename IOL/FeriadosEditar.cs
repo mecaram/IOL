@@ -45,6 +45,7 @@ namespace IOL
                 case 1: //Agregar
                     tsbEliminar.Visible = false;
                     this.Text = "Agregar Feriado";
+                    txtFecha.Enabled = true;
                     txtFecha.Focus();
                     break;
                 case 2: //Modificar
@@ -111,7 +112,7 @@ namespace IOL
                     lValidado = false;
                 }
 
-                var feriadoexistente = _service.GetByFecha(fecha.Value); // Date_format(fecha,'%d-%m-%y')
+                var feriadoexistente = _service.GetByMonth(fecha.Value); // Date_format(fecha,'%d-%m-%y')
                 if (feriadoexistente != null)
                 {
                     Mensaje += String.Format("Feriado Existente \r");
