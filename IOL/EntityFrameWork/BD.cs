@@ -3,6 +3,7 @@
     using DocumentFormat.OpenXml.Spreadsheet;
     using System;
     using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
     using System.Data.Entity;
     using System.Linq;
 
@@ -36,6 +37,7 @@
     }
     public class Acciones
     {
+        [Key]
         public string Simbolo { get; set; }
         public string Descripcion { get; set; }
         public string Pais { get; set; }
@@ -50,6 +52,7 @@
     }
     public class Comitentes
     {
+        [Key]
         public int Comitente { get; set; }
         public string Apellido { get; set; }
         public string Nombres { get; set; }
@@ -63,13 +66,14 @@
     }
     public class Feriados
     {
+        [Key]
         public int IdFeriado { get; set; }
         public DateTime Fecha { get; set; }
         public string Motivo { get; set; }
-        public virtual Ruedas ruedas { get; set; }
     }
     public class InformeFinal
     {
+        [Key]
         public int IdFormeFinal { get; set; }
         public int IdRueda { get; set; }
         public string Simbolo { get; set; }
@@ -83,6 +87,7 @@
     }
     public class PanelPrincipal
     {
+        [Key]
         public int IdPanelPrincipal { get; set; }
         public int IdRueda { get; set; }
         public int IdPanel { get; set; }
@@ -112,6 +117,7 @@
     }
     public class Ruedas
     {
+        [Key]
         public int IdRueda { get; set; }
         public int Comitente { get; set; }
         public DateTime FechaRueda { get; set; }
@@ -133,10 +139,10 @@
         public virtual RuedasDetalle ruedasDetalle { get; set; }
         public virtual RuedasDetalleSimulador ruedasDetalleSimulador { get; set; }
         public virtual RuedasDatosSimulador ruedasDatosSimulador { get; set; }
-        public virtual Feriados feriados { get; set; }
     }
     public class RuedasDatosSimulador
     {
+        [Key]
         public int IdRuedaSimulador { get; set; }
         public int IdRueda { get; set; }
         public int IdSimulador { get; set; }
@@ -147,6 +153,7 @@
     }
     public class RuedasDetalle
     {
+        [Key]
         public int IdRuedaDetalle { get; set; }
         public int IdRuedaActual { get; set; }
         public int IdRuedaCompra { get; set; }
@@ -169,6 +176,7 @@
     }
     public class RuedasDetalleSimulador
     {
+        [Key]
         public int IdRuedaDetalle { get; set; }
         public int IdRuedaActual { get; set; }
         public int IdRuedaCompra { get; set; }
@@ -196,6 +204,7 @@
     }
     public class TenenciaComitentes
     {
+        [Key]
         public int Comitente { get; set; }
         public DateTime Fecha { get; set; }
         public decimal DisponibleParaOperar { get; set; }
@@ -206,6 +215,7 @@
     }
     public class TenenciaSimuladores
     {
+        [Key]
         public int IdSimulador { get; set; }
         public int Comitente { get; set; }
         public DateTime Fecha { get; set; }
