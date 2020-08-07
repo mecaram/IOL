@@ -1,15 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Configuration;
-using MySql.Data;
-using MySql.Data.MySqlClient;
-using System.Data;
 using IOL.Servicios;
 
 namespace IOL
@@ -24,8 +16,6 @@ namespace IOL
 
         private void Feriados_Load(object sender, EventArgs e)
         {
-            string cone = ConfigurationManager.ConnectionStrings["conexion"].ToString();
-
             var feriados = _service.GetByMonth(Calendario.SelectionStart.Date);
 
             if (feriados != null)
@@ -87,8 +77,6 @@ namespace IOL
 
         private void tsbModificar_Click(object sender, EventArgs e)
         {
-            string cone = ConfigurationManager.ConnectionStrings["conexion"].ToString();
-
             FeriadosEditar formulario = new FeriadosEditar();
             formulario.StartPosition = FormStartPosition.CenterScreen;
             formulario.operacion = 2;
@@ -113,8 +101,6 @@ namespace IOL
 
         private void tsbEliminar_Click(object sender, EventArgs e)
         {
-            string cone = ConfigurationManager.ConnectionStrings["conexion"].ToString();
-
             FeriadosEditar formulario = new FeriadosEditar();
             formulario.StartPosition = FormStartPosition.CenterScreen;
             formulario.operacion = 3;
@@ -138,12 +124,9 @@ namespace IOL
 
         private void tsbDetalle_Click(object sender, EventArgs e)
         {
-            string cone = ConfigurationManager.ConnectionStrings["conexion"].ToString();
-
             FeriadosEditar formulario = new FeriadosEditar();
             formulario.StartPosition = FormStartPosition.CenterScreen;
             formulario.operacion = 4;
-
 
             if (dgvListado.RowCount > 0)
             {
@@ -261,14 +244,10 @@ namespace IOL
 
         private void Calendario_DateSelected(object sender, DateRangeEventArgs e)
         {
-            string cone = ConfigurationManager.ConnectionStrings["conexion"].ToString();
-
             DateTime Fecha = Calendario.SelectionStart;
-            string sentencia = string.Format("Select * From Feriados Where Date_format(fecha,'%y-%m-%d') = str_to_date('{0}','%d/%m/%y')", Fecha.Date.ToShortDateString());
-            MySqlDataAdapter da = new MySqlDataAdapter(sentencia, cone);
-            DataTable dt = new DataTable();
-            int registros = da.Fill(dt);
-            if (registros > 0)
+            var lstFeriados = _service.GetByDate(Fecha);
+
+            if (lstFeriados != null)
             {
                 tsbModificar_Click(sender, e);
             }

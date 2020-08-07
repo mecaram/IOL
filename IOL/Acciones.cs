@@ -1,21 +1,22 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Configuration;
-using MySql.Data;
 using MySql.Data.MySqlClient;
 using System.Data;
+using IOL.Servicios;
+using DocumentFormat.OpenXml.Office2010.ExcelAc;
+using System.Collections.Generic;
+using IOL.Clases;
+using IOL.EntityFrameWork;
 
 namespace IOL
 {
     public partial class frmAcciones : Form
     {
         public int comitente = 0;
+        private readonly ServiciosAccion _service = new ServiciosAccion();
+
         string cone = ConfigurationManager.ConnectionStrings["conexion"].ToString();
 
         public frmAcciones()
@@ -26,8 +27,6 @@ namespace IOL
 
         private void frmAcciones_Load(object sender, EventArgs e)
         {
-            string cone = ConfigurationManager.ConnectionStrings["conexion"].ToString();
-
             ContextMenu MenuContextual = new ContextMenu();
             MenuItem MenuActualizar = new MenuItem("&Actualizar Grilla", tsbActualizar_Click, Shortcut.Alt1);
             MenuItem MenuSeparador1 = new MenuItem("-");
@@ -36,16 +35,13 @@ namespace IOL
             MenuContextual.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] { MenuActualizar, MenuSeparador1, MenuBuscar });
             ContextMenu = MenuContextual;
 
-            MySqlConnection coneAcciones = new MySqlConnection(cone);
-            MySqlDataAdapter da = new MySqlDataAdapter("Select Simbolo, Descripcion, Mercado, Plazo From Acciones Order By Simbolo", coneAcciones);
-            DataTable ds = new DataTable();
-            da.Fill(ds);
+            var lstAcciones = _service.GetAll();
 
-            lblTotalAcciones.Text = string.Format("Total listado: {0}", ds.Rows.Count);
-            if (ds.Rows.Count > 0)
+            if (lstAcciones != null)
             {
-                dgvListado.DataSource = ds;
+                lblTotalAcciones.Text = string.Format("Total listado: {0}", lstAcciones.Count);
 
+                dgvListado.DataSource = lstAcciones;
                 DataGridViewCellStyle EstiloEncabezadoColumna = new DataGridViewCellStyle();
 
                 EstiloEncabezadoColumna.BackColor = Color.Green;
@@ -84,6 +80,7 @@ namespace IOL
             {
                 dgvListado.DataSource = null;
                 dgvListado.RefreshEdit();
+                lblTotalAcciones.Text = "Total listado: 0";
             }
         }
 
@@ -107,28 +104,7 @@ namespace IOL
                         int toti = 0, almacenadas = 0;
                         if (Acciones != null)
                         {
-                            MySqlConnection conexionEliminar = null;
-                            try
-                            {
-                                conexionEliminar = new MySqlConnection(cone);
-                                conexionEliminar.Open();
-
-                                string sentenciaEliminar = string.Format("Delete From Acciones");
-                                using (var comandoEliminar = new MySqlCommand(sentenciaEliminar, conexionEliminar))
-                                {
-                                    comandoEliminar.CommandType = CommandType.Text;
-                                    int nRegistros = comandoEliminar.ExecuteNonQuery();
-                                    conexionEliminar.Close();
-                                }
-                            }
-                            catch (Exception error)
-                            {
-                                conexionEliminar.Close();
-                            }
-                            finally
-                            {
-                                conexionEliminar.Close();
-                            }
+                            _service.DeleteAll();
 
                             foreach (var item in Acciones.titulos)
                             {
@@ -136,33 +112,16 @@ namespace IOL
                                 Clases.TituloModel DatosAccion = panel1.ObtenerDatosTitulo(tkn1.access_token, item.mercado.ToString().Trim(), item.simbolo.ToString().Trim());
                                 if (DatosAccion != null)
                                 {
-                                    MySqlConnection conexionInsertar = null;
-                                    try
-                                    {
-                                        conexionInsertar = new MySqlConnection(cone);
-                                        conexionInsertar.Open();
+                                    var accion = new EntityFrameWork.Acciones();
+                                    accion.Simbolo = DatosAccion.simbolo;
+                                    accion.Descripcion = DatosAccion.descripcion;
+                                    accion.Pais = DatosAccion.pais;
+                                    accion.Mercado = DatosAccion.mercado;
+                                    accion.Tipo = DatosAccion.tipo;
+                                    accion.Plazo = DatosAccion.plazo;
+                                    accion.Moneda = DatosAccion.moneda;
 
-                                        string sentenciaInsertar = string.Format("Insert Into Acciones(Simbolo, Descripcion, Pais, Mercado, Tipo, Plazo, Moneda) Values('{0}','{1}','{2}','{3}','{4}','{5}','{6}')", DatosAccion.simbolo.ToString().Trim(), DatosAccion.descripcion.ToString().Trim(), DatosAccion.pais.ToString().Trim(), DatosAccion.mercado.ToString().Trim(), DatosAccion.tipo.ToString().Trim(), DatosAccion.plazo.ToString().Trim(), DatosAccion.moneda.ToString().Trim());
-                                        using (var comandoInsertar = new MySqlCommand(sentenciaInsertar, conexionInsertar))
-                                        {
-                                            comandoInsertar.CommandType = CommandType.Text;
-                                            int nRegistros = comandoInsertar.ExecuteNonQuery();
-                                            if (nRegistros > 0)
-                                            {
-                                                almacenadas++;
-                                            }
-                                            conexionInsertar.Close();
-                                        }
-                                    }
-                                    catch (Exception error)
-                                    {
-                                        conexionInsertar.Close();
-                                    }
-                                    finally
-                                    {
-                                        conexionInsertar.Close();
-                                    }
-                                    
+                                    _service.Register(accion);
                                 }
                             }
                         }
@@ -217,7 +176,7 @@ namespace IOL
                 fBuscar.ShowDialog(this);
                 if (fBuscar.DialogResult == System.Windows.Forms.DialogResult.OK)
                 {
-                    string cWhere = "";
+                    List<EntityFrameWork.Acciones> lstAcciones = null;
 
                     string tipobusqueda = fBuscar.cboBuscar.Text.Trim();
                     string cBuscar = fBuscar.rctBuscar.Text.Trim();
@@ -227,25 +186,19 @@ namespace IOL
                         switch (tipobusqueda)
                         {
                             case "Símbolo":
-                                cWhere += " Where Simbolo = " + cBuscar;
+                                lstAcciones.Add(_service.GetById(cBuscar.ToUpper()));
                                 break;
                             case "Descripción":
-                                cWhere += " Where Descripcion '%" + cBuscar + "%' Order By Descripcion";
+                                lstAcciones = _service.GetByDescription(cBuscar);
                                 break;
                         }
                     }
-                    MySqlConnection coneAcciones = new MySqlConnection(cone);
-                    string sqlComando = "Select Simbolo, Descripcion, Mercado, Plazo From Acciones ";
-                    sqlComando += cWhere;
-                    MySqlDataAdapter da = new MySqlDataAdapter(sqlComando, coneAcciones);
-                    DataTable ds = new DataTable();
-                    da.Fill(ds);
 
-                    lblTotalAcciones.Text = string.Format("Total listado: {0}", ds.Rows.Count);
-                    if (ds.Rows.Count > 0)
+                    if (lstAcciones != null)
                     {
-                        dgvListado.DataSource = ds;
+                        dgvListado.DataSource = lstAcciones;
                         dgvListado.RefreshEdit();
+                        lblTotalAcciones.Text = string.Format("Total listado: {0}", lstAcciones.Count);
                     }
                     else
                     {

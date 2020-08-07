@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Data;
 using System.Windows.Forms;
-using System.Configuration;
-using MySql.Data.MySqlClient;
-using IOL.EntityFrameWork;
 using IOL.Servicios;
 
 namespace IOL
