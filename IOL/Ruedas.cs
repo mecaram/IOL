@@ -1,21 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Configuration;
-using MySql.Data;
-using MySql.Data.MySqlClient;
-using System.Data;
+using IOL.Servicios;
 
 namespace IOL
 {
     public partial class Ruedas : Form
     {
-        string conexion = ConfigurationManager.ConnectionStrings["conexion"].ToString();
+        private readonly ServiciosRueda _service = new ServiciosRueda();
+
         public int comitente = 0;
         public Ruedas()
         {
@@ -86,91 +80,67 @@ namespace IOL
 
         private void tsbModificar_Click(object sender, EventArgs e)
         {
-            string rueda = dgvListado.CurrentRow.Cells["IdRueda"].Value.ToString();
+            int id;
+            try { id = Convert.ToInt32(dgvListado.CurrentRow.Cells["IdRueda"].Value); }
+            catch { id = 0; }
+
+            EntityFrameWork.Ruedas rueda = _service.GetById(id);
             if (rueda != null)
             {
-                string sentencia = string.Format("Select * From Ruedas Where IdRueda = {0}", rueda);
-                MySqlConnection coneRuedas = new MySqlConnection(conexion);
-                MySqlDataAdapter daRuedas = new MySqlDataAdapter(sentencia, coneRuedas);
-                DataTable dsRuedas = new DataTable();
-                daRuedas.Fill(dsRuedas);
-                if (dsRuedas.Rows.Count > 0)
-                {
-                    DateTime? fecha = Convert.ToDateTime(dsRuedas.Rows[0]["FechaRueda"]);
-                    RuedasEditar formulario = new RuedasEditar();
-                    formulario.StartPosition = FormStartPosition.CenterScreen;
-                    formulario.operacion = 2;
-                    formulario.comitente = comitente;
-                    formulario.txtIdRueda.Text = rueda;
-                    formulario.txtFecha.Text = fecha.Value.Date.ToShortDateString();
-                    formulario.txtFecha.Enabled = false;
-                    formulario.ShowDialog();
-                    tsbVerTodos_Click(sender, e);
-                }
+                DateTime? fecha = rueda.FechaRueda;
+                RuedasEditar formulario = new RuedasEditar();
+                formulario.StartPosition = FormStartPosition.CenterScreen;
+                formulario.operacion = 2;
+                formulario.comitente = comitente;
+                formulario.txtIdRueda.Text = id.ToString();
+                formulario.txtFecha.Text = fecha.Value.Date.ToShortDateString();
+                formulario.txtFecha.Enabled = false;
+                formulario.ShowDialog();
+                tsbVerTodos_Click(sender, e);
             }
         }
 
         private void tsbEliminar_Click(object sender, EventArgs e)
         {
-            string rueda = dgvListado.CurrentRow.Cells["IdRueda"].Value.ToString();
+            int id;
+            try { id = Convert.ToInt32(dgvListado.CurrentRow.Cells["IdRueda"].Value); }
+            catch { id = 0; }
+
+            EntityFrameWork.Ruedas rueda = _service.GetById(id);
             if (rueda != null)
             {
                 RuedasEditar formulario = new RuedasEditar();
                 formulario.StartPosition = FormStartPosition.CenterScreen;
                 formulario.operacion = 3;
+                formulario.txtIdRueda.Text = id.ToString();
+                int fila = Convert.ToUInt16(dgvListado.CurrentRow.Index);
 
-                if (dgvListado.RowCount > 0)
-                {
-                    int fila = Convert.ToUInt16(dgvListado.CurrentRow.Index);
-
-                    string cone = ConfigurationManager.ConnectionStrings["conexion"].ToString();
-                    MySqlDataAdapter da = new MySqlDataAdapter("Select * From Ruedas Where IdRueda = " + rueda, cone);
-                    DataTable dt = new DataTable();
-                    da.Fill(dt);
-
-                    if (dt.Rows.Count > 0)
-                    {
-                        formulario.txtIdRueda.Text = dt.Rows[0]["IdRueda"].ToString();
-
-                        formulario.ShowDialog();
-                        tsbVerTodos_Click(sender, e);
-                        if (fila < dgvListado.Rows.Count)
-                            dgvListado.CurrentCell = dgvListado[0, fila];
-                    }
-                }
+                formulario.ShowDialog();
+                tsbVerTodos_Click(sender, e);
+                if (fila < dgvListado.Rows.Count)
+                    dgvListado.CurrentCell = dgvListado[0, fila];
             }
         }
 
         private void tsbDetalle_Click(object sender, EventArgs e)
         {
-            string rueda = dgvListado.CurrentRow.Cells["IdRueda"].Value.ToString();
+            int id;
+            try { id = Convert.ToInt32(dgvListado.CurrentRow.Cells["IdRueda"].Value); }
+            catch { id = 0; }
 
+            EntityFrameWork.Ruedas rueda = _service.GetById(id);
             if (rueda != null)
             {
                 RuedasEditar formulario = new RuedasEditar();
                 formulario.StartPosition = FormStartPosition.CenterScreen;
                 formulario.operacion = 4;
+                int fila = Convert.ToUInt16(dgvListado.CurrentRow.Index);
+                formulario.txtIdRueda.Text = id.ToString();
+                formulario.ShowDialog();
 
-
-                if (dgvListado.RowCount > 0)
-                {
-                    int fila = Convert.ToUInt16(dgvListado.CurrentRow.Index);
-
-                    string cone = ConfigurationManager.ConnectionStrings["conexion"].ToString();
-                    MySqlDataAdapter da = new MySqlDataAdapter("Select * From Ruedas Where IdRueda = " + rueda, cone);
-                    DataTable dt = new DataTable();
-                    da.Fill(dt);
-
-                    if (dt.Rows.Count > 0)
-                    {
-                        formulario.txtIdRueda.Text = dt.Rows[0]["IdRueda"].ToString();
-
-                        formulario.ShowDialog();
-                        tsbVerTodos_Click(sender, e);
-                        if (fila < dgvListado.Rows.Count)
-                            dgvListado.CurrentCell = dgvListado[0, fila];
-                    }
-                }
+                tsbVerTodos_Click(sender, e);
+                if (fila < dgvListado.Rows.Count)
+                    dgvListado.CurrentCell = dgvListado[0, fila];
             }
         }
 

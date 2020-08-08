@@ -259,6 +259,7 @@
     <Compile Include="Servicios\ServiciosComitente.cs" />
     <Compile Include="Servicios\ServiciosFeriado.cs" />
     <Compile Include="Servicios\ServiciosInformeFinal.cs" />
+    <Compile Include="Servicios\ServiciosRueda.cs" />
     <Compile Include="Servicios\ServiciosTenenciaSimulador.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="Simulador.cs">
