@@ -1,21 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Configuration;
-using MySql.Data;
-using MySql.Data.MySqlClient;
+using IOL.Servicios;
 
 namespace IOL
 {
     public partial class RuedasEditar : Form
     {
-        string conexion = ConfigurationManager.ConnectionStrings["conexion"].ToString();
+        private readonly ServiciosRueda _service = new ServiciosRueda();
+        private readonly ServiciosFeriado _serviceFeriado = new ServiciosFeriado();
+        private readonly ServiciosDatosSimulador _serviceFeriado = new ServiciosFeriado();
+
         public int operacion = 0;
         public int comitente = 0;
 
@@ -34,27 +29,21 @@ namespace IOL
                     this.Text = "Agregar Rueda";
 
                     DateTime? fecha = null;
-                    try
-                    { fecha = Convert.ToDateTime(txtFecha.Text.Trim()); }
-                    catch
-                    { fecha = null; }
+                    try { fecha = Convert.ToDateTime(txtFecha.Text.Trim()); }
+                    catch { fecha = null; }
 
-                    MySqlConnection coneAgregar = new MySqlConnection(conexion);
-                    string sentencia = string.Format("Select * From Ruedas Where Date_format(FechaRueda, '%d-%m-%y') < str_to_date('{0}', '%d/%m/%y')", fecha.Value.ToString("dd/MM/yy"));
-                    MySqlDataAdapter daAgregar = new MySqlDataAdapter(sentencia, coneAgregar);
-                    DataTable dsAgregar = new DataTable();
-                    daAgregar.Fill(dsAgregar);
-                    if (dsAgregar.Rows.Count > 0)
+                    var RuedaAnterior = _service.GetLast();
+                    if (RuedaAnterior != null)
                     {
-                        nupCantAcciones.Value = Convert.ToDecimal(dsAgregar.Rows[0]["CantAcciones"]);
-                        txtPorcComisionIOL.Text = string.Format("{0:00.00}", Convert.ToDecimal(dsAgregar.Rows[0]["PorcComisionIOL"]));
-                        txtPorcCompra.Text = string.Format("{0:00.00}", Convert.ToDecimal(dsAgregar.Rows[0]["PorcCompra"]));
-                        txtPorcVenta.Text = string.Format("{0:00.00}", Convert.ToDecimal(dsAgregar.Rows[0]["PorcVenta"]));
-                        txtPorcPuntaCompradora.Text = string.Format("{0:00.00}", Convert.ToDecimal(dsAgregar.Rows[0]["PorcPuntaCompradora"]));
-                        txtPorcPuntaVendedora.Text = string.Format("{0:00.00}", Convert.ToDecimal(dsAgregar.Rows[0]["PorcPuntaVendedora"]));
-                        nudComprarHasta.Value = Convert.ToInt32(dsAgregar.Rows[0]["ComprarHasta"]);
+                        nupCantAcciones.Value = RuedaAnterior.CantAcciones;
+                        txtPorcComisionIOL.Text = string.Format("{0:00.00}", RuedaAnterior.PorcComisionIOL);
+                        txtPorcCompra.Text = string.Format("{0:00.00}", RuedaAnterior.PorcCompra);
+                        txtPorcVenta.Text = string.Format("{0:00.00}", RuedaAnterior.PorcVenta);
+                        txtPorcPuntaCompradora.Text = string.Format("{0:00.00}", RuedaAnterior.PorcPuntaCompradora);
+                        txtPorcPuntaVendedora.Text = string.Format("{0:00.00}", RuedaAnterior.PorcPuntaVendedora);
+                        nudComprarHasta.Value = RuedaAnterior.ComprarHasta;
 
-                        int operar = Convert.ToInt16(dsAgregar.Rows[0]["Operar"]);
+                        int operar = RuedaAnterior.Operar == true ? 1 : 0;
                         if (operar == 0)
                         {
                             chkNo.Checked = true;
@@ -64,27 +53,31 @@ namespace IOL
                             chkSi.Checked = true;
                         }
 
-                        txtPorcCompra1.Text = string.Format("{0:00.00}", Convert.ToDecimal(dsAgregar.Rows[0]["PorcCompra1"]));
-                        txtPorcCompra2.Text = string.Format("{0:00.00}", Convert.ToDecimal(dsAgregar.Rows[0]["PorcCompra2"]));
-                        txtPorcCompra3.Text = string.Format("{0:00.00}", Convert.ToDecimal(dsAgregar.Rows[0]["PorcCompra3"]));
-                        txtPorcCompra4.Text = string.Format("{0:00.00}", Convert.ToDecimal(dsAgregar.Rows[0]["PorcCompra4"]));
-                        txtPorcCompra5.Text = string.Format("{0:00.00}", Convert.ToDecimal(dsAgregar.Rows[0]["PorcCompra5"]));
-                        txtPorcCompra6.Text = string.Format("{0:00.00}", Convert.ToDecimal(dsAgregar.Rows[0]["PorcCompra6"]));
-                        txtPorcCompra7.Text = string.Format("{0:00.00}", Convert.ToDecimal(dsAgregar.Rows[0]["PorcCompra7"]));
-                        txtPorcCompra8.Text = string.Format("{0:00.00}", Convert.ToDecimal(dsAgregar.Rows[0]["PorcCompra8"]));
-                        txtPorcCompra9.Text = string.Format("{0:00.00}", Convert.ToDecimal(dsAgregar.Rows[0]["PorcCompra9"]));
-                        txtPorcCompra10.Text = string.Format("{0:00.00}", Convert.ToDecimal(dsAgregar.Rows[0]["PorcCompra10"]));
+                        var RuedaDatosSimulador = _service.GetLast();
+                        if (RuedaDatosSimulador != null)
+                        {
+                            txtPorcCompra1.Text = string.Format("{0:00.00}", Convert.ToDecimal(dsAgregar.Rows[0]["PorcCompra1"]));
+                            txtPorcCompra2.Text = string.Format("{0:00.00}", Convert.ToDecimal(dsAgregar.Rows[0]["PorcCompra2"]));
+                            txtPorcCompra3.Text = string.Format("{0:00.00}", Convert.ToDecimal(dsAgregar.Rows[0]["PorcCompra3"]));
+                            txtPorcCompra4.Text = string.Format("{0:00.00}", Convert.ToDecimal(dsAgregar.Rows[0]["PorcCompra4"]));
+                            txtPorcCompra5.Text = string.Format("{0:00.00}", Convert.ToDecimal(dsAgregar.Rows[0]["PorcCompra5"]));
+                            txtPorcCompra6.Text = string.Format("{0:00.00}", Convert.ToDecimal(dsAgregar.Rows[0]["PorcCompra6"]));
+                            txtPorcCompra7.Text = string.Format("{0:00.00}", Convert.ToDecimal(dsAgregar.Rows[0]["PorcCompra7"]));
+                            txtPorcCompra8.Text = string.Format("{0:00.00}", Convert.ToDecimal(dsAgregar.Rows[0]["PorcCompra8"]));
+                            txtPorcCompra9.Text = string.Format("{0:00.00}", Convert.ToDecimal(dsAgregar.Rows[0]["PorcCompra9"]));
+                            txtPorcCompra10.Text = string.Format("{0:00.00}", Convert.ToDecimal(dsAgregar.Rows[0]["PorcCompra10"]));
 
-                        txtPorcVenta1.Text = string.Format("{0:00.00}", Convert.ToDecimal(dsAgregar.Rows[0]["PorcVenta1"]));
-                        txtPorcVenta2.Text = string.Format("{0:00.00}", Convert.ToDecimal(dsAgregar.Rows[0]["PorcVenta2"]));
-                        txtPorcVenta3.Text = string.Format("{0:00.00}", Convert.ToDecimal(dsAgregar.Rows[0]["PorcVenta3"]));
-                        txtPorcVenta4.Text = string.Format("{0:00.00}", Convert.ToDecimal(dsAgregar.Rows[0]["PorcVenta4"]));
-                        txtPorcVenta5.Text = string.Format("{0:00.00}", Convert.ToDecimal(dsAgregar.Rows[0]["PorcVenta5"]));
-                        txtPorcVenta6.Text = string.Format("{0:00.00}", Convert.ToDecimal(dsAgregar.Rows[0]["PorcVenta6"]));
-                        txtPorcVenta7.Text = string.Format("{0:00.00}", Convert.ToDecimal(dsAgregar.Rows[0]["PorcVenta7"]));
-                        txtPorcVenta8.Text = string.Format("{0:00.00}", Convert.ToDecimal(dsAgregar.Rows[0]["PorcVenta8"]));
-                        txtPorcVenta9.Text = string.Format("{0:00.00}", Convert.ToDecimal(dsAgregar.Rows[0]["PorcVenta9"]));
-                        txtPorcVenta10.Text = string.Format("{0:00.00}", Convert.ToDecimal(dsAgregar.Rows[0]["PorcVenta10"]));
+                            txtPorcVenta1.Text = string.Format("{0:00.00}", Convert.ToDecimal(dsAgregar.Rows[0]["PorcVenta1"]));
+                            txtPorcVenta2.Text = string.Format("{0:00.00}", Convert.ToDecimal(dsAgregar.Rows[0]["PorcVenta2"]));
+                            txtPorcVenta3.Text = string.Format("{0:00.00}", Convert.ToDecimal(dsAgregar.Rows[0]["PorcVenta3"]));
+                            txtPorcVenta4.Text = string.Format("{0:00.00}", Convert.ToDecimal(dsAgregar.Rows[0]["PorcVenta4"]));
+                            txtPorcVenta5.Text = string.Format("{0:00.00}", Convert.ToDecimal(dsAgregar.Rows[0]["PorcVenta5"]));
+                            txtPorcVenta6.Text = string.Format("{0:00.00}", Convert.ToDecimal(dsAgregar.Rows[0]["PorcVenta6"]));
+                            txtPorcVenta7.Text = string.Format("{0:00.00}", Convert.ToDecimal(dsAgregar.Rows[0]["PorcVenta7"]));
+                            txtPorcVenta8.Text = string.Format("{0:00.00}", Convert.ToDecimal(dsAgregar.Rows[0]["PorcVenta8"]));
+                            txtPorcVenta9.Text = string.Format("{0:00.00}", Convert.ToDecimal(dsAgregar.Rows[0]["PorcVenta9"]));
+                            txtPorcVenta10.Text = string.Format("{0:00.00}", Convert.ToDecimal(dsAgregar.Rows[0]["PorcVenta10"]));
+                        }
                     }
                     else
                     {

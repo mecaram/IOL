@@ -257,6 +257,7 @@
     </Compile>
     <Compile Include="Servicios\ServiciosAccion.cs" />
     <Compile Include="Servicios\ServiciosComitente.cs" />
+    <Compile Include="Servicios\ServiciosDatosSimulador.cs" />
     <Compile Include="Servicios\ServiciosFeriado.cs" />
     <Compile Include="Servicios\ServiciosInformeFinal.cs" />
     <Compile Include="Servicios\ServiciosRueda.cs" />

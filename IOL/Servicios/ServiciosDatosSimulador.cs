@@ -6,19 +6,19 @@ using System.Linq;
 
 namespace IOL.Servicios
 {
-    public class ServiciosRueda
+    public class ServiciosDatosSimulador
     {
         private BD _context;
-        public ServiciosRueda()
+        public ServiciosDatosSimulador()
         {
             _context = new BD();
         }
 
-        public bool Register(EntityFrameWork.Ruedas rueda)
+        public bool Register(EntityFrameWork.RuedasDatosSimulador ruedaDatosSimulador)
         {
             try
             {
-                _context.Ruedas.AddOrUpdate(rueda);
+                _context.RuedasDatosSimulador.AddOrUpdate(ruedaDatosSimulador);
                 _context.SaveChanges();
 
                 return true;
@@ -26,23 +26,18 @@ namespace IOL.Servicios
             catch { return false; }
         }
 
-        public List<EntityFrameWork.Ruedas> GetAll()
+        public List<EntityFrameWork.RuedasDatosSimulador> GetAll()
         {
-            return _context.Ruedas.ToList();
+            return _context.RuedasDatosSimulador.ToList();
         }
-        public EntityFrameWork.Ruedas GetById(int id)
+        public EntityFrameWork.RuedasDatosSimulador GetByIdRueda(int idRueda)
         {
-            return _context.Ruedas.Where(x => x.IdRueda == id).SingleOrDefault();
-        }
-
-        public EntityFrameWork.Ruedas GetLast()
-        {
-            return _context.Ruedas.LastOrDefault();
+            return _context.RuedasDatosSimulador.Where(x => x.IdRueda == idRueda).SingleOrDefault();
         }
 
-        public List<EntityFrameWork.Ruedas> GetByDate(DateTime fecha)
+        public EntityFrameWork.RuedasDatosSimulador GetByIdSimulador(int idRueda, int idSimulador)
         {
-            return _context.Ruedas.Where(x => x.FechaRueda.Date == fecha.Date).ToList();
+            return _context.RuedasDatosSimulador.Where(x => x.IdRueda == idRueda && x.IdSimulador == idSimulador).SingleOrDefault();
         }
 
         public void Delete(int id)

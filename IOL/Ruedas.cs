@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using IOL.Servicios;
@@ -9,6 +8,7 @@ namespace IOL
     public partial class Ruedas : Form
     {
         private readonly ServiciosRueda _service = new ServiciosRueda();
+        private readonly ServiciosFeriado _serviceFeriado = new ServiciosFeriado();
 
         public int comitente = 0;
         public Ruedas()
@@ -26,12 +26,8 @@ namespace IOL
         private void tsbAgregar_Click(object sender, EventArgs e)
         {
             DateTime? fecha = Calendario.SelectionStart.Date;
-            string sentencia = string.Format("Select * From Ruedas Where Date_format(fechaRueda,'%y-%m-%d') = str_to_date('{0}','%d/%m/%y')", fecha.Value.Date.ToShortDateString());
-            MySqlConnection coneRuedas = new MySqlConnection(conexion);
-            MySqlDataAdapter daRuedas = new MySqlDataAdapter(sentencia, coneRuedas);
-            DataTable dsRuedas = new DataTable();
-            daRuedas.Fill(dsRuedas);
-            if (dsRuedas.Rows.Count > 0)
+            var lstRuedas = _service.GetByDate(fecha.Value);
+            if (lstRuedas != null)
             {
                 MessageBox.Show("Rueda Registrada Anteriormente", "Información del Sistema", MessageBoxButtons.OK, MessageBoxIcon.Stop);
             }
@@ -44,16 +40,11 @@ namespace IOL
                 }
                 else
                 {
-                    sentencia = string.Format("Select * From Feriados Where Date_format(fecha,'%y-%m-%d') = str_to_date('{0}','%d/%m/%y')", fecha.Value.Date.ToShortDateString());
-                    MySqlConnection coneFeriados = new MySqlConnection(conexion);
-                    MySqlDataAdapter daFeriados = new MySqlDataAdapter(sentencia, coneFeriados);
-                    DataTable dsFeriados = new DataTable();
-                    daFeriados.Fill(dsFeriados);
-
-                    if (dsFeriados.Rows.Count > 0)
+                    var lstFeriados = _serviceFeriado.GetByDate(fecha.Value);
+                    if (lstRuedas != null)
                     {
                         string mensaje = string.Format("Sábado/Domingo y Feriados NO opera la bolsa. Dia {0} Feriado: '{1}'",
-                                                        fecha.Value.Date.ToShortDateString(), dsFeriados.Rows[0]["Motivo"].ToString());
+                                                        fecha.Value.Date.ToShortDateString(), lstFeriados[0].Motivo.ToString());
                         MessageBox.Show(mensaje, "Información del Sistema", MessageBoxButtons.OK, MessageBoxIcon.Stop);
                     }
                     else
@@ -193,18 +184,14 @@ namespace IOL
         private void Calendario_DateSelected(object sender, DateRangeEventArgs e)
         {
             DateTime? fecha = Calendario.SelectionStart.Date;
-            string sentencia = string.Format("Select * From Ruedas Where Date_format(fechaRueda,'%y-%m-%d') = str_to_date('{0}','%d/%m/%y')", fecha.Value.Date.ToShortDateString());
-            MySqlConnection coneRuedas = new MySqlConnection(conexion);
-            MySqlDataAdapter daRuedas = new MySqlDataAdapter(sentencia, coneRuedas);
-            DataTable dsRuedas = new DataTable();
-            daRuedas.Fill(dsRuedas);
-            if (dsRuedas.Rows.Count > 0)
+            var lstRuedas = _service.GetByDate(Calendario.SelectionStart.Date);
+            if (lstRuedas != null)
             {
                 RuedasEditar formulario = new RuedasEditar();
                 formulario.StartPosition = FormStartPosition.CenterScreen;
                 formulario.operacion = 2;
                 formulario.comitente = comitente;
-                formulario.txtIdRueda.Text = dsRuedas.Rows[0]["IdRueda"].ToString();
+                formulario.txtIdRueda.Text = lstRuedas[0].IdRueda.ToString();
                 formulario.txtFecha.Text = fecha.Value.Date.ToShortDateString();
                 formulario.txtFecha.Enabled = false;
                 formulario.ShowDialog();
@@ -219,16 +206,11 @@ namespace IOL
                 }
                 else
                 {
-                    sentencia = string.Format("Select * From Feriados Where Date_format(fecha,'%y-%m-%d') = str_to_date('{0}','%d/%m/%y')", fecha.Value.Date.ToShortDateString());
-                    MySqlConnection coneFeriados = new MySqlConnection(conexion);
-                    MySqlDataAdapter daFeriados = new MySqlDataAdapter(sentencia, coneFeriados);
-                    DataTable dsFeriados = new DataTable();
-                    daFeriados.Fill(dsFeriados);
-
-                    if (dsFeriados.Rows.Count > 0)
+                    var lstFeriados = _serviceFeriado.GetByDate(fecha.Value);
+                    if (lstFeriados != null)
                     {
                         string mensaje = string.Format("Sábado/Domingo y Feriados NO opera la bolsa. Dia {0} Feriado: '{1}'",
-                                                        fecha.Value.Date.ToShortDateString(), dsFeriados.Rows[0]["Motivo"].ToString());
+                                                        fecha.Value.Date.ToShortDateString(), lstFeriados[0].Motivo.ToString());
                         MessageBox.Show(mensaje, "Información del Sistema", MessageBoxButtons.OK, MessageBoxIcon.Stop);
                     }
                     else
@@ -261,18 +243,10 @@ namespace IOL
 
         private void ActualizarFeriados()
         {
-            string cone = ConfigurationManager.ConnectionStrings["conexion"].ToString();
-
-            int Mes = Calendario.SelectionStart.Date.Month;
-            string sentencia = string.Format("Select Fecha, Motivo From Feriados Where Month(Fecha) = {0} Order By Fecha Desc", Mes);
-            MySqlConnection coneFeriados = new MySqlConnection(cone);
-            MySqlDataAdapter da = new MySqlDataAdapter(sentencia, coneFeriados);
-            DataTable ds = new DataTable();
-            da.Fill(ds);
-
-            if (ds.Rows.Count > 0)
+            var lstFeriados = _serviceFeriado.GetByMonth(Calendario.SelectionStart.Date);
+            if (lstFeriados != null)
             {
-                dgvFeriados.DataSource = ds;
+                dgvFeriados.DataSource = lstFeriados;
 
                 DataGridViewCellStyle EstiloEncabezadoColumna = new DataGridViewCellStyle();
 
@@ -309,18 +283,10 @@ namespace IOL
 
         private void ActualizarRuedas()
         {
-            string cone = ConfigurationManager.ConnectionStrings["conexion"].ToString();
-
-            int Mes = Calendario.SelectionStart.Date.Month;
-            string sentencia = string.Format("Select IdRueda, FechaRueda, CantAcciones, PorcCompra, PorcVenta, if(Operar=1,'SI','NO') as Operar From Ruedas Where Month(FechaRueda) = {0} Order By FechaRueda", Mes);
-            MySqlConnection coneRuedas = new MySqlConnection(cone);
-            MySqlDataAdapter da = new MySqlDataAdapter(sentencia, coneRuedas);
-            DataTable ds = new DataTable();
-            da.Fill(ds);
-
-            if (ds.Rows.Count > 0)
+            var lstFeriados = _serviceFeriado.GetByMonth(Calendario.SelectionStart.Date);
+            if (lstFeriados != null)
             {
-                dgvListado.DataSource = ds;
+                dgvFeriados.DataSource = lstFeriados;
 
                 DataGridViewCellStyle EstiloEncabezadoColumna = new DataGridViewCellStyle();
 
