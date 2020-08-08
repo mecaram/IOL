@@ -32,9 +32,7 @@ namespace IOL.Servicios
         }
         public EntityFrameWork.InformeFinal GetById(int id)
         {
-            var informeFinal = _context.InformeFinal.Where(x => x.IdFormeFinal == id).SingleOrDefault();
-
-            return informeFinal;
+            return _context.InformeFinal.Where(x => x.IdFormeFinal == id).SingleOrDefault();
         }
 
         public void Delete(int id)

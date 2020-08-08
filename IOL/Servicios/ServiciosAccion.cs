@@ -31,14 +31,12 @@ namespace IOL.Servicios
         }
         public Acciones GetById(string id)
         {
-            var accion = _context.Acciones.Where(x => x.Simbolo.ToUpper() == id.ToUpper()).SingleOrDefault();
-            return accion;
+            return _context.Acciones.Where(x => x.Simbolo.ToUpper() == id.ToUpper()).SingleOrDefault();
         }
 
         public List<Acciones> GetByDescription(string descrip)
         {
-            var accion = _context.Acciones.Where(x => x.Descripcion.ToUpper().Contains(descrip.ToUpper())).ToList();
-            return accion;
+            return _context.Acciones.Where(x => x.Descripcion.ToUpper().Contains(descrip.ToUpper())).ToList();
         }
 
         public void Delete(string id)

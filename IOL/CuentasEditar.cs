@@ -1,21 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Configuration;
-using MySql.Data;
-using MySql.Data.MySqlClient;
+using IOL.Servicios;
+using IOL.EntityFrameWork;
+using System.Linq.Expressions;
 
 namespace IOL   
 {
     public partial class frmCuentasEditar : Form
     {
-        string conexion = ConfigurationManager.ConnectionStrings["conexion"].ToString();
+        private readonly ServiciosComitente _service = new ServiciosComitente();
         public int operacion = 0;
 
         public frmCuentasEditar()
@@ -25,6 +20,24 @@ namespace IOL
 
         private void frmCobradoresEditar_Load(object sender, EventArgs e)
         {
+            EntityFrameWork.Comitentes lstComitente = null;
+
+            int id;
+            try { id = Convert.ToInt32(txtComitente.Text); }
+            catch { id = 0; }
+            if (id > 0)
+                lstComitente = _service.GetById(id);
+
+            if (lstComitente != null)
+            {
+                txtComitente.Text = lstComitente.Comitente.ToString();
+                txtApellido.Text = lstComitente.Apellido.ToString();
+                txtNombres.Text = lstComitente.Nombres.ToString();
+                txtTelefonoCelular.Text = lstComitente.TelefonoCelular.ToString();
+                txtCorreoElectronico.Text = lstComitente.CorreoPrincipal.ToString();
+                txtCorreoAlternativo.Text = lstComitente.CorreoAlternativo.ToString();
+            }
+
             switch (operacion)
             {
                 case 1: //Agregar
@@ -37,91 +50,48 @@ namespace IOL
                 case 2: //Modificar
                     tsbEliminar.Visible = false;
 
-                    MySqlConnection coneModificar = new MySqlConnection(conexion);
-                    MySqlDataAdapter daModificar = new MySqlDataAdapter("Select * from Comitentes Where Comitente = " + txtComitente.Text.Trim(), coneModificar);
-                    DataTable dsModificar = new DataTable();
-                    daModificar.Fill(dsModificar);
-                    if (dsModificar.Rows.Count > 0)
-                    {
-                        txtComitente.Text = dsModificar.Rows[0]["Comitente"].ToString();
-                        txtApellido.Text = dsModificar.Rows[0]["Apellido"].ToString();
-                        txtNombres.Text = dsModificar.Rows[0]["Nombres"].ToString();
-                        txtTelefonoCelular.Text = dsModificar.Rows[0]["TelefonoCelular"].ToString();
-                        txtCorreoElectronico.Text = dsModificar.Rows[0]["correoPrincipal"].ToString();
-                        txtCorreoAlternativo.Text = dsModificar.Rows[0]["correoAlternativo"].ToString();
-
-                        this.Text = "Modificar Cuenta";
-                        txtComitente.Enabled = false;
-                        txtApellido.Focus();
-                    }
+                    this.Text = "Modificar Cuenta";
+                    txtComitente.Enabled = false;
+                    txtApellido.Focus();
                     break;
                 case 3: //Eliminar
                     tsbEliminar.Visible = false;
 
-                    MySqlConnection coneEliminar = new MySqlConnection(conexion);
-                    MySqlDataAdapter daEliminar = new MySqlDataAdapter("Select * from Comitentes Where Comitente = " + txtComitente.Text.Trim(), coneEliminar);
-                    DataTable dsEliminar = new DataTable();
-                    daEliminar.Fill(dsEliminar);
-                    if (dsEliminar.Rows.Count > 0)
-                    {
-                        txtComitente.Text = dsEliminar.Rows[0]["Comitente"].ToString();
-                        txtApellido.Text = dsEliminar.Rows[0]["Apellido"].ToString();
-                        txtNombres.Text = dsEliminar.Rows[0]["Nombres"].ToString();
-                        txtTelefonoCelular.Text = dsEliminar.Rows[0]["TelefonoCelular"].ToString();
-                        txtCorreoElectronico.Text = dsEliminar.Rows[0]["correoPrincipal"].ToString();
-                        txtCorreoAlternativo.Text = dsEliminar.Rows[0]["correoAlternativo"].ToString();
+                    this.Text = "Eliminar Cuenta";
 
-                        this.Text = "Eliminar Cuenta";
+                    txtComitente.Enabled = false;
+                    txtNombres.Enabled = false;
+                    txtApellido.Enabled = false;
 
-                        txtComitente.Enabled = false;
-                        txtNombres.Enabled = false;
-                        txtApellido.Enabled = false;
+                    tsbGuardar.Visible = false;
+                    tsbEliminar.Visible = true;
+                    tsbEliminar.Enabled = true;
 
-                        tsbGuardar.Visible = false;
-                        tsbEliminar.Visible = true;
-                        tsbEliminar.Enabled = true;
-
-                        txtTelefonoCelular.Enabled = false;
-                        txtCorreoElectronico.Enabled = false;
-                        txtCorreoAlternativo.Enabled = false;
-                    }
+                    txtTelefonoCelular.Enabled = false;
+                    txtCorreoElectronico.Enabled = false;
+                    txtCorreoAlternativo.Enabled = false;
                     break;
                 case 4: //Detalle
                     tsbEliminar.Visible = false;
 
-                    MySqlConnection coneDetalle = new MySqlConnection(conexion);
-                    MySqlDataAdapter daDetalle = new MySqlDataAdapter("Select * from Comitentes Where Comitente = " + txtComitente.Text.Trim(), coneDetalle);
-                    DataTable dsDetalle = new DataTable();
-                    daDetalle.Fill(dsDetalle);
-                    if (dsDetalle.Rows.Count > 0)
-                    {
-                        txtComitente.Text = dsDetalle.Rows[0]["Comitente"].ToString();
-                        txtApellido.Text = dsDetalle.Rows[0]["Apellido"].ToString();
-                        txtNombres.Text = dsDetalle.Rows[0]["Nombres"].ToString();
-                        txtTelefonoCelular.Text = dsDetalle.Rows[0]["TelefonoCelular"].ToString();
-                        txtCorreoElectronico.Text = dsDetalle.Rows[0]["correoPrincipal"].ToString();
-                        txtCorreoAlternativo.Text = dsDetalle.Rows[0]["correoAlternativo"].ToString();
+                    this.Text = "Detalle Cuenta";
 
-                        this.Text = "Detalle Cuenta";
+                    txtComitente.Enabled = false;
+                    txtNombres.Enabled = false;
+                    txtApellido.Enabled = false;
 
-                        txtComitente.Enabled = false;
-                        txtNombres.Enabled = false;
-                        txtApellido.Enabled = false;
+                    tsbGuardar.Visible = false;
+                    tsbEliminar.Visible = false;
 
-                        tsbGuardar.Visible = false;
-                        tsbEliminar.Visible = false;
+                    tsbCancelar.Visible = true;
+                    tsbCancelar.Text = "&Aceptar";
+                    tsbCancelar.Image = tsbGuardar.Image;
 
-                        tsbCancelar.Visible = true;
-                        tsbCancelar.Text = "&Aceptar";
-                        tsbCancelar.Image = tsbGuardar.Image;
-
-                        txtTelefonoCelular.Enabled = false;
-                        txtCorreoElectronico.Enabled = false;
-                        txtCorreoAlternativo.Enabled = false;
-                    }
+                    txtTelefonoCelular.Enabled = false;
+                    txtCorreoElectronico.Enabled = false;
+                    txtCorreoAlternativo.Enabled = false;
                     break;
             }
-
         }
 
         private void txtApellido_KeyPress(object sender, KeyPressEventArgs e)
@@ -186,17 +156,16 @@ namespace IOL
             Correo CorreoAlternativo = new Correo(txtCorreoAlternativo.Text.Trim());
             bool lValidado = true;
             string Mensaje = string.Empty;
+            Comitentes comitente = null;
 
-            MySqlConnection cone = new MySqlConnection(conexion);
-            string sentencia = string.Empty;
+            int id;
+            try { id = Convert.ToInt32(txtComitente.Text.Trim()); }
+            catch { id = 0; }
 
             if (operacion == 1)
             {
-                sentencia = string.Format("Select Comitente From Comitentes Where Comitente = {0}", txtComitente.Text.Trim());
-                MySqlDataAdapter da = new MySqlDataAdapter(sentencia, cone);
-                DataTable dt = new DataTable();
-                int registros = da.Fill(dt);
-                if (registros > 0)
+                comitente = _service.GetById(id);
+                if (comitente != null)
                 {
                     Mensaje += String.Format("Cuenta Comitente Existente \r");
                     lValidado = false;
@@ -240,25 +209,14 @@ namespace IOL
                 }
             }
 
+            comitente.Comitente = id;
+            comitente.Apellido = txtApellido.Text.Trim();
+            comitente.Nombres = txtNombres.Text.Trim();
+            comitente.TelefonoCelular = txtTelefonoCelular.Text.Trim();
+            comitente.CorreoPrincipal = txtCorreoElectronico.Text.Trim();
+            comitente.CorreoAlternativo = txtCorreoAlternativo.Text.Trim();
+            _service.Register(comitente);
 
-            cone.Open();
-            if (operacion == 1)
-            {
-                sentencia = string.Format("Insert Into Comitentes (Comitente, Apellido, Nombres, TelefonoCelular, CorreoPrincipal, CorreoAlternativo) Values({0},'{1}','{2}','{3}','{4}','{5}')", txtComitente.Text.Trim(), txtApellido.Text.Trim(), txtNombres.Text.Trim(), txtTelefonoCelular.Text.Trim(), txtCorreoElectronico.Text.Trim(), txtCorreoAlternativo.Text.Trim());
-                MySqlCommand comando = new MySqlCommand(sentencia, cone);
-                comando.CommandType = CommandType.Text;
-                comando.ExecuteNonQuery();
-                cone.Close();
-            }
-            else
-            {
-                sentencia = string.Format("Update Comitentes Set Apellido = '{0}', Nombres = '{1}', TelefonoCelular = '{2}',  CorreoPrincipal = '{3}', CorreoAlternativo = '{4}'  Where Comitente = {5}", txtApellido.Text.Trim(), txtNombres.Text.Trim(), txtTelefonoCelular.Text.Trim(), txtCorreoElectronico.Text.Trim(), txtCorreoAlternativo.Text.Trim(), txtComitente.Text.Trim());
-                MySqlCommand comando = new MySqlCommand(sentencia, cone);
-                comando.CommandType = CommandType.Text;
-
-                comando.ExecuteNonQuery();
-                cone.Close();
-            }
             Close();
         }
 
@@ -266,15 +224,10 @@ namespace IOL
         {
             if (MessageBox.Show("Desea realmente dar de baja esta cuenta ?", "Solicitud del Sistema", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) == System.Windows.Forms.DialogResult.Yes)
             {
-                MySqlConnection coneEliminar = new MySqlConnection(conexion);
-                coneEliminar.Open();
-
-                string sentencia = string.Format("Delete From Comitentes Where Comitente = {0}",txtComitente.Text.Trim());
-                MySqlCommand comando = new MySqlCommand(sentencia, coneEliminar);
-                comando.CommandType = CommandType.Text;
-
-                comando.ExecuteNonQuery();
-                coneEliminar.Close();
+                int id;
+                try { id = Convert.ToInt32(txtComitente.Text.Trim()); }
+                catch { id = 0; }
+                _service.Delete(id);
                 Close();
             }
         }

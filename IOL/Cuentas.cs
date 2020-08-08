@@ -1,20 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Configuration;
-using MySql.Data;
-using MySql.Data.MySqlClient;
-using System.Data;
+using IOL.Servicios;
 
 namespace IOL
 {
     public partial class frmCuentas : Form
     {
+        private readonly ServiciosComitente _service = new ServiciosComitente();
         public frmCuentas()
         {
             InitializeComponent();
@@ -31,23 +25,20 @@ namespace IOL
 
         private void tsbModificar_Click(object sender, EventArgs e)
         {
-            string cone = ConfigurationManager.ConnectionStrings["conexion"].ToString();
-
             frmCuentasEditar formulario = new frmCuentasEditar();
             formulario.StartPosition = FormStartPosition.CenterScreen;
             formulario.operacion = 2;
 
             if (dgvListado.RowCount > 0)
             {
-                string cuenta = dgvListado.CurrentRow.Cells["Comitente"].Value.ToString();
-                int fila = Convert.ToUInt16(dgvListado.CurrentRow.Index);
-                MySqlDataAdapter da = new MySqlDataAdapter("Select * From Comitentes Where Comitente = " + cuenta, cone);
-                DataTable dt = new DataTable();
-                da.Fill(dt);
+                int idCuenta = Convert.ToInt32(dgvListado.CurrentRow.Cells["Comitente"].Value);
+                var lstComitentes = _service.GetById(idCuenta);
 
-                if (dt.Rows.Count > 0)
+                int fila = Convert.ToUInt16(dgvListado.CurrentRow.Index);
+
+                if (lstComitentes != null)
                 {
-                    formulario.txtComitente.Text = dt.Rows[0]["Comitente"].ToString();
+                    formulario.txtComitente.Text = lstComitentes.Comitente.ToString();
                 }
                 formulario.ShowDialog();
                 tsbVerTodos_Click(sender, e);
@@ -58,25 +49,20 @@ namespace IOL
 
         private void tsbEliminar_Click(object sender, EventArgs e)
         {
-            string cone = ConfigurationManager.ConnectionStrings["conexion"].ToString();
-
             frmCuentasEditar formulario = new frmCuentasEditar();
             formulario.StartPosition = FormStartPosition.CenterScreen;
             formulario.operacion = 3;
 
             if (dgvListado.RowCount > 0)
             {
-                string cuenta = dgvListado.CurrentRow.Cells["Comitente"].Value.ToString();
+                int idCuenta = Convert.ToInt32(dgvListado.CurrentRow.Cells["Comitente"].Value);
+                var lstComitentes = _service.GetById(idCuenta);
+
                 int fila = Convert.ToUInt16(dgvListado.CurrentRow.Index);
 
-                MySqlDataAdapter da = new MySqlDataAdapter("Select * From Comitentes Where Comitente = " + cuenta, cone);
-                DataTable dt = new DataTable();
-                da.Fill(dt);
-
-                if (dt.Rows.Count > 0)
+                if (lstComitentes != null)
                 {
-                    formulario.txtComitente.Text = dt.Rows[0]["Comitente"].ToString();
-
+                    formulario.txtComitente.Text = lstComitentes.Comitente.ToString();
                     formulario.ShowDialog();
                     tsbVerTodos_Click(sender, e);
                     if (fila < dgvListado.Rows.Count)
@@ -87,8 +73,6 @@ namespace IOL
 
         private void tsbDetalle_Click(object sender, EventArgs e)
         {
-            string cone = ConfigurationManager.ConnectionStrings["conexion"].ToString();
-
             frmCuentasEditar formulario = new frmCuentasEditar();
             formulario.StartPosition = FormStartPosition.CenterScreen;
             formulario.operacion = 4;
@@ -96,16 +80,13 @@ namespace IOL
 
             if (dgvListado.RowCount > 0)
             {
-                string cuenta = dgvListado.CurrentRow.Cells["Comitente"].Value.ToString();
+                int idCuenta = Convert.ToInt32(dgvListado.CurrentRow.Cells["Comitente"].Value);
+                var lstComitentes = _service.GetById(idCuenta);
                 int fila = Convert.ToUInt16(dgvListado.CurrentRow.Index);
 
-                MySqlDataAdapter da = new MySqlDataAdapter("Select * From Comitentes Where Comitente = " + cuenta, cone);
-                DataTable dt = new DataTable();
-                da.Fill(dt);
-
-                if (dt.Rows.Count > 0)
+                if (lstComitentes != null)
                 {
-                    formulario.txtComitente.Text = dt.Rows[0]["Comitente"].ToString();
+                    formulario.txtComitente.Text = lstComitentes.ToString();
 
                     formulario.ShowDialog();
                     tsbVerTodos_Click(sender, e);
@@ -135,7 +116,6 @@ namespace IOL
         {
             if (dgvListado.RowCount > 0)
             {
-                string cone = ConfigurationManager.ConnectionStrings["conexion"].ToString();
                 Buscar fBuscar = new Buscar();
                 fBuscar.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
                 fBuscar.Text = "Busqueda de Cuentas";
@@ -148,8 +128,7 @@ namespace IOL
                 fBuscar.ShowDialog(this);
                 if (fBuscar.DialogResult == System.Windows.Forms.DialogResult.OK)
                 {
-                    string cWhere = "";
-
+                    List<EntityFrameWork.Comitentes> lstComitentes = null;
                     string tipobusqueda = fBuscar.cboBuscar.Text.Trim();
                     string cBuscar = fBuscar.rctBuscar.Text.Trim();
 
@@ -158,28 +137,22 @@ namespace IOL
                         switch (tipobusqueda)
                         {
                             case "Comitente":
-                                cWhere += " Where Comitente = " + cBuscar;
+                                int id = Convert.ToInt32(cBuscar);
+                                lstComitentes.Add(_service.GetById(id));
                                 break;
                             case "Apellido":
-                                cWhere += " Where Apellido like '%" + cBuscar + "%' Order By Apellido";
+                                lstComitentes = _service.GetByName(cBuscar);
                                 break;
                             case "Usuario":
-                                cWhere += " Where Usuario Like '%" + cBuscar + "%' Order By Usuario";
+                                lstComitentes = _service.GetByUser(cBuscar);
                                 break;
                         }
                     }
-                    MySqlConnection coneCuentas = new MySqlConnection(cone);
-                    string sqlComando = "Select Comitente, Apellido, Nombres, Usuario From Comitentes ";
-                    sqlComando += cWhere;
-                    MySqlDataAdapter da = new MySqlDataAdapter(sqlComando, coneCuentas);
-                    DataTable ds = new DataTable();
-                    da.Fill(ds);
-
-                    lblTotalCuentas.Text = string.Format("Total listado: {0}", ds.Rows.Count);
-                    if (ds.Rows.Count > 0)
+                    if (lstComitentes != null)
                     {
-                        dgvListado.DataSource = ds;
+                        dgvListado.DataSource = lstComitentes;
                         dgvListado.RefreshEdit();
+                        lblTotalCuentas.Text = string.Format("Total listado: {0}", lstComitentes.Count);
                     }
                     else
                     {
@@ -217,8 +190,6 @@ namespace IOL
 
         private void frmCuentas_Load(object sender, EventArgs e)
         {
-            string cone = ConfigurationManager.ConnectionStrings["conexion"].ToString();
-
             ContextMenu MenuContextual = new ContextMenu();
             MenuItem MenuAgregar = new MenuItem("&Agregar", tsbAgregar_Click, Shortcut.Alt1);
             MenuItem MenuModificar = new MenuItem("&Modificar", tsbModificar_Click, Shortcut.Alt2);
@@ -230,15 +201,12 @@ namespace IOL
             MenuContextual.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] { MenuAgregar, MenuModificar, MenuEliminar, MenuSeparador1, MenuDetalle, MenuBuscar });
             ContextMenu = MenuContextual;
 
-            MySqlConnection coneCuentas = new MySqlConnection(cone);
-            MySqlDataAdapter da = new MySqlDataAdapter("Select Comitente, Apellido, Nombres, Usuario From Comitentes Order By Comitente", coneCuentas);
-            DataTable ds = new DataTable();
-            da.Fill(ds);
+            var lstComitentes = _service.GetAll();
 
-            lblTotalCuentas.Text = string.Format("Total listado: {0}", ds.Rows.Count);
-            if (ds.Rows.Count > 0)
+            if (lstComitentes != null)
             {
-                dgvListado.DataSource = ds;
+                dgvListado.DataSource = lstComitentes;
+                lblTotalCuentas.Text = string.Format("Total listado: {0}", lstComitentes.Count);
 
                 DataGridViewCellStyle EstiloEncabezadoColumna = new DataGridViewCellStyle();
 
@@ -280,6 +248,7 @@ namespace IOL
             {
                 dgvListado.DataSource = null;
                 dgvListado.RefreshEdit();
+                lblTotalCuentas.Text = "Total listado: 0";
             }
 
         }

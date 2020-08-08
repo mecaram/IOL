@@ -19,7 +19,6 @@ namespace IOL.Servicios
             {
                 _context.Comitentes.AddOrUpdate(comitente);
                 _context.SaveChanges();
-
                 return true;
             }
             catch { return false; }
@@ -29,11 +28,19 @@ namespace IOL.Servicios
         {
             return _context.Comitentes.ToList();
         }
+        public List<Comitentes> GetByUser(string usuario)
+        {
+            return _context.Comitentes.Where(x=> x.Usuario.Contains(usuario)).ToList();
+        }
+
+        public List<Comitentes> GetByName(string apellido)
+        {
+            return _context.Comitentes.Where(x => x.Apellido.Contains(apellido)).ToList();
+        }
+
         public Comitentes GetById(int id)
         {
-            var comitente = _context.Comitentes.Where(x => x.Comitente == id).SingleOrDefault();
-
-            return comitente;
+            return _context.Comitentes.Where(x => x.Comitente == id).SingleOrDefault();
         }
 
         public void Delete(int id)

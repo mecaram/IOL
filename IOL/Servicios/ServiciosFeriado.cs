@@ -31,26 +31,21 @@ namespace IOL.Servicios
         }
         public EntityFrameWork.Feriados GetById(int id)
         {
-            var feriado = _context.Feriados.Where(x => x.IdFeriado == id).SingleOrDefault();
-
-            return feriado;
+            return _context.Feriados.Where(x => x.IdFeriado == id).SingleOrDefault();
         }
 
         public List<EntityFrameWork.Feriados> GetByReason(string motivo)
         {
-            var feriado = _context.Feriados.Where(x => x.Motivo.Contains(motivo)).OrderBy(x => x.Motivo).ToList();
-            return feriado;
+            return _context.Feriados.Where(x => x.Motivo.Contains(motivo)).OrderBy(x => x.Motivo).ToList();
         }
         public List<EntityFrameWork.Feriados> GetByDate(DateTime fecha)
         {
-            var feriado = _context.Feriados.Where(x => x.Fecha == fecha).OrderBy(x => x.Fecha).ToList();
-            return feriado;
+            return _context.Feriados.Where(x => x.Fecha == fecha).OrderBy(x => x.Fecha).ToList();
         }
 
         public List<EntityFrameWork.Feriados> GetByMonth(DateTime fecha)
         {
-            var feriado = _context.Feriados.Where(x => x.Fecha.Year == fecha.Year && x.Fecha.Month == fecha.Month).OrderBy(x => x.Fecha).ToList();
-            return feriado;
+            return _context.Feriados.Where(x => x.Fecha.Year == fecha.Year && x.Fecha.Month == fecha.Month).OrderBy(x => x.Fecha).ToList();
         }
 
         public void Delete(int id)
