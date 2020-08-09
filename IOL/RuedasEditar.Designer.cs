@@ -66,6 +66,8 @@
             this.chkNo = new System.Windows.Forms.CheckBox();
             this.chkSi = new System.Windows.Forms.CheckBox();
             this.tbpSimulador = new System.Windows.Forms.TabPage();
+            this.lnkEstrategiaDos = new System.Windows.Forms.LinkLabel();
+            this.lnkEstrategiaUno = new System.Windows.Forms.LinkLabel();
             this.label29 = new System.Windows.Forms.Label();
             this.label30 = new System.Windows.Forms.Label();
             this.label31 = new System.Windows.Forms.Label();
@@ -118,8 +120,6 @@
             this.label5 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
-            this.lnkEstrategiaDos = new System.Windows.Forms.LinkLabel();
-            this.lnkEstrategiaUno = new System.Windows.Forms.LinkLabel();
             this.toolStrip1.SuspendLayout();
             this.tbcDatosRueda.SuspendLayout();
             this.tbpDatosRueda.SuspendLayout();
@@ -222,7 +222,7 @@
             this.tbpDatosRueda.Location = new System.Drawing.Point(4, 22);
             this.tbpDatosRueda.Name = "tbpDatosRueda";
             this.tbpDatosRueda.Padding = new System.Windows.Forms.Padding(3);
-            this.tbpDatosRueda.Size = new System.Drawing.Size(537, 362);
+            this.tbpDatosRueda.Size = new System.Drawing.Size(537, 401);
             this.tbpDatosRueda.TabIndex = 0;
             this.tbpDatosRueda.Text = "Datos de la Rueda";
             this.tbpDatosRueda.UseVisualStyleBackColor = true;
@@ -617,6 +617,30 @@
             this.tbpSimulador.Text = "Datos Simulador";
             this.tbpSimulador.UseVisualStyleBackColor = true;
             // 
+            // lnkEstrategiaDos
+            // 
+            this.lnkEstrategiaDos.AutoSize = true;
+            this.lnkEstrategiaDos.Font = new System.Drawing.Font("Georgia", 12.75F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Underline))));
+            this.lnkEstrategiaDos.LinkColor = System.Drawing.SystemColors.Highlight;
+            this.lnkEstrategiaDos.Location = new System.Drawing.Point(194, 211);
+            this.lnkEstrategiaDos.Name = "lnkEstrategiaDos";
+            this.lnkEstrategiaDos.Size = new System.Drawing.Size(139, 20);
+            this.lnkEstrategiaDos.TabIndex = 245;
+            this.lnkEstrategiaDos.TabStop = true;
+            this.lnkEstrategiaDos.Text = "Estrategia Dos";
+            // 
+            // lnkEstrategiaUno
+            // 
+            this.lnkEstrategiaUno.AutoSize = true;
+            this.lnkEstrategiaUno.Font = new System.Drawing.Font("Georgia", 12.75F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Underline))));
+            this.lnkEstrategiaUno.LinkColor = System.Drawing.SystemColors.Highlight;
+            this.lnkEstrategiaUno.Location = new System.Drawing.Point(194, 27);
+            this.lnkEstrategiaUno.Name = "lnkEstrategiaUno";
+            this.lnkEstrategiaUno.Size = new System.Drawing.Size(143, 20);
+            this.lnkEstrategiaUno.TabIndex = 244;
+            this.lnkEstrategiaUno.TabStop = true;
+            this.lnkEstrategiaUno.Text = "Estrategia Uno";
+            // 
             // label29
             // 
             this.label29.AutoSize = true;
@@ -998,7 +1022,6 @@
             this.txtPorcVenta1.Size = new System.Drawing.Size(81, 29);
             this.txtPorcVenta1.TabIndex = 1;
             this.txtPorcVenta1.Click += new System.EventHandler(this.txtPorcVenta1_Click);
-            this.txtPorcVenta1.TextChanged += new System.EventHandler(this.txtPorcVenta1_TextChanged);
             this.txtPorcVenta1.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtPorcVenta1_KeyPress);
             this.txtPorcVenta1.Leave += new System.EventHandler(this.txtPorcVenta1_Leave);
             // 
@@ -1010,7 +1033,6 @@
             this.txtPorcVenta2.Size = new System.Drawing.Size(81, 29);
             this.txtPorcVenta2.TabIndex = 3;
             this.txtPorcVenta2.Click += new System.EventHandler(this.txtPorcVenta2_Click);
-            this.txtPorcVenta2.TextChanged += new System.EventHandler(this.txtPorcVenta2_TextChanged);
             this.txtPorcVenta2.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtPorcVenta2_KeyPress);
             this.txtPorcVenta2.Leave += new System.EventHandler(this.txtPorcVenta2_Leave);
             // 
@@ -1022,7 +1044,6 @@
             this.txtPorcVenta3.Size = new System.Drawing.Size(81, 29);
             this.txtPorcVenta3.TabIndex = 5;
             this.txtPorcVenta3.Click += new System.EventHandler(this.txtPorcVenta3_Click);
-            this.txtPorcVenta3.TextChanged += new System.EventHandler(this.txtPorcVenta3_TextChanged);
             this.txtPorcVenta3.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtPorcVenta3_KeyPress);
             this.txtPorcVenta3.Leave += new System.EventHandler(this.txtPorcVenta3_Leave);
             // 
@@ -1034,7 +1055,6 @@
             this.txtPorcVenta4.Size = new System.Drawing.Size(81, 29);
             this.txtPorcVenta4.TabIndex = 7;
             this.txtPorcVenta4.Click += new System.EventHandler(this.txtPorcVenta4_Click);
-            this.txtPorcVenta4.TextChanged += new System.EventHandler(this.txtPorcVenta4_TextChanged);
             this.txtPorcVenta4.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtPorcVenta4_KeyPress);
             this.txtPorcVenta4.Leave += new System.EventHandler(this.txtPorcVenta4_Leave);
             // 
@@ -1046,7 +1066,6 @@
             this.txtPorcVenta5.Size = new System.Drawing.Size(81, 29);
             this.txtPorcVenta5.TabIndex = 9;
             this.txtPorcVenta5.Click += new System.EventHandler(this.txtPorcVenta5_Click);
-            this.txtPorcVenta5.TextChanged += new System.EventHandler(this.txtPorcVenta5_TextChanged);
             this.txtPorcVenta5.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtPorcVenta5_KeyPress);
             this.txtPorcVenta5.Leave += new System.EventHandler(this.txtPorcVenta5_Leave);
             // 
@@ -1069,7 +1088,6 @@
             this.txtPorcCompra1.Size = new System.Drawing.Size(81, 29);
             this.txtPorcCompra1.TabIndex = 0;
             this.txtPorcCompra1.Click += new System.EventHandler(this.txtPorcCompra1_Click);
-            this.txtPorcCompra1.TextChanged += new System.EventHandler(this.txtPorcCompra1_TextChanged);
             this.txtPorcCompra1.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtPorcCompra1_KeyPress);
             this.txtPorcCompra1.Leave += new System.EventHandler(this.txtPorcCompra1_Leave);
             // 
@@ -1081,7 +1099,6 @@
             this.txtPorcCompra2.Size = new System.Drawing.Size(81, 29);
             this.txtPorcCompra2.TabIndex = 2;
             this.txtPorcCompra2.Click += new System.EventHandler(this.txtPorcCompra2_Click);
-            this.txtPorcCompra2.TextChanged += new System.EventHandler(this.txtPorcCompra2_TextChanged);
             this.txtPorcCompra2.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtPorcCompra2_KeyPress);
             this.txtPorcCompra2.Leave += new System.EventHandler(this.txtPorcCompra2_Leave);
             // 
@@ -1093,7 +1110,6 @@
             this.txtPorcCompra3.Size = new System.Drawing.Size(81, 29);
             this.txtPorcCompra3.TabIndex = 4;
             this.txtPorcCompra3.Click += new System.EventHandler(this.txtPorcCompra3_Click);
-            this.txtPorcCompra3.TextChanged += new System.EventHandler(this.txtPorcCompra3_TextChanged);
             this.txtPorcCompra3.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtPorcCompra3_KeyPress);
             this.txtPorcCompra3.Leave += new System.EventHandler(this.txtPorcCompra3_Leave);
             // 
@@ -1105,7 +1121,6 @@
             this.txtPorcCompra4.Size = new System.Drawing.Size(81, 29);
             this.txtPorcCompra4.TabIndex = 6;
             this.txtPorcCompra4.Click += new System.EventHandler(this.txtPorcCompra4_Click);
-            this.txtPorcCompra4.TextChanged += new System.EventHandler(this.txtPorcCompra4_TextChanged);
             this.txtPorcCompra4.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtPorcCompra4_KeyPress);
             this.txtPorcCompra4.Leave += new System.EventHandler(this.txtPorcCompra4_Leave);
             // 
@@ -1117,7 +1132,6 @@
             this.txtPorcCompra5.Size = new System.Drawing.Size(81, 29);
             this.txtPorcCompra5.TabIndex = 8;
             this.txtPorcCompra5.Click += new System.EventHandler(this.txtPorcCompra5_Click);
-            this.txtPorcCompra5.TextChanged += new System.EventHandler(this.txtPorcCompra5_TextChanged);
             this.txtPorcCompra5.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtPorcCompra5_KeyPress);
             this.txtPorcCompra5.Leave += new System.EventHandler(this.txtPorcCompra5_Leave);
             // 
@@ -1170,30 +1184,6 @@
             this.label2.Size = new System.Drawing.Size(23, 21);
             this.label2.TabIndex = 162;
             this.label2.Text = "1:";
-            // 
-            // lnkEstrategiaDos
-            // 
-            this.lnkEstrategiaDos.AutoSize = true;
-            this.lnkEstrategiaDos.Font = new System.Drawing.Font("Georgia", 12.75F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Underline))));
-            this.lnkEstrategiaDos.LinkColor = System.Drawing.SystemColors.Highlight;
-            this.lnkEstrategiaDos.Location = new System.Drawing.Point(194, 211);
-            this.lnkEstrategiaDos.Name = "lnkEstrategiaDos";
-            this.lnkEstrategiaDos.Size = new System.Drawing.Size(139, 20);
-            this.lnkEstrategiaDos.TabIndex = 245;
-            this.lnkEstrategiaDos.TabStop = true;
-            this.lnkEstrategiaDos.Text = "Estrategia Dos";
-            // 
-            // lnkEstrategiaUno
-            // 
-            this.lnkEstrategiaUno.AutoSize = true;
-            this.lnkEstrategiaUno.Font = new System.Drawing.Font("Georgia", 12.75F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Underline))));
-            this.lnkEstrategiaUno.LinkColor = System.Drawing.SystemColors.Highlight;
-            this.lnkEstrategiaUno.Location = new System.Drawing.Point(194, 27);
-            this.lnkEstrategiaUno.Name = "lnkEstrategiaUno";
-            this.lnkEstrategiaUno.Size = new System.Drawing.Size(143, 20);
-            this.lnkEstrategiaUno.TabIndex = 244;
-            this.lnkEstrategiaUno.TabStop = true;
-            this.lnkEstrategiaUno.Text = "Estrategia Uno";
             // 
             // RuedasEditar
             // 

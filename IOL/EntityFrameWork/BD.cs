@@ -146,7 +146,6 @@
         public int IdRuedaSimulador { get; set; }
         public int IdRueda { get; set; }
         public int IdSimulador { get; set; }
-        public decimal InversionTotalSimulador { get; set; }
         public decimal PorcCompra { get; set; }
         public decimal PorcVenta { get; set; }
         public virtual ICollection<Ruedas> ruedas { get; set; }
@@ -220,7 +219,6 @@
         public DateTime Fecha { get; set; }
         public decimal DisponibleParaOperar { get; set; }
         public decimal ActivosValorizados { get; set; }
-        public decimal BonificacionPorComisiones { get; set; }
         public decimal TotalTenencia { get; set; }
         public virtual ICollection<Comitentes> comitentes { get; set; }
     }
