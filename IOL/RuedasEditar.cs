@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
+using DocumentFormat.OpenXml.Office2010.Excel;
 using IOL.EntityFrameWork;
 using IOL.Servicios;
 
@@ -48,7 +50,6 @@ namespace IOL
 
                         chkSi.Checked = RuedaAnterior.Operar ? true : false;
                         chkNo.Checked = !chkSi.Checked;
-                        //                    ActualizarDatosSimulador();
                     }
                     else
                     {
@@ -64,27 +65,68 @@ namespace IOL
 
                         chkSi.Checked = true;
 
-                        txtPorcCompra1.Text = string.Format("{0:00.00}", 0.58m);
-                        txtPorcCompra2.Text = string.Format("{0:00.00}", 0.55m);
-                        txtPorcCompra3.Text = string.Format("{0:00.00}", 0.60m);
-                        txtPorcCompra4.Text = string.Format("{0:00.00}", 0.59m);
-                        txtPorcCompra5.Text = string.Format("{0:00.00}", 0.60m);
-                        txtPorcCompra6.Text = string.Format("{0:00.00}", 0.01m);
-                        txtPorcCompra7.Text = string.Format("{0:00.00}", 0.05m);
-                        txtPorcCompra8.Text = string.Format("{0:00.00}", 0.01m);
-                        txtPorcCompra9.Text = string.Format("{0:00.00}", 0.01m);
-                        txtPorcCompra10.Text = string.Format("{0:00.00}", 0.05m);
+                        List<IOL.EntityFrameWork.RuedasDatosSimulador> lstDatosSimulador = null;
+                        RuedasDatosSimulador datosSimulador = null;
+                        
+                        int idSimulador = 1;
+                        datosSimulador.IdSimulador = idSimulador;
+                        datosSimulador.PorcCompra = 0.58m;
+                        datosSimulador.PorcVenta = 1.0m;
+                        lstDatosSimulador.Add(datosSimulador);
 
-                        txtPorcVenta1.Text = string.Format("{0:00.00}", 1.0m);
-                        txtPorcVenta2.Text = string.Format("{0:00.00}", 0.70m);
-                        txtPorcVenta3.Text = string.Format("{0:00.00}", 0.75m);
-                        txtPorcVenta4.Text = string.Format("{0:00.00}", 1.00m);
-                        txtPorcVenta5.Text = string.Format("{0:00.00}", 1.00m);
-                        txtPorcVenta6.Text = string.Format("{0:00.00}", 0.15m);
-                        txtPorcVenta7.Text = string.Format("{0:00.00}", 0.20m);
-                        txtPorcVenta8.Text = string.Format("{0:00.00}", 0.25m);
-                        txtPorcVenta9.Text = string.Format("{0:00.00}", 0.30m);
-                        txtPorcVenta10.Text = string.Format("{0:00.00}", 0.36m);
+                        idSimulador = 2;
+                        datosSimulador.IdSimulador = idSimulador;
+                        datosSimulador.PorcCompra = 0.55m;
+                        datosSimulador.PorcVenta = 0.70m;
+                        lstDatosSimulador.Add(datosSimulador);
+
+                        idSimulador = 3;
+                        datosSimulador.IdSimulador = idSimulador;
+                        datosSimulador.PorcCompra = 0.60m;
+                        datosSimulador.PorcVenta = 0.75m;
+                        lstDatosSimulador.Add(datosSimulador);
+
+                        idSimulador = 4;
+                        datosSimulador.IdSimulador = idSimulador;
+                        datosSimulador.PorcCompra = 0.59m;
+                        datosSimulador.PorcVenta = 1.00m;
+                        lstDatosSimulador.Add(datosSimulador);
+
+                        idSimulador = 5;
+                        datosSimulador.IdSimulador = idSimulador;
+                        datosSimulador.PorcCompra = 0.60m;
+                        datosSimulador.PorcVenta = 1.00m;
+                        lstDatosSimulador.Add(datosSimulador);
+
+                        idSimulador = 6;
+                        datosSimulador.IdSimulador = idSimulador;
+                        datosSimulador.PorcCompra = 0.01m;
+                        datosSimulador.PorcVenta = 0.15m;
+                        lstDatosSimulador.Add(datosSimulador);
+
+                        idSimulador = 7;
+                        datosSimulador.IdSimulador = idSimulador;
+                        datosSimulador.PorcCompra = 0.05m;
+                        datosSimulador.PorcVenta = 0.20m;
+                        lstDatosSimulador.Add(datosSimulador);
+
+                        idSimulador = 8;
+                        datosSimulador.IdSimulador = idSimulador;
+                        datosSimulador.PorcCompra = 0.01m;
+                        datosSimulador.PorcVenta = 0.25m;
+                        lstDatosSimulador.Add(datosSimulador);
+
+                        idSimulador = 9;
+                        datosSimulador.IdSimulador = idSimulador;
+                        datosSimulador.PorcCompra = 0.01m;
+                        datosSimulador.PorcVenta = 0.30m;
+                        lstDatosSimulador.Add(datosSimulador);
+
+                        idSimulador = 10;
+                        datosSimulador.IdSimulador = idSimulador;
+                        datosSimulador.PorcCompra = 0.05m;
+                        datosSimulador.PorcVenta = 0.05m;
+                        lstDatosSimulador.Add(datosSimulador);
                     }
 
                     txtSaldoARetirar.Focus();
@@ -93,7 +135,6 @@ namespace IOL
                     tsbEliminar.Visible = false;
 
                     ActualizarRueda();
-                    ActualizarDatosSimulador();
 
                     this.Text = "Modificar Rueda";
                     txtFecha.Enabled = false;
@@ -103,7 +144,6 @@ namespace IOL
                     tsbEliminar.Visible = false;
 
                     ActualizarRueda();
-                    ActualizarDatosSimulador();
                     this.Text = "Eliminar Rueda";
 
                     txtIdRueda.Enabled = false;
@@ -130,7 +170,6 @@ namespace IOL
                     tsbEliminar.Visible = false;
 
                     ActualizarRueda();
-                    ActualizarDatosSimulador();
 
                     txtIdRueda.Enabled = false;
                     txtFecha.Enabled = false;
@@ -240,146 +279,6 @@ namespace IOL
                 }
             }
 
-            decimal porccompra1 = 0, porccompra2 = 0, porccompra3 = 0, porccompra4 = 0, porccompra5 = 0,
-                    porccompra6 = 0, porccompra7 = 0, porccompra8 = 0, porccompra9 = 0, porccompra10 = 0,
-                    porcventa1 = 0, porcventa2 = 0, porcventa3 = 0, porcventa4 = 0, porcventa5 = 0,
-                    porcventa6 = 0, porcventa7 = 0, porcventa8 = 0, porcventa9 = 0, porcventa10 = 0;
-
-            try { porccompra1 = Convert.ToDecimal(txtPorcCompra1.Text.Trim()); }
-            catch { porccompra1 = 0; }
-
-            try { porccompra2 = Convert.ToDecimal(txtPorcCompra2.Text.Trim()); }
-            catch { porccompra2 = 0; }
-
-            try { porccompra3 = Convert.ToDecimal(txtPorcCompra3.Text.Trim()); }
-            catch { porccompra3 = 0; }
-
-            try { porccompra4 = Convert.ToDecimal(txtPorcCompra4.Text.Trim()); }
-            catch { porccompra4 = 0; }
-
-            try { porccompra5 = Convert.ToDecimal(txtPorcCompra5.Text.Trim()); }
-            catch { porccompra5 = 0; }
-
-            try { porccompra6 = Convert.ToDecimal(txtPorcCompra6.Text.Trim()); }
-            catch { porccompra6 = 0; }
-
-            try { porccompra7 = Convert.ToDecimal(txtPorcCompra7.Text.Trim()); }
-            catch { porccompra7 = 0; }
-
-            try { porccompra8 = Convert.ToDecimal(txtPorcCompra8.Text.Trim()); }
-            catch { porccompra8 = 0; }
-
-            try { porccompra9 = Convert.ToDecimal(txtPorcCompra9.Text.Trim()); }
-            catch { porccompra9 = 0; }
-
-            try { porccompra10 = Convert.ToDecimal(txtPorcCompra10.Text.Trim()); }
-            catch { porccompra10 = 0; }
-
-            try { porcventa1 = Convert.ToDecimal(txtPorcVenta1.Text.Trim()); }
-            catch { porcventa1 = 0; }
-
-            try { porcventa2 = Convert.ToDecimal(txtPorcVenta2.Text.Trim()); }
-            catch { porcventa2 = 0; }
-
-            try { porcventa3 = Convert.ToDecimal(txtPorcVenta3.Text.Trim()); }
-            catch { porcventa3 = 0; }
-
-            try { porcventa4 = Convert.ToDecimal(txtPorcVenta4.Text.Trim()); }
-            catch { porcventa4 = 0; }
-
-            try { porcventa5 = Convert.ToDecimal(txtPorcVenta5.Text.Trim()); }
-            catch { porcventa5 = 0; }
-
-            try { porcventa6 = Convert.ToDecimal(txtPorcVenta6.Text.Trim()); }
-            catch { porcventa6 = 0; }
-
-            try { porcventa7 = Convert.ToDecimal(txtPorcVenta7.Text.Trim()); }
-            catch { porcventa7 = 0; }
-
-            try { porcventa8 = Convert.ToDecimal(txtPorcVenta8.Text.Trim()); }
-            catch { porcventa8 = 0; }
-
-            try { porcventa9 = Convert.ToDecimal(txtPorcVenta9.Text.Trim()); }
-            catch { porcventa9 = 0; }
-
-            try { porcventa10 = Convert.ToDecimal(txtPorcVenta10.Text.Trim()); }
-            catch { porcventa10 = 0; }
-
-            if (porccompra1 <= 0)
-            {
-                Mensaje += String.Format("Ingrese Porcentaje de Compra 1 \r");
-                lValidado = false;
-            }
-
-            if (porcventa1 <= 0)
-            {
-                Mensaje += String.Format("Ingrese Porcentaje de Venta 1 \r");
-                lValidado = false;
-            }
-
-            if (porccompra2 > 0)
-                if (porcventa2 <= 0)
-                {
-                    Mensaje += String.Format("Ingrese Porcentaje de Venta 2 \r");
-                    lValidado = false;
-                }
-
-            if (porccompra3 > 0)
-                if (porcventa3 <= 0)
-                {
-                    Mensaje += String.Format("Ingrese Porcentaje de Venta 3 \r");
-                    lValidado = false;
-                }
-
-            if (porccompra4 > 0)
-                if (porcventa4 <= 0)
-                {
-                    Mensaje += String.Format("Ingrese Porcentaje de Venta 4 \r");
-                    lValidado = false;
-                }
-
-            if (porccompra5 > 0)
-                if (porcventa5 <= 0)
-                {
-                    Mensaje += String.Format("Ingrese Porcentaje de Venta 5 \r");
-                    lValidado = false;
-                }
-
-            if (porccompra6 > 0)
-                if (porcventa6 <= 0)
-                {
-                    Mensaje += String.Format("Ingrese Porcentaje de Venta 6 \r");
-                    lValidado = false;
-                }
-
-            if (porccompra7 > 0)
-                if (porcventa7 <= 0)
-                {
-                    Mensaje += String.Format("Ingrese Porcentaje de Venta 7 \r");
-                    lValidado = false;
-                }
-
-            if (porccompra8 > 0)
-                if (porcventa8 <= 0)
-                {
-                    Mensaje += String.Format("Ingrese Porcentaje de Venta 8 \r");
-                    lValidado = false;
-                }
-
-            if (porccompra9 > 0)
-                if (porcventa9 <= 0)
-                {
-                    Mensaje += String.Format("Ingrese Porcentaje de Venta 9 \r");
-                    lValidado = false;
-                }
-
-            if (porccompra10 > 0)
-                if (porcventa10 <= 0)
-                {
-                    Mensaje += String.Format("Ingrese Porcentaje de Venta 10 \r");
-                    lValidado = false;
-                }
-
             DateTime? fecha = null;
             try
             { fecha = Convert.ToDateTime(txtFecha.Text.Trim()); }
@@ -430,91 +329,23 @@ namespace IOL
             rueda.Comitente = comitente;
 
             _service.Register(rueda);
+            int idRueda = _service.GetLast().IdRueda;
 
-            int idSimulador = 1;
-            ruedasDatosSimulador = _serviceDatoSimulador.GetByIdSimulador(rueda.IdRueda, idSimulador);
-            ruedasDatosSimulador.IdSimulador = idSimulador;
-            ruedasDatosSimulador.IdRueda = rueda.IdRueda;
-            ruedasDatosSimulador.PorcCompra = porccompra1;
-            ruedasDatosSimulador.PorcVenta = porcventa1;
-            _serviceDatoSimulador.Register(ruedasDatosSimulador);
+            for (int x = 0; x < dgvListado.Rows.Count; x++)
+            {
+                int idSimulador = Convert.ToInt32(dgvListado.Rows[x].Cells["IdSimulador"].Value);
+                ruedasDatosSimulador.IdSimulador = idSimulador;
+                ruedasDatosSimulador.IdRueda = idRueda;
+                ruedasDatosSimulador.PorcCompra = Convert.ToDecimal(dgvListado.Rows[x].Cells["PorcCompra"].Value);
+                ruedasDatosSimulador.PorcVenta = Convert.ToDecimal(dgvListado.Rows[x].Cells["PorcVenta"].Value);
+                _serviceDatoSimulador.Register(ruedasDatosSimulador);
+            }
 
-            idSimulador = 2;
-            ruedasDatosSimulador = _serviceDatoSimulador.GetByIdSimulador(rueda.IdRueda, idSimulador);
-            ruedasDatosSimulador.IdSimulador = idSimulador;
-            ruedasDatosSimulador.IdRueda = rueda.IdRueda;
-            ruedasDatosSimulador.PorcCompra = porccompra2;
-            ruedasDatosSimulador.PorcVenta = porcventa2;
-            _serviceDatoSimulador.Register(ruedasDatosSimulador);
-
-            idSimulador = 3;
-            ruedasDatosSimulador = _serviceDatoSimulador.GetByIdSimulador(rueda.IdRueda, idSimulador);
-            ruedasDatosSimulador.IdSimulador = idSimulador;
-            ruedasDatosSimulador.IdRueda = rueda.IdRueda;
-            ruedasDatosSimulador.PorcCompra = porccompra3;
-            ruedasDatosSimulador.PorcVenta = porcventa3;
-            _serviceDatoSimulador.Register(ruedasDatosSimulador);
-
-            idSimulador = 4;
-            ruedasDatosSimulador = _serviceDatoSimulador.GetByIdSimulador(rueda.IdRueda, idSimulador);
-            ruedasDatosSimulador.IdSimulador = idSimulador;
-            ruedasDatosSimulador.IdRueda = rueda.IdRueda;
-            ruedasDatosSimulador.PorcCompra = porccompra4;
-            ruedasDatosSimulador.PorcVenta = porcventa4;
-            _serviceDatoSimulador.Register(ruedasDatosSimulador);
-
-            idSimulador = 5;
-            ruedasDatosSimulador = _serviceDatoSimulador.GetByIdSimulador(rueda.IdRueda, idSimulador);
-            ruedasDatosSimulador.IdSimulador = idSimulador;
-            ruedasDatosSimulador.IdRueda = rueda.IdRueda;
-            ruedasDatosSimulador.PorcCompra = porccompra5;
-            ruedasDatosSimulador.PorcVenta = porcventa5;
-            _serviceDatoSimulador.Register(ruedasDatosSimulador);
-
-            idSimulador = 6;
-            ruedasDatosSimulador = _serviceDatoSimulador.GetByIdSimulador(rueda.IdRueda, idSimulador);
-            ruedasDatosSimulador.IdSimulador = idSimulador;
-            ruedasDatosSimulador.IdRueda = rueda.IdRueda;
-            ruedasDatosSimulador.PorcCompra = porccompra6;
-            ruedasDatosSimulador.PorcVenta = porcventa6;
-            _serviceDatoSimulador.Register(ruedasDatosSimulador);
-
-            idSimulador = 7;
-            ruedasDatosSimulador = _serviceDatoSimulador.GetByIdSimulador(rueda.IdRueda, idSimulador);
-            ruedasDatosSimulador.IdSimulador = idSimulador;
-            ruedasDatosSimulador.IdRueda = rueda.IdRueda;
-            ruedasDatosSimulador.PorcCompra = porccompra7;
-            ruedasDatosSimulador.PorcVenta = porcventa7;
-            _serviceDatoSimulador.Register(ruedasDatosSimulador);
-
-            idSimulador = 8;
-            ruedasDatosSimulador = _serviceDatoSimulador.GetByIdSimulador(rueda.IdRueda, idSimulador);
-            ruedasDatosSimulador.IdSimulador = idSimulador;
-            ruedasDatosSimulador.IdRueda = rueda.IdRueda;
-            ruedasDatosSimulador.PorcCompra = porccompra8;
-            ruedasDatosSimulador.PorcVenta = porcventa8;
-            _serviceDatoSimulador.Register(ruedasDatosSimulador);
-
-            idSimulador = 9;
-            ruedasDatosSimulador = _serviceDatoSimulador.GetByIdSimulador(rueda.IdRueda, idSimulador);
-            ruedasDatosSimulador.IdSimulador = idSimulador;
-            ruedasDatosSimulador.IdRueda = rueda.IdRueda;
-            ruedasDatosSimulador.PorcCompra = porccompra9;
-            ruedasDatosSimulador.PorcVenta = porcventa9;
-            _serviceDatoSimulador.Register(ruedasDatosSimulador);
-
-            idSimulador = 10;
-            ruedasDatosSimulador = _serviceDatoSimulador.GetByIdSimulador(rueda.IdRueda, idSimulador);
-            ruedasDatosSimulador.IdSimulador = idSimulador;
-            ruedasDatosSimulador.IdRueda = rueda.IdRueda;
-            ruedasDatosSimulador.PorcCompra = porccompra10;
-            ruedasDatosSimulador.PorcVenta = porcventa10;
-            _serviceDatoSimulador.Register(ruedasDatosSimulador);
 
             TenenciaSimuladores tenenciaSimulador = new TenenciaSimuladores();
             for (int x = 1; x < 11; x++)
             {
-                idSimulador = 1;
+                int idSimulador = 1;
                 tenenciaSimulador = _serviceTenenciaSimulador.GetById(idSimulador);
                 if (tenenciaSimulador != null)
                 {
@@ -568,27 +399,8 @@ namespace IOL
 
         private void DesactivarPorcentajesSimulador()
         {
-            txtPorcCompra1.Enabled = false;
-            txtPorcCompra2.Enabled = false;
-            txtPorcCompra3.Enabled = false;
-            txtPorcCompra4.Enabled = false;
-            txtPorcCompra5.Enabled = false;
-            txtPorcCompra6.Enabled = false;
-            txtPorcCompra7.Enabled = false;
-            txtPorcCompra8.Enabled = false;
-            txtPorcCompra9.Enabled = false;
-            txtPorcCompra10.Enabled = false;
-
-            txtPorcVenta1.Enabled = false;
-            txtPorcVenta2.Enabled = false;
-            txtPorcVenta3.Enabled = false;
-            txtPorcVenta4.Enabled = false;
-            txtPorcVenta5.Enabled = false;
-            txtPorcVenta6.Enabled = false;
-            txtPorcVenta7.Enabled = false;
-            txtPorcVenta8.Enabled = false;
-            txtPorcVenta9.Enabled = false;
-            txtPorcVenta10.Enabled = false;
+            txtPorcCompraSimulador.Enabled = false;
+            txtPorcVentaSimulador.Enabled = false;
         }
         private void ActualizarRueda()
         {
@@ -608,80 +420,6 @@ namespace IOL
 
                 chkSi.Checked = rueda.Operar ? true : false;
                 chkNo.Checked = !chkSi.Checked;
-            }
-        }
-
-        private void ActualizarDatosSimulador()
-        {
-            int idRueda = Convert.ToInt32(txtIdRueda.Text.Trim());
-            var RuedaDatosSimulador = _serviceDatoSimulador.GetByIdSimulador(idRueda, 1);
-            if (RuedaDatosSimulador != null)
-            {
-                txtPorcCompra1.Text = string.Format("{0:00.00}", RuedaDatosSimulador.PorcCompra);
-                txtPorcVenta1.Text = string.Format("{0:00.00}", RuedaDatosSimulador.PorcVenta);
-            }
-
-            RuedaDatosSimulador = _serviceDatoSimulador.GetByIdSimulador(idRueda, 2);
-            if (RuedaDatosSimulador != null)
-            {
-                txtPorcCompra2.Text = string.Format("{0:00.00}", RuedaDatosSimulador.PorcCompra);
-                txtPorcVenta2.Text = string.Format("{0:00.00}", RuedaDatosSimulador.PorcVenta);
-            }
-
-            RuedaDatosSimulador = _serviceDatoSimulador.GetByIdSimulador(idRueda, 3);
-            if (RuedaDatosSimulador != null)
-            {
-                txtPorcCompra3.Text = string.Format("{0:00.00}", RuedaDatosSimulador.PorcCompra);
-                txtPorcVenta3.Text = string.Format("{0:00.00}", RuedaDatosSimulador.PorcVenta);
-            }
-
-            RuedaDatosSimulador = _serviceDatoSimulador.GetByIdSimulador(idRueda, 4);
-            if (RuedaDatosSimulador != null)
-            {
-                txtPorcCompra4.Text = string.Format("{0:00.00}", RuedaDatosSimulador.PorcCompra);
-                txtPorcVenta4.Text = string.Format("{0:00.00}", RuedaDatosSimulador.PorcVenta);
-            }
-
-            RuedaDatosSimulador = _serviceDatoSimulador.GetByIdSimulador(idRueda, 5);
-            if (RuedaDatosSimulador != null)
-            {
-                txtPorcCompra5.Text = string.Format("{0:00.00}", RuedaDatosSimulador.PorcCompra);
-                txtPorcVenta5.Text = string.Format("{0:00.00}", RuedaDatosSimulador.PorcVenta);
-            }
-
-            RuedaDatosSimulador = _serviceDatoSimulador.GetByIdSimulador(idRueda, 6);
-            if (RuedaDatosSimulador != null)
-            {
-                txtPorcCompra6.Text = string.Format("{0:00.00}", RuedaDatosSimulador.PorcCompra);
-                txtPorcVenta6.Text = string.Format("{0:00.00}", RuedaDatosSimulador.PorcVenta);
-            }
-
-            RuedaDatosSimulador = _serviceDatoSimulador.GetByIdSimulador(idRueda, 7);
-            if (RuedaDatosSimulador != null)
-            {
-                txtPorcCompra7.Text = string.Format("{0:00.00}", RuedaDatosSimulador.PorcCompra);
-                txtPorcVenta7.Text = string.Format("{0:00.00}", RuedaDatosSimulador.PorcVenta);
-            }
-
-            RuedaDatosSimulador = _serviceDatoSimulador.GetByIdSimulador(idRueda, 8);
-            if (RuedaDatosSimulador != null)
-            {
-                txtPorcCompra8.Text = string.Format("{0:00.00}", RuedaDatosSimulador.PorcCompra);
-                txtPorcVenta8.Text = string.Format("{0:00.00}", RuedaDatosSimulador.PorcVenta);
-            }
-
-            RuedaDatosSimulador = _serviceDatoSimulador.GetByIdSimulador(idRueda, 9);
-            if (RuedaDatosSimulador != null)
-            {
-                txtPorcCompra9.Text = string.Format("{0:00.00}", RuedaDatosSimulador.PorcCompra);
-                txtPorcVenta9.Text = string.Format("{0:00.00}", RuedaDatosSimulador.PorcVenta);
-            }
-
-            RuedaDatosSimulador = _serviceDatoSimulador.GetByIdSimulador(idRueda, 10);
-            if (RuedaDatosSimulador != null)
-            {
-                txtPorcCompra10.Text = string.Format("{0:00.00}", RuedaDatosSimulador.PorcCompra);
-                txtPorcVenta10.Text = string.Format("{0:00.00}", RuedaDatosSimulador.PorcVenta);
             }
         }
         private void txtInversionTotal_Click(object sender, EventArgs e)
@@ -714,56 +452,6 @@ namespace IOL
             SeleccionarTexto(sender);
         }
 
-        private void txtPorcCompra1_Click(object sender, EventArgs e)
-        {
-            SeleccionarTexto(sender);
-        }
-
-        private void txtPorcCompra2_Click(object sender, EventArgs e)
-        {
-            SeleccionarTexto(sender);
-        }
-
-        private void txtPorcCompra3_Click(object sender, EventArgs e)
-        {
-            SeleccionarTexto(sender);
-        }
-
-        private void txtPorcCompra4_Click(object sender, EventArgs e)
-        {
-            SeleccionarTexto(sender);
-        }
-
-        private void txtPorcCompra5_Click(object sender, EventArgs e)
-        {
-            SeleccionarTexto(sender);
-        }
-
-        private void txtPorcVenta1_Click(object sender, EventArgs e)
-        {
-            SeleccionarTexto(sender);
-        }
-
-        private void txtPorcVenta2_Click(object sender, EventArgs e)
-        {
-            SeleccionarTexto(sender);
-        }
-
-        private void txtPorcVenta3_Click(object sender, EventArgs e)
-        {
-            SeleccionarTexto(sender);
-        }
-
-        private void txtPorcVenta4_Click(object sender, EventArgs e)
-        {
-            SeleccionarTexto(sender);
-        }
-
-        private void txtPorcVenta5_Click(object sender, EventArgs e)
-        {
-            SeleccionarTexto(sender);
-        }
-
         private void txtInversionTotal_KeyPress(object sender, KeyPressEventArgs e)
         {
 
@@ -780,56 +468,6 @@ namespace IOL
         }
 
         private void txtPorcVenta_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            ValidarFormatoNumerico(sender, e);
-        }
-
-        private void txtPorcCompra1_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            ValidarFormatoNumerico(sender, e);
-        }
-
-        private void txtPorcCompra2_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            ValidarFormatoNumerico(sender, e);
-        }
-
-        private void txtPorcCompra3_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            ValidarFormatoNumerico(sender, e);
-        }
-
-        private void txtPorcCompra4_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            ValidarFormatoNumerico(sender, e);
-        }
-
-        private void txtPorcCompra5_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            ValidarFormatoNumerico(sender, e);
-        }
-
-        private void txtPorcVenta1_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            ValidarFormatoNumerico(sender, e);
-        }
-
-        private void txtPorcVenta2_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            ValidarFormatoNumerico(sender, e);
-        }
-
-        private void txtPorcVenta3_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            ValidarFormatoNumerico(sender, e);
-        }
-
-        private void txtPorcVenta4_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            ValidarFormatoNumerico(sender, e);
-        }
-
-        private void txtPorcVenta5_KeyPress(object sender, KeyPressEventArgs e)
         {
             ValidarFormatoNumerico(sender, e);
         }
@@ -884,55 +522,6 @@ namespace IOL
             EventoLeave(sender, e);
         }
 
-        private void txtPorcCompra1_Leave(object sender, EventArgs e)
-        {
-            EventoLeave(sender, e);
-        }
-
-        private void txtPorcCompra2_Leave(object sender, EventArgs e)
-        {
-            EventoLeave(sender, e);
-        }
-
-        private void txtPorcCompra3_Leave(object sender, EventArgs e)
-        {
-            EventoLeave(sender, e);
-        }
-
-        private void txtPorcCompra4_Leave(object sender, EventArgs e)
-        {
-            EventoLeave(sender, e);
-        }
-
-        private void txtPorcCompra5_Leave(object sender, EventArgs e)
-        {
-            EventoLeave(sender, e);
-        }
-
-        private void txtPorcVenta1_Leave(object sender, EventArgs e)
-        {
-            EventoLeave(sender, e);
-        }
-
-        private void txtPorcVenta3_Leave(object sender, EventArgs e)
-        {
-            EventoLeave(sender, e);
-        }
-
-        private void txtPorcVenta2_Leave(object sender, EventArgs e)
-        {
-            EventoLeave(sender, e);
-        }
-
-        private void txtPorcVenta5_Leave(object sender, EventArgs e)
-        {
-            EventoLeave(sender, e);
-        }
-
-        private void txtPorcVenta4_Leave(object sender, EventArgs e)
-        {
-            EventoLeave(sender, e);
-        }
         private void nupCantAcciones_Click(object sender, EventArgs e)
         {
         }
@@ -1003,90 +592,6 @@ namespace IOL
             SeleccionarTexto(sender);
         }
 
-        private void txtPorcCompra6_Click(object sender, EventArgs e)
-        {
-            SeleccionarTexto(sender);
-        }
-
-        private void txtPorcCompra7_Click(object sender, EventArgs e)
-        {
-            SeleccionarTexto(sender);
-        }
-
-        private void txtPorcCompra8_Click(object sender, EventArgs e)
-        {
-            SeleccionarTexto(sender);
-        }
-
-        private void txtPorcCompra9_Click(object sender, EventArgs e)
-        {
-            SeleccionarTexto(sender);
-        }
-
-        private void txtPorcCompra10_Click(object sender, EventArgs e)
-        {
-            SeleccionarTexto(sender);
-        }
-
-        private void txtPorcVenta6_Click(object sender, EventArgs e)
-        {
-            SeleccionarTexto(sender);
-        }
-
-        private void txtPorcVenta7_Click(object sender, EventArgs e)
-        {
-            SeleccionarTexto(sender);
-        }
-
-        private void txtPorcVenta8_Click(object sender, EventArgs e)
-        {
-            SeleccionarTexto(sender);
-        }
-
-        private void txtPorcVenta9_Click(object sender, EventArgs e)
-        {
-            SeleccionarTexto(sender);
-        }
-
-        private void txtPorcVenta10_Click(object sender, EventArgs e)
-        {
-            SeleccionarTexto(sender);
-        }
-
-        private void txtPorcCompra6_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            ValidarFormatoNumerico(sender, e);
-        }
-
-        private void txtPorcCompra7_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            ValidarFormatoNumerico(sender, e);
-        }
-
-        private void txtPorcCompra8_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            ValidarFormatoNumerico(sender, e);
-        }
-
-        private void txtPorcCompra9_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            ValidarFormatoNumerico(sender, e);
-        }
-
-        private void txtPorcCompra10_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            ValidarFormatoNumerico(sender, e);
-        }
-
-        private void txtPorcVenta6_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            ValidarFormatoNumerico(sender, e);
-        }
-
-        private void txtPorcVenta7_KeyPress(object sender, KeyPressEventArgs e)
-        {
-        }
-
         private void txtPorcVenta8_KeyPress(object sender, KeyPressEventArgs e)
         {
             ValidarFormatoNumerico(sender, e);
@@ -1150,6 +655,69 @@ namespace IOL
         private void txtPorcVenta10_Leave(object sender, EventArgs e)
         {
             EventoLeave(sender, e);
+        }
+
+        private void txtPorcCompraSimulador_Click(object sender, EventArgs e)
+        {
+            SeleccionarTexto(sender);
+        }
+
+        private void txtPorcCompraSimulador_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            ValidarFormatoNumerico(sender, e);
+        }
+
+        private void txtPorcCompraSimulador_Leave(object sender, EventArgs e)
+        {
+            EventoLeave(sender, e);
+        }
+
+        private void txtPorcVentaSimulador_Click(object sender, EventArgs e)
+        {
+            SeleccionarTexto(sender);
+        }
+
+        private void txtPorcVentaSimulador_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            ValidarFormatoNumerico(sender, e);
+        }
+
+        private void txtPorcVentaSimulador_Leave(object sender, EventArgs e)
+        {
+            EventoLeave(sender, e);
+        }
+
+        private void btnGuardarSimulador_Click(object sender, EventArgs e)
+        {
+
+            int idRueda, idSimulador;
+            decimal porcCompra, porcVenta;
+
+            try { idRueda = Convert.ToInt32(txtIdRueda.Text); }
+            catch { idRueda = 0; }
+
+            try { idSimulador = Convert.ToInt32(txtIdSimulador.Text); }
+            catch { idSimulador = 0; }
+
+            try { porcCompra = Convert.ToDecimal(txtPorcCompra.Text); }
+            catch { porcCompra = 0; }
+
+            try { porcVenta = Convert.ToDecimal(txtPorcVenta.Text); }
+            catch { porcVenta = 0; }
+
+            if (idRueda > 0 && idSimulador > 0)
+            {
+                RuedasDatosSimulador datosSimulador = null;
+
+                datosSimulador.IdRueda = idRueda;
+                datosSimulador.IdSimulador = idSimulador;
+                datosSimulador.PorcCompra = porcCompra;
+                datosSimulador.PorcVenta = porcVenta;
+            }
+        }
+
+        private void dgvListado_SelectionChanged(object sender, EventArgs e)
+        {
         }
     }
 }
