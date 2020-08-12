@@ -1,5 +1,4 @@
 ﻿using IOL.EntityFrameWork;
-using Org.BouncyCastle.Crypto.Engines;
 using System.Collections.Generic;
 using System.Data.Entity.Migrations;
 using System.Linq;
@@ -31,8 +30,7 @@ namespace IOL.Servicios
         }
         public TenenciaSimuladores GetById(int id)
         {
-            var tenencia = _context.TenenciaSimuladores.Where(x => x.IdSimulador == id).SingleOrDefault();
-            return tenencia;
+            return _context.TenenciaSimuladores.Where(x => x.IdSimulador == id).SingleOrDefault();
         }
 
         public void Delete(int id)

@@ -14,6 +14,7 @@ namespace IOL
         private readonly ServiciosFeriado _serviceFeriado = new ServiciosFeriado();
         private readonly ServiciosDatosSimulador _serviceDatoSimulador = new ServiciosDatosSimulador();
         private readonly ServiciosTenenciaSimulador _serviceTenenciaSimulador = new ServiciosTenenciaSimulador();
+        private readonly ServiciosRuedasDetalleSimulador _serviceRuedasDetalleSimulador = new ServiciosRuedasDetalleSimulador();
         BD Bd = new BD();
 
         public int operacion = 0;
@@ -342,31 +343,30 @@ namespace IOL
             }
 
 
-            TenenciaSimuladores tenenciaSimulador = new TenenciaSimuladores();
+            RuedasDetalleSimulador ruedaDetalleSimulador = new RuedasDetalleSimulador();
             for (int x = 1; x < 11; x++)
             {
-                int idSimulador = 1;
+                TenenciaSimuladores tenenciaSimulador = new TenenciaSimuladores();
+
+                int idSimulador = x;
                 tenenciaSimulador = _serviceTenenciaSimulador.GetById(idSimulador);
                 if (tenenciaSimulador != null)
                 {
-                    //   To Do 
-                    //   Update TenenciaSimulador Set ActivosValorizados = ifnull((Select Sum(ImporteCompra) From RuedasDetalleSimulador
-                    //   Where IdRuedaActual = rueda And IdSimulacion = Simulacion  And Estado = "Comprado"),0)
-                    //   Where IdSimulacion = Simulacion;
-                    //   Update TenenciaSimulador Set DisponibleParaOperar = TotalTenencia - ActivosValorizados Where IdSimulacion = Simulacion;
-
-                    //decimal activosvalorizado = _serviceTenenciaSimulador
-                    tenenciaSimulador.DisponibleParaOperar = 100000;
-                    tenenciaSimulador.ActivosValorizados = 0;
                     tenenciaSimulador.Fecha = DateTime.Now.Date;
-                    tenenciaSimulador.TotalTenencia = tenenciaSimulador.DisponibleParaOperar;
+                    tenenciaSimulador.ActivosValorizados = _serviceRuedasDetalleSimulador.GetActivosValorizados(idSimulador);
+                    tenenciaSimulador.DisponibleParaOperar = tenenciaSimulador.TotalTenencia - tenenciaSimulador.ActivosValorizados;
+                    if (tenenciaSimulador.DisponibleParaOperar < 0)
+                    {
+                        tenenciaSimulador.TotalTenencia = 100000;
+                        tenenciaSimulador.DisponibleParaOperar = tenenciaSimulador.TotalTenencia - tenenciaSimulador.ActivosValorizados;
+                    }
                 }
                 else
                 {
                     tenenciaSimulador.IdSimulador = idSimulador;
+                    tenenciaSimulador.Fecha = DateTime.Now.Date;
                     tenenciaSimulador.DisponibleParaOperar = 100000;
                     tenenciaSimulador.ActivosValorizados = 0;
-                    tenenciaSimulador.Fecha = DateTime.Now.Date;
                     tenenciaSimulador.TotalTenencia = tenenciaSimulador.DisponibleParaOperar;
                 }
                 _serviceTenenciaSimulador.Register(tenenciaSimulador);
