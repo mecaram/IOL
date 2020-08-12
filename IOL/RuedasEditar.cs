@@ -718,6 +718,22 @@ namespace IOL
 
         private void dgvListado_SelectionChanged(object sender, EventArgs e)
         {
+            int idSimulador;
+            decimal porcCompra, porcVenta;
+
+            try { idSimulador = Convert.ToInt32(dgvListado.CurrentRow.Cells["IdSimulador"].Value); }
+            catch { idSimulador = 0; }
+
+            try { porcCompra = Convert.ToDecimal(dgvListado.CurrentRow.Cells["PorcCompra"].Value); }
+            catch { porcCompra = 0; }
+
+            try { porcVenta = Convert.ToDecimal(dgvListado.CurrentRow.Cells["PorcVenta"].Value); }
+            catch { porcVenta = 0; }
+
+            txtIdSimulador.Text = string.Format("{0:0}", idSimulador);
+            txtEstrategia.Text = idSimulador < 6 ? "Uno" : "Dos";
+            txtPorcCompraSimulador.Text = string.Format("{0:00.00}", porcCompra);
+            txtPorcVentaSimulador.Text = string.Format("{0:00.00}", porcVenta);
         }
     }
 }
