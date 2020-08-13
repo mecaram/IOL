@@ -45,50 +45,42 @@ namespace IOL
 
         private void ActualizarLoad(object sender, EventArgs e)
         {
-            string sentencia = string.Empty;
-
-            MySqlConnection coneRuedas = new MySqlConnection(conexion);
-            DateTime? fecha = DateTime.Now.Date;
-            sentencia = string.Format("Select * From Ruedas Where Date_format(fechaRueda,'%y-%m-%d') = str_to_date('{0}','%d/%m/%y') And Comitente = {1}", fecha.Value.Date.ToShortDateString(), comitente);
-            MySqlDataAdapter daRuedas = new MySqlDataAdapter(sentencia, coneRuedas);
-            DataTable dsRuedas = new DataTable();
-            daRuedas.Fill(dsRuedas);
-            if (dsRuedas.Rows.Count > 0)
+            var ruedaactual = _service.GetByDate(DateTime.Now.Date, comitente);
+            if (ruedaactual != null)
             {
-                DataRow Fila = dsRuedas.Rows[0];
-                txtIdRueda.Text = Fila["IdRueda"].ToString();
-                txtFecha.Text = fecha.Value.Date.ToShortDateString();
+                txtIdRueda.Text = ruedaactual.IdRueda.ToString();
+                txtFecha.Text = DateTime.Now.Date.ToShortDateString();
                 txtHora.Text = string.Format("{0:00}:{1:00}", DateTime.Now.Hour, DateTime.Now.Minute);
                 txtEstado.Text = _service.GetEstadoRueda(Convert.ToInt32(txtIdRueda.Text.Trim()));
                 this.Refresh();
                 AgregarAccesoIOL();
-                txtPorcCompra.Text = string.Format("{0:00.00}", Convert.ToDecimal(Fila["PorcCompra"]));
-                txtPorcVenta.Text = string.Format("{0:00.00}", Convert.ToDecimal(Fila["PorcVenta"]));
-                txtPorcComisionIOL.Text = string.Format("{0:00.00}", Convert.ToDecimal(Fila["PorcComisionIOL"]));
-                txtPorcPuntaCompradora.Text = string.Format("{0:00.00}", Convert.ToDecimal(Fila["PorcPuntaCompradora"]));
-                txtPorcPuntaVendedora.Text = string.Format("{0:00.00}", Convert.ToDecimal(Fila["PorcPuntaVendedora"]));
+                txtPorcCompra.Text = string.Format("{0:00.00}", ruedaactual.PorcCompra);
+                txtPorcVenta.Text = string.Format("{0:00.00}", ruedaactual.PorcVenta);
+                txtPorcComisionIOL.Text = string.Format("{0:00.00}", ruedaactual.PorcComisionIOL);
+                txtPorcPuntaCompradora.Text = string.Format("{0:00.00}", ruedaactual.PorcPuntaCompradora);
+                txtPorcPuntaVendedora.Text = string.Format("{0:00.00}", ruedaactual.PorcPuntaVendedora);
 
-                txtPorcCompra1.Text = string.Format("{0:00.00}", Convert.ToDecimal(Fila["PorcCompra1"]));
-                txtPorcCompra2.Text = string.Format("{0:00.00}", Convert.ToDecimal(Fila["PorcCompra2"]));
-                txtPorcCompra3.Text = string.Format("{0:00.00}", Convert.ToDecimal(Fila["PorcCompra3"]));
-                txtPorcCompra4.Text = string.Format("{0:00.00}", Convert.ToDecimal(Fila["PorcCompra4"]));
-                txtPorcCompra5.Text = string.Format("{0:00.00}", Convert.ToDecimal(Fila["PorcCompra5"]));
-                txtPorcCompra6.Text = string.Format("{0:00.00}", Convert.ToDecimal(Fila["PorcCompra6"]));
-                txtPorcCompra7.Text = string.Format("{0:00.00}", Convert.ToDecimal(Fila["PorcCompra7"]));
-                txtPorcCompra8.Text = string.Format("{0:00.00}", Convert.ToDecimal(Fila["PorcCompra8"]));
-                txtPorcCompra9.Text = string.Format("{0:00.00}", Convert.ToDecimal(Fila["PorcCompra9"]));
-                txtPorcCompra10.Text = string.Format("{0:00.00}", Convert.ToDecimal(Fila["PorcCompra10"]));
+                txtPorcCompra1.Text = string.Format("{0:00.00}", _serviceDatoSimulador.GetPorcCompraSimulador(ruedaactual.IdRueda,1));
+                txtPorcCompra2.Text = string.Format("{0:00.00}", _serviceDatoSimulador.GetPorcCompraSimulador(ruedaactual.IdRueda, 2));
+                txtPorcCompra3.Text = string.Format("{0:00.00}", _serviceDatoSimulador.GetPorcCompraSimulador(ruedaactual.IdRueda, 3));
+                txtPorcCompra4.Text = string.Format("{0:00.00}", _serviceDatoSimulador.GetPorcCompraSimulador(ruedaactual.IdRueda, 4));
+                txtPorcCompra5.Text = string.Format("{0:00.00}", _serviceDatoSimulador.GetPorcCompraSimulador(ruedaactual.IdRueda, 5));
+                txtPorcCompra6.Text = string.Format("{0:00.00}", _serviceDatoSimulador.GetPorcCompraSimulador(ruedaactual.IdRueda, 6));
+                txtPorcCompra7.Text = string.Format("{0:00.00}", _serviceDatoSimulador.GetPorcCompraSimulador(ruedaactual.IdRueda, 7));
+                txtPorcCompra8.Text = string.Format("{0:00.00}", _serviceDatoSimulador.GetPorcCompraSimulador(ruedaactual.IdRueda, 8));
+                txtPorcCompra9.Text = string.Format("{0:00.00}", _serviceDatoSimulador.GetPorcCompraSimulador(ruedaactual.IdRueda, 9));
+                txtPorcCompra10.Text = string.Format("{0:00.00}", _serviceDatoSimulador.GetPorcCompraSimulador(ruedaactual.IdRueda, 10));
 
-                txtPorcVenta1.Text = string.Format("{0:00.00}", Convert.ToDecimal(Fila["PorcVenta1"]));
-                txtPorcVenta2.Text = string.Format("{0:00.00}", Convert.ToDecimal(Fila["PorcVenta2"]));
-                txtPorcVenta3.Text = string.Format("{0:00.00}", Convert.ToDecimal(Fila["PorcVenta3"]));
-                txtPorcVenta4.Text = string.Format("{0:00.00}", Convert.ToDecimal(Fila["PorcVenta4"]));
-                txtPorcVenta5.Text = string.Format("{0:00.00}", Convert.ToDecimal(Fila["PorcVenta5"]));
-                txtPorcVenta6.Text = string.Format("{0:00.00}", Convert.ToDecimal(Fila["PorcVenta6"]));
-                txtPorcVenta7.Text = string.Format("{0:00.00}", Convert.ToDecimal(Fila["PorcVenta7"]));
-                txtPorcVenta8.Text = string.Format("{0:00.00}", Convert.ToDecimal(Fila["PorcVenta8"]));
-                txtPorcVenta9.Text = string.Format("{0:00.00}", Convert.ToDecimal(Fila["PorcVenta9"]));
-                txtPorcVenta10.Text = string.Format("{0:00.00}", Convert.ToDecimal(Fila["PorcVenta10"]));
+                txtPorcVenta1.Text = string.Format("{0:00.00}", _serviceDatoSimulador.GetPorcVentaSimulador(ruedaactual.IdRueda, 1));
+                txtPorcVenta2.Text = string.Format("{0:00.00}", _serviceDatoSimulador.GetPorcVentaSimulador(ruedaactual.IdRueda, 2));
+                txtPorcVenta3.Text = string.Format("{0:00.00}", _serviceDatoSimulador.GetPorcVentaSimulador(ruedaactual.IdRueda, 3));
+                txtPorcVenta4.Text = string.Format("{0:00.00}", _serviceDatoSimulador.GetPorcVentaSimulador(ruedaactual.IdRueda, 4));
+                txtPorcVenta5.Text = string.Format("{0:00.00}", _serviceDatoSimulador.GetPorcVentaSimulador(ruedaactual.IdRueda, 5));
+                txtPorcVenta6.Text = string.Format("{0:00.00}", _serviceDatoSimulador.GetPorcVentaSimulador(ruedaactual.IdRueda, 6));
+                txtPorcVenta7.Text = string.Format("{0:00.00}", _serviceDatoSimulador.GetPorcVentaSimulador(ruedaactual.IdRueda, 7));
+                txtPorcVenta8.Text = string.Format("{0:00.00}", _serviceDatoSimulador.GetPorcVentaSimulador(ruedaactual.IdRueda, 8));
+                txtPorcVenta9.Text = string.Format("{0:00.00}", _serviceDatoSimulador.GetPorcVentaSimulador(ruedaactual.IdRueda, 9));
+                txtPorcVenta10.Text = string.Format("{0:00.00}", _serviceDatoSimulador.GetPorcVentaSimulador(ruedaactual.IdRueda, 10));
 
                 tmrActualizarToken_Tick(sender, e);
                 ActualizarAcciones();
@@ -96,21 +88,15 @@ namespace IOL
         }
         private void Simulador_Load(object sender, EventArgs e)
         {
-            string sentencia = string.Empty;
-
-            MySqlConnection coneRuedas = new MySqlConnection(conexion);
             DateTime? fecha = DateTime.Now.Date;
-            sentencia = string.Format("Select * From Ruedas Where Date_format(fechaRueda,'%y-%m-%d') = str_to_date('{0}','%d/%m/%y') And Comitente = {1}", fecha.Value.Date.ToShortDateString(), comitente);
-            MySqlDataAdapter daRuedas = new MySqlDataAdapter(sentencia, coneRuedas);
-            DataTable dsRuedas = new DataTable();
-            daRuedas.Fill(dsRuedas);
-            if (dsRuedas.Rows.Count > 0)
+
+            var ruedaactual = _service.GetByDate(DateTime.Now.Date, comitente);
+            if (ruedaactual != null)
             {
                 ActualizarLoad(sender, e);
             }
             else
             {
-                fecha = DateTime.Now.Date;
                 DayOfWeek nrodia = fecha.Value.DayOfWeek;
                 if (nrodia == DayOfWeek.Saturday || nrodia == DayOfWeek.Sunday)
                 {
@@ -118,16 +104,11 @@ namespace IOL
                 }
                 else
                 {
-                    sentencia = string.Format("Select * From Feriados Where Date_format(fecha,'%y-%m-%d') = str_to_date('{0}','%d/%m/%y')", fecha.Value.Date.ToShortDateString());
-                    MySqlConnection coneFeriados = new MySqlConnection(conexion);
-                    MySqlDataAdapter daFeriados = new MySqlDataAdapter(sentencia, coneFeriados);
-                    DataTable dsFeriados = new DataTable();
-                    daFeriados.Fill(dsFeriados);
-
-                    if (dsFeriados.Rows.Count > 0)
+                    var feriado = _serviceFeriado.GetByDate(DateTime.Now.Date);
+                    if (feriado != null)
                     {
                         string mensaje = string.Format("Sábado/Domingo y Feriados NO opera la bolsa. Dia {0} Feriado: '{1}'",
-                                                        fecha.Value.Date.ToShortDateString(), dsFeriados.Rows[0]["Motivo"].ToString());
+                                                        fecha.Value.Date.ToShortDateString(), feriado.Motivo);
                         MessageBox.Show(mensaje, "Información del Sistema", MessageBoxButtons.OK, MessageBoxIcon.Stop);
                     }
                     else
@@ -319,18 +300,8 @@ namespace IOL
                     // Verificamos se realizo la apertura de la rueda
                     if (_service.GetEstadoRueda(idrueda).Trim().Length == 0)
                     {
-
-                        // Almacenamos todas las acciones compradas de la rueda del dia anterior
-                        // a la rueda actual
-                        using (MySqlConnection coneAperturaRueda = new MySqlConnection(conexion))
-                        {
-                            sentencia = $"UPDATE RuedasDetalleSimulador SET IdRuedaActual = {idrueda} " +
-                                        $" Where Estado = 'Comprado' And IdRuedaActual != {idrueda} And IdRuedaActual = IdRuedaCompra ";
-                            coneAperturaRueda.Open();
-                            MySqlCommand comandoAperturaRueda = new MySqlCommand(sentencia, coneAperturaRueda);
-                            comandoAperturaRueda.ExecuteNonQuery();
-                            coneAperturaRueda.Close();
-                        }
+                        // Almacenamos todas las acciones compradas de la rueda del dia anterior a la rueda actual
+                        _serviceRuedasDetalleSimulador.RegisterActionsYesterday(idrueda);
                     }
 
                     _service.SetAbrirRueda(idrueda);

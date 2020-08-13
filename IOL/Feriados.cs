@@ -192,7 +192,7 @@ namespace IOL
                                 break;
                             case "Fecha":
                                 DateTime fecha = Convert.ToDateTime(cBuscar);
-                                lstFeriados = _service.GetByDate(fecha);
+                                lstFeriados.Add(_service.GetByDate(fecha));
                                 break;
                             case "Motivo":
                                 lstFeriados = _service.GetByReason(cBuscar);

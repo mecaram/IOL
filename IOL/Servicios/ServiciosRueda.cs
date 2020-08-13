@@ -61,9 +61,9 @@ namespace IOL.Servicios
             return _context.Ruedas.LastOrDefault();
         }
 
-        public List<EntityFrameWork.Ruedas> GetByDate(DateTime fecha)
+        public EntityFrameWork.Ruedas GetByDate(DateTime fecha, int comitente)
         {
-            return _context.Ruedas.Where(x => x.FechaRueda.Date == fecha.Date).ToList();
+            return _context.Ruedas.Where(x => x.FechaRueda.Date == fecha.Date && x.Comitente == comitente).SingleOrDefault();
         }
 
         public string GetEstadoRueda(int id)

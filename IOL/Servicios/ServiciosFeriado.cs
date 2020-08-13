@@ -38,9 +38,9 @@ namespace IOL.Servicios
         {
             return _context.Feriados.Where(x => x.Motivo.Contains(motivo)).OrderBy(x => x.Motivo).ToList();
         }
-        public List<EntityFrameWork.Feriados> GetByDate(DateTime fecha)
+        public EntityFrameWork.Feriados GetByDate(DateTime fecha)
         {
-            return _context.Feriados.Where(x => x.Fecha == fecha).OrderBy(x => x.Fecha).ToList();
+            return _context.Feriados.Where(x => x.Fecha == fecha).OrderBy(x => x.Fecha).SingleOrDefault();
         }
 
         public List<EntityFrameWork.Feriados> GetByMonth(DateTime fecha)

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
+using IOL.EntityFrameWork;
 using IOL.Servicios;
 
 namespace IOL
@@ -26,7 +27,7 @@ namespace IOL
         private void tsbAgregar_Click(object sender, EventArgs e)
         {
             DateTime? fecha = Calendario.SelectionStart.Date;
-            var lstRuedas = _service.GetByDate(fecha.Value);
+            var lstRuedas = _service.GetByDate(fecha.Value, comitente);
             if (lstRuedas != null)
             {
                 MessageBox.Show("Rueda Registrada Anteriormente", "Información del Sistema", MessageBoxButtons.OK, MessageBoxIcon.Stop);
@@ -44,7 +45,7 @@ namespace IOL
                     if (lstRuedas != null)
                     {
                         string mensaje = string.Format("Sábado/Domingo y Feriados NO opera la bolsa. Dia {0} Feriado: '{1}'",
-                                                        fecha.Value.Date.ToShortDateString(), lstFeriados[0].Motivo.ToString());
+                                                        fecha.Value.Date.ToShortDateString(), lstFeriados.Motivo.ToString());
                         MessageBox.Show(mensaje, "Información del Sistema", MessageBoxButtons.OK, MessageBoxIcon.Stop);
                     }
                     else
@@ -184,14 +185,14 @@ namespace IOL
         private void Calendario_DateSelected(object sender, DateRangeEventArgs e)
         {
             DateTime? fecha = Calendario.SelectionStart.Date;
-            var lstRuedas = _service.GetByDate(Calendario.SelectionStart.Date);
+            var lstRuedas = _service.GetByDate(Calendario.SelectionStart.Date, comitente);
             if (lstRuedas != null)
             {
                 RuedasEditar formulario = new RuedasEditar();
                 formulario.StartPosition = FormStartPosition.CenterScreen;
                 formulario.operacion = 2;
                 formulario.comitente = comitente;
-                formulario.txtIdRueda.Text = lstRuedas[0].IdRueda.ToString();
+                formulario.txtIdRueda.Text = lstRuedas.IdRueda.ToString();
                 formulario.txtFecha.Text = fecha.Value.Date.ToShortDateString();
                 formulario.txtFecha.Enabled = false;
                 formulario.ShowDialog();
@@ -210,7 +211,7 @@ namespace IOL
                     if (lstFeriados != null)
                     {
                         string mensaje = string.Format("Sábado/Domingo y Feriados NO opera la bolsa. Dia {0} Feriado: '{1}'",
-                                                        fecha.Value.Date.ToShortDateString(), lstFeriados[0].Motivo.ToString());
+                                                        fecha.Value.Date.ToShortDateString(), lstFeriados.Motivo.ToString());
                         MessageBox.Show(mensaje, "Información del Sistema", MessageBoxButtons.OK, MessageBoxIcon.Stop);
                     }
                     else

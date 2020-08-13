@@ -24,6 +24,16 @@ namespace IOL.Servicios
             catch { return false; }
         }
 
+        public void RegisterActionsYesterday(int IdRuedaActual)
+        {
+            var actions = _context.RuedasDetalleSimulador.Where(x => x.Estado == "Comprado" && x.IdRuedaActual != IdRuedaActual && IdRuedaActual == x.IdRuedaCompra).ToList();
+            foreach (RuedasDetalleSimulador regAction in actions)
+            {
+                regAction.IdRuedaActual = IdRuedaActual;
+                _context.RuedasDetalleSimulador.AddOrUpdate(regAction);
+            }
+            _context.SaveChanges();
+        }
         public List<RuedasDetalleSimulador> GetAll()
         {
             return _context.RuedasDetalleSimulador.ToList();
