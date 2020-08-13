@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
+using System.Collections.Generic;
 using System.Windows.Forms;
-using DocumentFormat.OpenXml.Office2010.Excel;
 using IOL.EntityFrameWork;
 using IOL.Servicios;
 
@@ -353,7 +352,7 @@ namespace IOL
                 if (tenenciaSimulador != null)
                 {
                     tenenciaSimulador.Fecha = DateTime.Now.Date;
-                    tenenciaSimulador.ActivosValorizados = _serviceRuedasDetalleSimulador.GetActivosValorizados(idSimulador);
+                    tenenciaSimulador.ActivosValorizados = Convert.ToDecimal(_serviceTenenciaSimulador.GetActivosValorizados(idSimulador));
                     tenenciaSimulador.DisponibleParaOperar = tenenciaSimulador.TotalTenencia - tenenciaSimulador.ActivosValorizados;
                     if (tenenciaSimulador.DisponibleParaOperar < 0)
                     {

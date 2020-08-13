@@ -1,14 +1,22 @@
 ﻿using System;
-using System.Drawing;
 using System.Windows.Forms;
-using System.Configuration;
 using MySql.Data.MySqlClient;
 using System.Data;
+using IOL.EntityFrameWork;
+using IOL.Servicios;
+using System.Linq;
 
 namespace IOL
 {
     public partial class Simulador : Form
     {
+        private readonly ServiciosRueda _service = new ServiciosRueda();
+        private readonly ServiciosFeriado _serviceFeriado = new ServiciosFeriado();
+        private readonly ServiciosDatosSimulador _serviceDatoSimulador = new ServiciosDatosSimulador();
+        private readonly ServiciosTenenciaSimulador _serviceTenenciaSimulador = new ServiciosTenenciaSimulador();
+        private readonly ServiciosRuedasDetalleSimulador _serviceRuedasDetalleSimulador = new ServiciosRuedasDetalleSimulador();
+        BD Bd = new BD();
+
         string conexion = ConfigurationManager.ConnectionStrings["conexion"].ToString();
         public int comitente = 0;  // Nro. de Comitente
 
@@ -51,7 +59,7 @@ namespace IOL
                 txtIdRueda.Text = Fila["IdRueda"].ToString();
                 txtFecha.Text = fecha.Value.Date.ToShortDateString();
                 txtHora.Text = string.Format("{0:00}:{1:00}", DateTime.Now.Hour, DateTime.Now.Minute);
-                txtEstado.Text = ObtenerEstadoRueda(Convert.ToInt32(txtIdRueda.Text.Trim()));
+                txtEstado.Text = _service.GetEstadoRueda(Convert.ToInt32(txtIdRueda.Text.Trim()));
                 this.Refresh();
                 AgregarAccesoIOL();
                 txtPorcCompra.Text = string.Format("{0:00.00}", Convert.ToDecimal(Fila["PorcCompra"]));
@@ -170,136 +178,96 @@ namespace IOL
 
             if (IdSimulacion > 0 && txtIdRueda.Text.Trim().Length > 0)
             {
-                using (MySqlConnection coneDetalle = new MySqlConnection(cone))
+                var detalleRuedaSimulacion = _serviceRuedasDetalleSimulador.GetByIdSimulacion(Convert.ToInt32(txtIdRueda.Text.Trim()), IdSimulacion);
+                if (detalleRuedaSimulacion != null)
                 {
-                    string sentencia = string.Format("Select Simbolo, VariacionEnPorcentajes, VariacionEnPesos, FechaCompra, Cantidad, PrecioCompra, ImporteComisionIOL, ImporteCompra, UltimoPrecio, FechaUltimoPrecio, Estado, IdRuedaActual, IdPanel, PrecioVenta, ImporteVenta, IdRuedaDetalle, IdRuedaCompra, IdRuedaVenta, IdSimulacion, FechaVenta, PorcComisionIOL From RuedasDetalleSimulador Where IdRuedaActual = {0} And IdSimulacion = {1}", txtIdRueda.Text.Trim(), IdSimulacion);
-
-                    MySqlDataAdapter da = new MySqlDataAdapter(sentencia, coneDetalle);
-                    DataTable ds = new DataTable();
-                    da.Fill(ds);
-
                     lblTotales.Text = string.Format("Total Simulador {0:00}:", IdSimulacion);
 
-                    double totalAccionesCompradas = 0, totalCantidadCompradas = 0, totalImporteComisionCompradas = 0,
-                           totalImporteCompra = 0, totalVariacionEnPesosCompradas = 0, totalVariacionEnPorcentajesCompradas = 0,
-                           totalAccionesVendidas = 0, totalCantidadVendidas = 0, totalImporteComisionVentas = 0,
-                           totalImporteVentas = 0, totalVariacionEnPesosVendidas = 0, totalVariacionEnPorcentajesVendidas = 0;
+                    dgvAcciones.DataSource = detalleRuedaSimulacion;
 
-                    if (ds.Rows.Count > 0)
-                    {
-                        dgvAcciones.DataSource = ds;
+                    DataGridViewCellStyle EstiloEncabezadoColumna = new DataGridViewCellStyle();
 
-                        DataGridViewCellStyle EstiloEncabezadoColumna = new DataGridViewCellStyle();
+                    EstiloEncabezadoColumna.BackColor = System.Drawing.Color.Green;
+                    EstiloEncabezadoColumna.Font = new System.Drawing.Font("Times New Roman", 12, System.Drawing.FontStyle.Bold);
+                    dgvAcciones.ColumnHeadersDefaultCellStyle = EstiloEncabezadoColumna;
 
-                        EstiloEncabezadoColumna.BackColor = System.Drawing.Color.Green;
-                        EstiloEncabezadoColumna.Font = new System.Drawing.Font("Times New Roman", 12, FontStyle.Bold);
-                        dgvAcciones.ColumnHeadersDefaultCellStyle = EstiloEncabezadoColumna;
+                    DataGridViewCellStyle EstiloColumnas = new DataGridViewCellStyle();
+                    EstiloColumnas.BackColor = System.Drawing.Color.AliceBlue;
+                    EstiloColumnas.Font = new System.Drawing.Font("Times New Roman", 12);
+                    dgvAcciones.RowsDefaultCellStyle = EstiloColumnas;
 
-                        DataGridViewCellStyle EstiloColumnas = new DataGridViewCellStyle();
-                        EstiloColumnas.BackColor = System.Drawing.Color.AliceBlue;
-                        EstiloColumnas.Font = new System.Drawing.Font("Times New Roman", 12);
-                        dgvAcciones.RowsDefaultCellStyle = EstiloColumnas;
+                    dgvAcciones.Columns["Simbolo"].HeaderText = "Símbolo";
+                    dgvAcciones.Columns["FechaCompra"].HeaderText = "Fecha Compra";
+                    dgvAcciones.Columns["Cantidad"].HeaderText = "Cantidad";
+                    dgvAcciones.Columns["PrecioCompra"].HeaderText = "Precio Compra";
+                    dgvAcciones.Columns["ImporteComisionIOL"].HeaderText = "Comisión$";
+                    dgvAcciones.Columns["ImporteCompra"].HeaderText = "Importe";
+                    dgvAcciones.Columns["UltimoPrecio"].HeaderText = "Ultimo Precio";
+                    dgvAcciones.Columns["FechaUltimoPrecio"].HeaderText = "Fecha Precio";
+                    dgvAcciones.Columns["VariacionEnPesos"].HeaderText = "Variación$";
+                    dgvAcciones.Columns["VariacionEnPorcentajes"].HeaderText = "Variación%";
+                    dgvAcciones.Columns["Estado"].HeaderText = "Estado";
 
-                        dgvAcciones.Columns["Simbolo"].HeaderText = "Símbolo";
-                        dgvAcciones.Columns["FechaCompra"].HeaderText = "Fecha Compra";
-                        dgvAcciones.Columns["Cantidad"].HeaderText = "Cantidad";
-                        dgvAcciones.Columns["PrecioCompra"].HeaderText = "Precio Compra";
-                        dgvAcciones.Columns["ImporteComisionIOL"].HeaderText = "Comisión$";
-                        dgvAcciones.Columns["ImporteCompra"].HeaderText = "Importe";
-                        dgvAcciones.Columns["UltimoPrecio"].HeaderText = "Ultimo Precio";
-                        dgvAcciones.Columns["FechaUltimoPrecio"].HeaderText = "Fecha Precio";
-                        dgvAcciones.Columns["VariacionEnPesos"].HeaderText = "Variación$";
-                        dgvAcciones.Columns["VariacionEnPorcentajes"].HeaderText = "Variación%";
-                        dgvAcciones.Columns["Estado"].HeaderText = "Estado";
+                    dgvAcciones.Columns["Simbolo"].Width = 100;
+                    dgvAcciones.Columns["FechaCompra"].Width = 150;
+                    dgvAcciones.Columns["Cantidad"].Width = 90;
+                    dgvAcciones.Columns["PrecioCompra"].Width = 120;
+                    dgvAcciones.Columns["ImporteComisionIOL"].Width = 120;
+                    dgvAcciones.Columns["ImporteCompra"].Width = 100;
+                    dgvAcciones.Columns["UltimoPrecio"].Width = 120;
+                    dgvAcciones.Columns["FechaUltimoPrecio"].Width = 150;
+                    dgvAcciones.Columns["VariacionEnPesos"].Width = 90;
+                    dgvAcciones.Columns["VariacionEnPorcentajes"].Width = 100;
+                    dgvAcciones.Columns["Estado"].Width = 100;
 
-                        dgvAcciones.Columns["Simbolo"].Width = 100;
-                        dgvAcciones.Columns["FechaCompra"].Width = 150;
-                        dgvAcciones.Columns["Cantidad"].Width = 90;
-                        dgvAcciones.Columns["PrecioCompra"].Width = 120;
-                        dgvAcciones.Columns["ImporteComisionIOL"].Width = 120;
-                        dgvAcciones.Columns["ImporteCompra"].Width = 100;
-                        dgvAcciones.Columns["UltimoPrecio"].Width = 120;
-                        dgvAcciones.Columns["FechaUltimoPrecio"].Width = 150;
-                        dgvAcciones.Columns["VariacionEnPesos"].Width = 90;
-                        dgvAcciones.Columns["VariacionEnPorcentajes"].Width = 100;
-                        dgvAcciones.Columns["Estado"].Width = 100;
+                    dgvAcciones.Columns["Simbolo"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                    dgvAcciones.Columns["FechaCompra"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                    dgvAcciones.Columns["Cantidad"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                    dgvAcciones.Columns["PrecioCompra"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                    dgvAcciones.Columns["ImporteComisionIOL"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                    dgvAcciones.Columns["ImporteCompra"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                    dgvAcciones.Columns["UltimoPrecio"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                    dgvAcciones.Columns["FechaUltimoPrecio"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                    dgvAcciones.Columns["VariacionEnPesos"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                    dgvAcciones.Columns["VariacionEnPorcentajes"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                    dgvAcciones.Columns["Estado"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
 
-                        dgvAcciones.Columns["Simbolo"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
-                        dgvAcciones.Columns["FechaCompra"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
-                        dgvAcciones.Columns["Cantidad"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
-                        dgvAcciones.Columns["PrecioCompra"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
-                        dgvAcciones.Columns["ImporteComisionIOL"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
-                        dgvAcciones.Columns["ImporteCompra"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
-                        dgvAcciones.Columns["UltimoPrecio"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
-                        dgvAcciones.Columns["FechaUltimoPrecio"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
-                        dgvAcciones.Columns["VariacionEnPesos"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
-                        dgvAcciones.Columns["VariacionEnPorcentajes"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
-                        dgvAcciones.Columns["Estado"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                    dgvAcciones.Columns["PrecioCompra"].DefaultCellStyle.Format = "$ #00.00";
+                    dgvAcciones.Columns["Cantidad"].DefaultCellStyle.Format = "#00.00";
+                    dgvAcciones.Columns["ImporteCompra"].DefaultCellStyle.Format = "$ #00.00";
+                    dgvAcciones.Columns["ImporteComisionIOL"].DefaultCellStyle.Format = "$ #00.00";
+                    dgvAcciones.Columns["UltimoPrecio"].DefaultCellStyle.Format = "$ #00.00";
+                    dgvAcciones.Columns["VariacionEnPesos"].DefaultCellStyle.Format = "$ #00.00";
+                    dgvAcciones.Columns["VariacionEnPorcentajes"].DefaultCellStyle.Format = "#00.00";
 
-                        dgvAcciones.Columns["PrecioCompra"].DefaultCellStyle.Format = "$ #00.00";
-                        dgvAcciones.Columns["Cantidad"].DefaultCellStyle.Format = "#00.00";
-                        dgvAcciones.Columns["ImporteCompra"].DefaultCellStyle.Format = "$ #00.00";
-                        dgvAcciones.Columns["ImporteComisionIOL"].DefaultCellStyle.Format = "$ #00.00";
-                        dgvAcciones.Columns["UltimoPrecio"].DefaultCellStyle.Format = "$ #00.00";
-                        dgvAcciones.Columns["VariacionEnPesos"].DefaultCellStyle.Format = "$ #00.00";
-                        dgvAcciones.Columns["VariacionEnPorcentajes"].DefaultCellStyle.Format = "#00.00";
+                    dgvAcciones.Columns["Simbolo"].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                    dgvAcciones.Columns["FechaCompra"].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                    dgvAcciones.Columns["Cantidad"].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                    dgvAcciones.Columns["PrecioCompra"].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                    dgvAcciones.Columns["ImporteComisionIOL"].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                    dgvAcciones.Columns["ImporteCompra"].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                    dgvAcciones.Columns["UltimoPrecio"].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                    dgvAcciones.Columns["FechaUltimoPrecio"].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                    dgvAcciones.Columns["VariacionEnPesos"].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                    dgvAcciones.Columns["VariacionEnPorcentajes"].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                    dgvAcciones.Columns["Estado"].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
 
-                        dgvAcciones.Columns["Simbolo"].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
-                        dgvAcciones.Columns["FechaCompra"].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
-                        dgvAcciones.Columns["Cantidad"].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
-                        dgvAcciones.Columns["PrecioCompra"].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
-                        dgvAcciones.Columns["ImporteComisionIOL"].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
-                        dgvAcciones.Columns["ImporteCompra"].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
-                        dgvAcciones.Columns["UltimoPrecio"].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
-                        dgvAcciones.Columns["FechaUltimoPrecio"].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
-                        dgvAcciones.Columns["VariacionEnPesos"].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
-                        dgvAcciones.Columns["VariacionEnPorcentajes"].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
-                        dgvAcciones.Columns["Estado"].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                    dgvAcciones.RefreshEdit();
+                    dgvAcciones.Enabled = true;
 
-                        dgvAcciones.RefreshEdit();
-                        dgvAcciones.Enabled = true;
+                    int totalAccionesCompradas = detalleRuedaSimulacion.Where(x => x.Estado == "Comprado").ToList().Count;
+                    decimal totalCantidadCompradas = detalleRuedaSimulacion.Where(x => x.Estado == "Comprado").Sum(x => x.Cantidad);
+                    decimal totalImporteComisionCompradas = detalleRuedaSimulacion.Where(x => x.Estado == "Comprado").Sum(x => x.ImporteComisionIOL);
+                    decimal totalImporteCompra = detalleRuedaSimulacion.Where(x => x.Estado == "Comprado").Sum(x => x.ImporteCompra);
+                    decimal totalVariacionEnPesosCompradas = detalleRuedaSimulacion.Where(x => x.Estado == "Comprado").Sum(x => x.Variacionenpesos);
+                    decimal totalVariacionEnPorcentajesCompradas = detalleRuedaSimulacion.Where(x => x.Estado == "Comprado").Sum(x => x.Variacionenporcentajes);
 
-                        try { totalAccionesCompradas = Convert.ToDouble(ds.Compute("Count(Simbolo)", "Estado = 'Comprado'")); }
-                        catch { totalAccionesCompradas = 0; }
-
-                        try { totalCantidadCompradas = Convert.ToDouble(ds.Compute("Sum(Cantidad)", "Estado = 'Comprado'")); }
-                        catch { totalCantidadCompradas = 0; }
-
-                        try { totalImporteComisionCompradas = Convert.ToDouble(ds.Compute("Sum(ImporteComisionIOL)", "Estado = 'Comprado'")); }
-                        catch { totalImporteComisionCompradas = 0; }
-
-                        try { totalImporteCompra = Convert.ToDouble(ds.Compute("Sum(ImporteCompra)", "Estado = 'Comprado'")); }
-                        catch { totalImporteCompra = 0; }
-
-                        try { totalVariacionEnPesosCompradas = Convert.ToDouble(ds.Compute("Sum(VariacionEnPesos)", "Estado = 'Comprado'")); }
-                        catch { totalVariacionEnPesosCompradas = 0; }
-
-                        try { totalVariacionEnPorcentajesCompradas = Convert.ToDouble(ds.Compute("Sum(VariacionEnPorcentajes)", "Estado = 'Comprado'")); }
-                        catch { totalVariacionEnPorcentajesCompradas = 0; }
-
-                        try { totalAccionesVendidas = Convert.ToDouble(ds.Compute("Count(Simbolo)", "Estado = 'Vendido'")); }
-                        catch { totalAccionesVendidas = 0; }
-
-                        try { totalCantidadVendidas = Convert.ToDouble(ds.Compute("Sum(Cantidad)", "Estado = 'Vendido'")); }
-                        catch { totalCantidadVendidas = 0; }
-
-                        try { totalImporteComisionVentas = Convert.ToDouble(ds.Compute("Sum(ImporteComisionIOL)", "Estado = 'Vendido'")); }
-                        catch { totalImporteComisionVentas = 0; }
-
-                        try { totalImporteVentas = Convert.ToDouble(ds.Compute("Sum(ImporteVenta)", "Estado = 'Vendido'")); }
-                        catch { totalImporteVentas = 0; }
-
-                        try { totalVariacionEnPesosVendidas = Convert.ToDouble(ds.Compute("Sum(VariacionEnPesos)", "Estado = 'Vendido'")); }
-                        catch { totalVariacionEnPesosVendidas = 0; }
-
-                        try { totalVariacionEnPorcentajesVendidas = Convert.ToDouble(ds.Compute("Sum(VariacionEnPorcentajes)", "Estado = 'Vendido'")); }
-                        catch { totalVariacionEnPorcentajesVendidas = 0; }
-                    }
-                    else
-                    {
-                        dgvAcciones.DataSource = null;
-                        dgvAcciones.RefreshEdit();
-                    }
+                    int totalAccionesVendidas = detalleRuedaSimulacion.Where(x => x.Estado == "Vendido").ToList().Count;
+                    decimal totalCantidadVendidas = detalleRuedaSimulacion.Where(x => x.Estado == "Vendido").Sum(x => x.Cantidad);
+                    decimal totalImporteComisionVentas = detalleRuedaSimulacion.Where(x => x.Estado == "Vendido").Sum(x => x.ImporteComisionIOL); ;
+                    decimal totalImporteVentas = detalleRuedaSimulacion.Where(x => x.Estado == "Vendido").Sum(x => x.ImporteVenta);
+                    decimal totalVariacionEnPesosVendidas = detalleRuedaSimulacion.Where(x => x.Estado == "Vendido").Sum(x => x.Variacionenpesos);
+                    decimal totalVariacionEnPorcentajesVendidas = detalleRuedaSimulacion.Where(x => x.Estado == "Vendido").Sum(x => x.Variacionenporcentajes);
 
                     txtTotalAccionesCompradas.Text = string.Format("{0:000}", totalAccionesCompradas);
                     txtTotalCantidadCompradas.Text = string.Format("{0:000}", totalCantidadCompradas);
@@ -349,7 +317,7 @@ namespace IOL
                 if (HoraActual >= 11 && HoraActual < 17)
                 {
                     // Verificamos se realizo la apertura de la rueda
-                    if (ObtenerEstadoRueda(idrueda).Trim().Length == 0)
+                    if (_service.GetEstadoRueda(idrueda).Trim().Length == 0)
                     {
 
                         // Almacenamos todas las acciones compradas de la rueda del dia anterior
@@ -365,8 +333,8 @@ namespace IOL
                         }
                     }
 
-                    AbrirEstadoRueda(idrueda);
-                    txtEstado.Text = ObtenerEstadoRueda(idrueda);
+                    _service.SetAbrirRueda(idrueda);
+                    txtEstado.Text = _service.GetEstadoRueda(idrueda);
 
                     // Obtengo el Panel Principal de Acciones con las correspondientes puntas
                     // y las almaceno en un vector de paneles
@@ -539,7 +507,7 @@ namespace IOL
                     ActualizarAcciones(); // Actualiza la grilla de acciones compradas
                 }
             }
-            txtEstado.Text = ObtenerEstadoRueda(idrueda);
+            txtEstado.Text = _service.GetEstadoRueda(idrueda);
             this.Refresh();
         }
 
@@ -573,7 +541,7 @@ namespace IOL
                 // SI(PrecioCompra+(PrecioCompra*0,7%) < PrecioActual;"VENTA";"NEUTRO")
                 double resultado = 0, cantidadvendida = CantidadComprada;
 
-                resultado = PrecioCompra + (PrecioCompra * ObtenerPorcVentaSimulador(IdRueda, Simulador) / 100);
+                resultado = PrecioCompra + (PrecioCompra * _serviceDatoSimulador.GetPorcVentaSimulador(IdRueda, Simulador) / 100);
 
                 if (resultado < PrecioActualVenta)  // Vendemos
                 {
@@ -606,7 +574,7 @@ namespace IOL
                             comando.ExecuteNonQuery();
                             cone.Close();
                         }
-                        ActualizarVentaSimulador(Simulador, Importe);
+                        _serviceTenenciaSimulador.SetActualizarTenenciaPorVenta(Simulador, Convert.ToDecimal(Importe));
                     }
                 }
             }
@@ -635,7 +603,7 @@ namespace IOL
                     if (regUltimosPrecios == 3)
                     {
                         promedio1 = suma / 3;
-                        promedio2 = (suma / 3) * ObtenerPorcCompraSimulador(IdRueda, Simulador) / 100;
+                        promedio2 = (suma / 3) * _serviceDatoSimulador.GetPorcCompraSimulador(IdRueda, Simulador) / 100;
                         resultado = promedio1 - promedio2;
                         precioactual = PrecioActualCompra;
                         if (resultado > precioactual)
@@ -666,7 +634,7 @@ namespace IOL
                                 catch { porcomisionIOL = 0; }
 
                                 // Calcular el Importe total para comprar acciones incluyendo Comision
-                                double importe = ObtenerDisponibleParaOperar(Simulador) / CantRestantes;
+                                double importe = _serviceTenenciaSimulador.GetDisponibleParaOperar(Simulador) / CantRestantes;
 
                                 // Calcular la comision de Invertir Online
                                 double comisionIOL = importe * porcomisionIOL / 100;
@@ -705,7 +673,7 @@ namespace IOL
                                         comando.ExecuteNonQuery();
                                         cone.Close();
                                     }
-                                    ActualizarCompraSimulador(Simulador, Importe);
+                                    _serviceTenenciaSimulador.SetActualizarTenenciaPorCompra(Simulador, Convert.ToDecimal(Importe));
                                 }
                             }
                         }
@@ -768,8 +736,8 @@ namespace IOL
                     catch { precioanteriorAA = 0; }
 
                     resultado1 = PrecioCompra + (PrecioCompra * 0.7 / 100);
-                    resultado2 = precioanterior - (precioanterior * ObtenerPorcVentaSimulador(IdRueda, Simulador) / 100);
-                    resultado3 = precioanteriorA - (precioanteriorA * ObtenerPorcVentaSimulador(IdRueda, Simulador) / 100);
+                    resultado2 = precioanterior - (precioanterior * _serviceDatoSimulador.GetPorcVentaSimulador(IdRueda, Simulador) / 100);
+                    resultado3 = precioanteriorA - (precioanteriorA * _serviceDatoSimulador.GetPorcVentaSimulador(IdRueda, Simulador) / 100);
 
                     bool lvender1 = precioactual > resultado1 && precioactual < resultado2 && precioanterior > precioanteriorA;
                     bool lvender2 = precioactual > resultado1 && precioactual < resultado3 && precioanteriorA > precioanteriorAA;
@@ -807,7 +775,7 @@ namespace IOL
                                 cone.Close();
                             }
 
-                            ActualizarVentaSimulador(Simulador, Importe);
+                            _serviceTenenciaSimulador.SetActualizarTenenciaPorVenta(Simulador, Convert.ToDecimal(Importe));
                         }
                     }
                 }
@@ -839,8 +807,8 @@ namespace IOL
                         try { precioanteriorAA = Convert.ToDouble(dsUltimosPrecios.Rows[0]["Precio"]); }
                         catch { precioanteriorAA = 0; }
 
-                        resultado1 = precioanterior + (precioanterior * ObtenerPorcCompraSimulador(IdRueda, Simulador) / 100);
-                        resultado2 = precioanteriorA + (precioanteriorA * ObtenerPorcCompraSimulador(IdRueda, Simulador) / 100);
+                        resultado1 = precioanterior + (precioanterior * _serviceDatoSimulador.GetPorcCompraSimulador(IdRueda, Simulador) / 100);
+                        resultado2 = precioanteriorA + (precioanteriorA * _serviceDatoSimulador.GetPorcCompraSimulador(IdRueda, Simulador) / 100);
 
                         bool lComprar1 = precioactual > resultado1 && precioactual < precioanterior;
                         bool lComprar2 = precioactual > resultado2 && precioanteriorA < precioanteriorAA;
@@ -873,7 +841,7 @@ namespace IOL
                                 catch { porcomisionIOL = 0; }
 
                                 // Calcular el Importe total para comprar acciones incluyendo Comision
-                                double importe = ObtenerDisponibleParaOperar(Simulador) / CantRestantes;
+                                double importe = _serviceTenenciaSimulador.GetDisponibleParaOperar(Simulador) / CantRestantes;
 
                                 // Calcular la comision de Invertir Online
                                 double comisionIOL = importe * porcomisionIOL / 100;
@@ -913,7 +881,7 @@ namespace IOL
                                         comando.ExecuteNonQuery();
                                         cone.Close();
                                     }
-                                    ActualizarCompraSimulador(Simulador, Importe);
+                                    _serviceTenenciaSimulador.SetActualizarTenenciaPorCompra(Simulador, Convert.ToDecimal(Importe));
                                 }
                             }
                         }
@@ -1424,7 +1392,7 @@ namespace IOL
                     if (regRuedaFinalizada == 1)
                     {
 
-                        CerrarEstadoRueda(IdRueda);
+                        _service.SetCerrarRueda(IdRueda);
 
                         // Agregar Informe Final
                         sentencia = "InformeFinalAgregar";
@@ -1798,177 +1766,11 @@ namespace IOL
                 }
             }
         }
-
-        private double ObtenerPorcVentaSimulador(int rueda, int simulador)
-        {
-            double auxPorcVenta = 0;
-            using (MySqlConnection coneSimulador = new MySqlConnection(conexion))
-            {
-                string sentencia = string.Format("Select PorcVenta{0} as PorcVenta From Ruedas Where IdRueda = {1}", simulador, rueda);
-                MySqlDataAdapter da = new MySqlDataAdapter(sentencia, coneSimulador);
-                DataTable ds = new DataTable();
-                da.Fill(ds);
-                if (ds.Rows.Count > 0)
-                {
-                    auxPorcVenta = Convert.ToDouble(ds.Rows[0]["PorcVenta"]);
-                }
-            }
-            return auxPorcVenta;
-        }
-        private double ObtenerPorcCompraSimulador(int rueda, int simulador)
-        {
-            double auxPorcCompra = 0;
-            using (MySqlConnection coneSimulador = new MySqlConnection(conexion))
-            {
-                string sentencia = string.Format("Select PorcCompra{0} as PorcCompra From Ruedas Where IdRueda = {1}", simulador, rueda);
-                MySqlDataAdapter da = new MySqlDataAdapter(sentencia, coneSimulador);
-                DataTable ds = new DataTable();
-                da.Fill(ds);
-                if (ds.Rows.Count > 0)
-                {
-                    auxPorcCompra = Convert.ToDouble(ds.Rows[0]["PorcCompra"]);
-                }
-            }
-            return auxPorcCompra;
-        }
-
-        private double ObtenerDisponibleParaOperar(int simulador)
-        {
-            double disponible = 0;
-            using (MySqlConnection cone = new MySqlConnection(conexion))
-            {
-                string sentencia = string.Format("Select * From TenenciaSimulador Where IdSimulacion = {0} Order By IdSimulacion", simulador);
-                MySqlDataAdapter daSimulador = new MySqlDataAdapter(sentencia, cone);
-                DataTable dsSimulador = new DataTable();
-                int nSimuladores = daSimulador.Fill(dsSimulador);
-                if (nSimuladores > 0)
-                {
-                    disponible = Convert.ToDouble(dsSimulador.Rows[0]["DisponibleParaOperar"]);
-                }
-                cone.Close();
-            }
-            return disponible;
-        }
-
-        private double ObtenerActivosValorizados(int simulador)
-        {
-            double activos = 0;
-            using (MySqlConnection cone = new MySqlConnection(conexion))
-            {
-                string sentencia = string.Format("Select * From TenenciaSimulador Where IdSimulacion = {0} Order By IdSimulacion", simulador);
-                MySqlDataAdapter daSimulador = new MySqlDataAdapter(sentencia, cone);
-                DataTable dsSimulador = new DataTable();
-                int nSimuladores = daSimulador.Fill(dsSimulador);
-                if (nSimuladores > 0)
-                {
-                    activos = Convert.ToDouble(dsSimulador.Rows[0]["ActivosValorizados"]);
-                }
-                cone.Close();
-            }
-            return activos;
-        }
-        private double ObtenerTotalTenencia(int simulador)
-        {
-            double totaltenencia = 0;
-            using (MySqlConnection cone = new MySqlConnection(conexion))
-            {
-                string sentencia = string.Format("Select * From TenenciaSimulador Where IdSimulacion = {0} Order By IdSimulacion", simulador);
-                MySqlDataAdapter daSimulador = new MySqlDataAdapter(sentencia, cone);
-                DataTable dsSimulador = new DataTable();
-                int nSimuladores = daSimulador.Fill(dsSimulador);
-                if (nSimuladores > 0)
-                {
-                    totaltenencia = Convert.ToDouble(dsSimulador.Rows[0]["TotalTenencia"]);
-                }
-                cone.Close();
-            }
-            return totaltenencia;
-        }
-        private void ActualizarCompraSimulador(int simulador, double importe)
-        {
-            using (MySqlConnection coneSimulador = new MySqlConnection(conexion))
-            {
-                string sentencia = $"Update TenenciaSimulador Set DisponibleParaOperar = DisponibleParaOperar - {importe}, ActivosValorizados = ActivosValorizados + {importe}," +
-                                   $" TotalTenencia = TotalTenencia - {importe}, Fecha = Now() Where IdSimulacion = {simulador}";
-                coneSimulador.Open();
-                MySqlCommand comando = new MySqlCommand(sentencia, coneSimulador);
-                comando.CommandType = CommandType.Text;
-                comando.ExecuteNonQuery();
-                coneSimulador.Close();
-            }
-        }
-        private void ActualizarVentaSimulador(int simulador, double importe)
-        {
-            using (MySqlConnection coneSimulador = new MySqlConnection(conexion))
-            {
-                string sentencia = $"Update TenenciaSimulador Set DisponibleParaOperar = DisponibleParaOperar + {importe}, ActivosValorizados = ActivosValorizados - {importe}," +
-                                   $" TotalTenencia = TotalTenencia + {importe}, Fecha = Now() Where IdSimulacion = {simulador}";
-                coneSimulador.Open();
-                MySqlCommand comando = new MySqlCommand(sentencia, coneSimulador);
-                comando.CommandType = CommandType.Text;
-                comando.ExecuteNonQuery();
-                coneSimulador.Close();
-            }
-        }
-        private string ObtenerEstadoRueda(int rueda)
-        {
-            string estado = string.Empty;
-            using (MySqlConnection cone = new MySqlConnection(conexion))
-            {
-                string sentencia = string.Format("Select Estado From Ruedas Where IdRueda = {0} ", rueda);
-                MySqlDataAdapter daEstadoRueda = new MySqlDataAdapter(sentencia, cone);
-                DataTable dsEstadoRueda = new DataTable();
-                int nEstados = daEstadoRueda.Fill(dsEstadoRueda);
-                if (nEstados > 0)
-                {
-                    estado = Convert.ToString(dsEstadoRueda.Rows[0]["Estado"]);
-                }
-                cone.Close();
-            }
-            return estado;
-        }
-        private void CerrarEstadoRueda(int rueda)
-        {
-            using (MySqlConnection cone = new MySqlConnection(conexion))
-            {
-                string sentencia = $"Update Ruedas Set Estado = 'Finalizado' Where IdRueda = {rueda}";
-                cone.Open();
-                MySqlCommand comandoApertura = new MySqlCommand(sentencia, cone);
-                comandoApertura.ExecuteNonQuery();
-                cone.Close();
-            }
-        }
-        private void AbrirEstadoRueda(int rueda)
-        {
-            using (MySqlConnection cone = new MySqlConnection(conexion))
-            {
-                string sentencia = $"Update Ruedas Set Estado = 'Abierto' Where IdRueda = {rueda}";
-                cone.Open();
-                MySqlCommand comandoApertura = new MySqlCommand(sentencia, cone);
-                comandoApertura.ExecuteNonQuery();
-                cone.Close();
-            }
-        }
         private bool SeguirComprando(int rueda)
         {
             int horaActual = DateTime.Now.Hour;
-            int horaHasta = 17;
-            bool comprar = false;
-
-            using (MySqlConnection cone = new MySqlConnection(conexion))
-            {
-                string sentencia = string.Format("Select ComprarHasta From Ruedas Where IdRueda = {0} ", rueda);
-                MySqlDataAdapter daComprar = new MySqlDataAdapter(sentencia, cone);
-                DataTable dsComprar = new DataTable();
-                int nEstados = daComprar.Fill(dsComprar);
-                if (nEstados > 0)
-                {
-                    horaHasta = Convert.ToInt32(dsComprar.Rows[0]["ComprarHasta"]);
-                    comprar = horaActual >= 11 && horaActual < horaHasta;
-                }
-                cone.Close();
-            }
-            return comprar;
+            int horaHasta = Bd.Ruedas.Where(x => x.IdRueda == rueda).SingleOrDefault().ComprarHasta;
+            return horaActual >= 11 && horaActual < horaHasta;
         }
     }
 }

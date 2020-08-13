@@ -40,6 +40,16 @@ namespace IOL.Servicios
             return _context.RuedasDatosSimulador.Where(x => x.IdRueda == idRueda && x.IdSimulador == idSimulador).SingleOrDefault();
         }
 
+        public double GetPorcCompraSimulador(int idRueda, int idSimulador)
+        {
+            return Convert.ToDouble(_context.RuedasDatosSimulador.Where(x => x.IdRueda == idRueda && x.IdSimulador == idSimulador).SingleOrDefault().PorcCompra);
+        }
+
+        public double GetPorcVentaSimulador(int idRueda, int idSimulador)
+        {
+            return Convert.ToDouble(_context.RuedasDatosSimulador.Where(x => x.IdRueda == idRueda && x.IdSimulador == idSimulador).SingleOrDefault().PorcVenta);
+        }
+
         public void Delete(int id)
         {
             var ruedas = _context.Ruedas.Where(x => x.IdRueda == id).SingleOrDefault();

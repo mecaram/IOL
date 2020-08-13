@@ -28,14 +28,14 @@ namespace IOL.Servicios
         {
             return _context.RuedasDetalleSimulador.ToList();
         }
-        public RuedasDetalleSimulador GetById(int id)
+        public RuedasDetalleSimulador GetById(int idRuedaDetalle)
         {
-            return _context.RuedasDetalleSimulador.Where(x => x.IdRuedaDetalle == id).SingleOrDefault();
+            return _context.RuedasDetalleSimulador.Where(x => x.IdRuedaDetalle == idRuedaDetalle).SingleOrDefault();
         }
 
-        public decimal GetActivosValorizados(int idSimulacion)
+        public List<RuedasDetalleSimulador> GetByIdSimulacion(int idRueda, int idSimulacion)
         {
-            return _context.RuedasDetalleSimulador.Where(x => x.IdSimulacion == idSimulacion && x.Estado == "Comprado").Sum(x => x.ImporteCompra);
+            return _context.RuedasDetalleSimulador.Where(x => x.IdRuedaActual == idRueda && x.IdSimulacion == idSimulacion).ToList();
         }
 
         public void Delete(int id)

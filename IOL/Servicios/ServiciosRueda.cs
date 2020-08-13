@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.Entity.Migrations;
 using System.Linq;
+using System.Web.Management;
 
 namespace IOL.Servicios
 {
@@ -26,6 +27,26 @@ namespace IOL.Servicios
             catch { return false; }
         }
 
+        public void SetAbrirRueda(int idRueda)
+        {
+            var rueda = GetById(idRueda);
+            if (rueda != null)
+            {
+                rueda.Estado = "Abierto";
+                Register(rueda);
+            }
+        }
+
+        public void SetCerrarRueda(int idRueda)
+        {
+            var rueda = GetById(idRueda);
+            if (rueda != null)
+            {
+                rueda.Estado = "Finalizado";
+                Register(rueda);
+            }
+        }
+
         public List<EntityFrameWork.Ruedas> GetAll()
         {
             return _context.Ruedas.ToList();
@@ -43,6 +64,11 @@ namespace IOL.Servicios
         public List<EntityFrameWork.Ruedas> GetByDate(DateTime fecha)
         {
             return _context.Ruedas.Where(x => x.FechaRueda.Date == fecha.Date).ToList();
+        }
+
+        public string GetEstadoRueda(int id)
+        {
+            return _context.Ruedas.Where(x => x.IdRueda == id).SingleOrDefault().Estado;
         }
 
         public void Delete(int id)
