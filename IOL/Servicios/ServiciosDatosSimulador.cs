@@ -14,7 +14,7 @@ namespace IOL.Servicios
             _context = new BD();
         }
 
-        public bool Register(EntityFrameWork.RuedasDatosSimulador ruedaDatosSimulador)
+        public bool Register(RuedasDatosSimulador ruedaDatosSimulador)
         {
             try
             {
@@ -26,16 +26,16 @@ namespace IOL.Servicios
             catch { return false; }
         }
 
-        public List<EntityFrameWork.RuedasDatosSimulador> GetAll()
+        public List<RuedasDatosSimulador> GetAll()
         {
             return _context.RuedasDatosSimulador.ToList();
         }
-        public EntityFrameWork.RuedasDatosSimulador GetByIdRueda(int idRueda)
+        public RuedasDatosSimulador GetByIdRueda(int idRueda)
         {
             return _context.RuedasDatosSimulador.Where(x => x.IdRueda == idRueda).SingleOrDefault();
         }
 
-        public EntityFrameWork.RuedasDatosSimulador GetByIdSimulador(int idRueda, int idSimulador)
+        public RuedasDatosSimulador GetByIdSimulador(int idRueda, int idSimulador)
         {
             return _context.RuedasDatosSimulador.Where(x => x.IdRueda == idRueda && x.IdSimulador == idSimulador).SingleOrDefault();
         }

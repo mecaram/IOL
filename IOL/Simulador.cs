@@ -5,6 +5,7 @@ using System.Data;
 using IOL.EntityFrameWork;
 using IOL.Servicios;
 using System.Linq;
+using System.Configuration;
 
 namespace IOL
 {
@@ -15,7 +16,8 @@ namespace IOL
         private readonly ServiciosDatosSimulador _serviceDatoSimulador = new ServiciosDatosSimulador();
         private readonly ServiciosTenenciaSimulador _serviceTenenciaSimulador = new ServiciosTenenciaSimulador();
         private readonly ServiciosRuedasDetalleSimulador _serviceRuedasDetalleSimulador = new ServiciosRuedasDetalleSimulador();
-        BD Bd = new BD();
+        private readonly ServiciosPanelPrincipal _servicePanelPrincipal = new ServiciosPanelPrincipal();
+        BD Databases = new BD();
 
         string conexion = ConfigurationManager.ConnectionStrings["conexion"].ToString();
         public int comitente = 0;  // Nro. de Comitente
@@ -42,7 +44,6 @@ namespace IOL
                 }
             }
         }
-
         private void ActualizarLoad(object sender, EventArgs e)
         {
             var ruedaactual = _service.GetByDate(DateTime.Now.Date, comitente);
@@ -59,28 +60,6 @@ namespace IOL
                 txtPorcComisionIOL.Text = string.Format("{0:00.00}", ruedaactual.PorcComisionIOL);
                 txtPorcPuntaCompradora.Text = string.Format("{0:00.00}", ruedaactual.PorcPuntaCompradora);
                 txtPorcPuntaVendedora.Text = string.Format("{0:00.00}", ruedaactual.PorcPuntaVendedora);
-
-                txtPorcCompra1.Text = string.Format("{0:00.00}", _serviceDatoSimulador.GetPorcCompraSimulador(ruedaactual.IdRueda,1));
-                txtPorcCompra2.Text = string.Format("{0:00.00}", _serviceDatoSimulador.GetPorcCompraSimulador(ruedaactual.IdRueda, 2));
-                txtPorcCompra3.Text = string.Format("{0:00.00}", _serviceDatoSimulador.GetPorcCompraSimulador(ruedaactual.IdRueda, 3));
-                txtPorcCompra4.Text = string.Format("{0:00.00}", _serviceDatoSimulador.GetPorcCompraSimulador(ruedaactual.IdRueda, 4));
-                txtPorcCompra5.Text = string.Format("{0:00.00}", _serviceDatoSimulador.GetPorcCompraSimulador(ruedaactual.IdRueda, 5));
-                txtPorcCompra6.Text = string.Format("{0:00.00}", _serviceDatoSimulador.GetPorcCompraSimulador(ruedaactual.IdRueda, 6));
-                txtPorcCompra7.Text = string.Format("{0:00.00}", _serviceDatoSimulador.GetPorcCompraSimulador(ruedaactual.IdRueda, 7));
-                txtPorcCompra8.Text = string.Format("{0:00.00}", _serviceDatoSimulador.GetPorcCompraSimulador(ruedaactual.IdRueda, 8));
-                txtPorcCompra9.Text = string.Format("{0:00.00}", _serviceDatoSimulador.GetPorcCompraSimulador(ruedaactual.IdRueda, 9));
-                txtPorcCompra10.Text = string.Format("{0:00.00}", _serviceDatoSimulador.GetPorcCompraSimulador(ruedaactual.IdRueda, 10));
-
-                txtPorcVenta1.Text = string.Format("{0:00.00}", _serviceDatoSimulador.GetPorcVentaSimulador(ruedaactual.IdRueda, 1));
-                txtPorcVenta2.Text = string.Format("{0:00.00}", _serviceDatoSimulador.GetPorcVentaSimulador(ruedaactual.IdRueda, 2));
-                txtPorcVenta3.Text = string.Format("{0:00.00}", _serviceDatoSimulador.GetPorcVentaSimulador(ruedaactual.IdRueda, 3));
-                txtPorcVenta4.Text = string.Format("{0:00.00}", _serviceDatoSimulador.GetPorcVentaSimulador(ruedaactual.IdRueda, 4));
-                txtPorcVenta5.Text = string.Format("{0:00.00}", _serviceDatoSimulador.GetPorcVentaSimulador(ruedaactual.IdRueda, 5));
-                txtPorcVenta6.Text = string.Format("{0:00.00}", _serviceDatoSimulador.GetPorcVentaSimulador(ruedaactual.IdRueda, 6));
-                txtPorcVenta7.Text = string.Format("{0:00.00}", _serviceDatoSimulador.GetPorcVentaSimulador(ruedaactual.IdRueda, 7));
-                txtPorcVenta8.Text = string.Format("{0:00.00}", _serviceDatoSimulador.GetPorcVentaSimulador(ruedaactual.IdRueda, 8));
-                txtPorcVenta9.Text = string.Format("{0:00.00}", _serviceDatoSimulador.GetPorcVentaSimulador(ruedaactual.IdRueda, 9));
-                txtPorcVenta10.Text = string.Format("{0:00.00}", _serviceDatoSimulador.GetPorcVentaSimulador(ruedaactual.IdRueda, 10));
 
                 tmrActualizarToken_Tick(sender, e);
                 ActualizarAcciones();
@@ -126,33 +105,13 @@ namespace IOL
                 }
             }
         }
-
         private int AgregarAccesoIOL()
         {
-            MySqlConnection cone = new MySqlConnection(conexion);
-            string sentencia = string.Empty;
-            sentencia = $"Update Ruedas Set AccesosIOL = AccesosIOL + 1 Where IdRueda = {txtIdRueda.Text.Trim()}";
-            cone.Open();
-            MySqlCommand comando = new MySqlCommand(sentencia, cone);
-            comando.CommandType = CommandType.Text;
-            comando.ExecuteNonQuery();
-            cone.Close();
-
-            sentencia = $"Select * From Ruedas Where IdRueda = {txtIdRueda.Text.Trim()}";
-            MySqlConnection coneRuedas = new MySqlConnection(conexion);
-            MySqlDataAdapter daRuedas = new MySqlDataAdapter(sentencia, coneRuedas);
-            DataTable dsRuedas = new DataTable();
-            daRuedas.Fill(dsRuedas);
-            if (dsRuedas.Rows.Count > 0)
-                return Convert.ToInt32((dsRuedas.Rows[0]["AccesosIOL"] is DBNull) ? 0 : dsRuedas.Rows[0]["AccesosIOL"]);
-            else
-                return 0;
+            int idRueda = Convert.ToInt32(txtIdRueda.Text);
+            return _service.InsertAccess(idRueda);
         }
-
         private void ActualizarAcciones()
         {
-            string cone = ConfigurationManager.ConnectionStrings["conexion"].ToString();
-
             int IdSimulacion = 0;
             try { IdSimulacion = Convert.ToInt32(nudSimulador.Value); }
             catch { IdSimulacion = 0; }
@@ -275,7 +234,6 @@ namespace IOL
                     controles.Enabled = false;
             }
         }
-
         private void tmrActualizarCotizacion_Tick(object sender, EventArgs e)
         {
             // Obtenemos la fecha y hora actual
@@ -284,7 +242,6 @@ namespace IOL
             int HoraActual = FechaActual.Hour;
             int MinutoActual = FechaActual.Minute;
             txtHora.Text = string.Format("{0:00}:{1:00}", FechaActual.Hour, FechaActual.Minute);
-            string sentencia = string.Empty;
 
             // Obtenemos el nro. de rueda
             // para luego verificar que exista la rueda.
@@ -322,23 +279,7 @@ namespace IOL
 
                     if (Panel != null && Panel.titulos != null)
                     {
-
-                        int nIdPanel = 0;
-                        MySqlConnection coneUltimoIndicePanel = new MySqlConnection(conexion);
-                        sentencia = string.Format("Select Max(IdPanel) as UltimoIdPanel From PanelPrincipal Where IdRueda = {0} ", idrueda);
-                        MySqlDataAdapter daUltimoIndicePanel = new MySqlDataAdapter(sentencia, coneUltimoIndicePanel);
-                        DataTable dsUltimoIndicePanel = new DataTable();
-                        int regUltimoIndicePanel = daUltimoIndicePanel.Fill(dsUltimoIndicePanel);
-                        coneUltimoIndicePanel.Close();
-                        if (regUltimoIndicePanel > 0)
-                        {
-                            try { nIdPanel = Convert.ToInt32(dsUltimoIndicePanel.Rows[0]["UltimoIdPanel"]) + 1; }
-                            catch { nIdPanel = 1; }
-                        }
-                        else
-                            nIdPanel = 1;
-
-
+                        int nIdPanel = _servicePanelPrincipal.GetNextId(idrueda);
                         foreach (var registro in Panel.titulos)
                         {
                             simbolo = registro.simbolo.ToString();
@@ -363,59 +304,9 @@ namespace IOL
                             }
 
                             if (UltimoPrecio > 0)
-                            {
-                                using (MySqlConnection cone = new MySqlConnection(conexion))
-                                {
-                                    cone.Open();
-                                    sentencia = $"Update RuedasDetalleSimulador Set UltimoPrecio = {UltimoPrecio}," +
-                                                              $" FechaUltimoPrecio = str_to_date('{DateTime.Now}','%d/%m/%Y %H:%i:%s') " +
-                                                              $" Where IdRuedaActual = {idrueda} And Simbolo = '{simbolo}' And Estado = 'Comprado'";
-                                    MySqlCommand comando = new MySqlCommand(sentencia, cone);
-                                    comando.CommandType = CommandType.Text;
-                                    comando.ExecuteNonQuery();
-                                    cone.Close();
-                                }
-                            }
+                                _serviceRuedasDetalleSimulador.RegisterActionsPrice(idrueda, simbolo, (decimal)UltimoPrecio);
 
-                            using (MySqlConnection cone = new MySqlConnection(conexion))
-                            {
-                                cone.Open();
-                                sentencia = $"Update RuedasDetalleSimulador Set " +
-                                            $"VariacionenPesos = (UltimoPrecio - PrecioCompra) * cantidad," +
-                                            $"VariacionenPorcentajes = ((UltimoPrecio / preciocompra) - 1) * 100 " +
-                                            $"Where IdRuedaActual = {idrueda} And Estado = 'Comprado' And UltimoPrecio > 0";
-
-                                MySqlCommand comando = new MySqlCommand(sentencia, cone);
-                                comando.CommandType = CommandType.Text;
-                                comando.ExecuteNonQuery();
-                                cone.Close();
-                            }
-
-                            using (MySqlConnection cone = new MySqlConnection(conexion))
-                            {
-                                cone.Open();
-                                sentencia = $"Update RuedasDetalleSimulador Set " +
-                                            $"VariacionenPesos = 0, " +
-                                            $"VariacionenPorcentajes = 0 " +
-                                            $"Where IdRuedaActual = {idrueda} And Estado = 'Comprado' And Simbolo = '{simbolo}' And UltimoPrecio = 0";
-                                MySqlCommand comando = new MySqlCommand(sentencia, cone);
-                                comando.CommandType = CommandType.Text;
-                                comando.ExecuteNonQuery();
-                                cone.Close();
-                            }
-
-                            using (MySqlConnection cone = new MySqlConnection(conexion))
-                            {
-                                cone.Open();
-                                sentencia = $"Update RuedasDetalleSimulador Set " +
-                                            $"VariacionenPesos = (PrecioVenta - PrecioCompra) * cantidad," +
-                                            $"VariacionenPorcentajes = ((PrecioVenta / PrecioCompra) - 1) * 100 " +
-                                            $" Where IdRuedaActual = {idrueda} And Estado = 'Vendido'";
-                                MySqlCommand comando = new MySqlCommand(sentencia, cone);
-                                comando.CommandType = CommandType.Text;
-                                comando.ExecuteNonQuery();
-                                cone.Close();
-                            }
+                            _serviceRuedasDetalleSimulador.UpdateVariations(idrueda);
 
                             double? _VariacionPorcentual = 0, _Apertura = 0, _Maximo = 0, _Minimo = 0,
                                    _UltimoCierre = 0, _Volumen = 0, _CantidadOperaciones = 0;
@@ -423,56 +314,42 @@ namespace IOL
                             double? _PrecioCompra = 0, _PrecioVenta = 0, _CantidadCompra = 0, _CantidadVenta = 0, _UltimoPrecio = 0;
 
                             try { _VariacionPorcentual = registro.variacionPorcentual; } catch { _VariacionPorcentual = 0; }
-
                             try { _Apertura = registro.apertura; } catch { _Apertura = 0; }
-
                             try { _Maximo = registro.maximo; } catch { _Maximo = 0; }
-
                             try { _Minimo = registro.minimo; } catch { _Minimo = 0; }
-
                             try { _UltimoCierre = registro.ultimoCierre; } catch { _UltimoCierre = 0; }
-
                             try { _Volumen = registro.volumen; } catch { _Volumen = 0; }
-
                             try { _CantidadOperaciones = registro.cantidadOperaciones; } catch { _CantidadOperaciones = 0; }
-
                             try { _Fecha = registro.fecha; } catch { _Fecha = string.Empty; }
-
                             try { _Mercado = registro.mercado; } catch { _Mercado = string.Empty; }
-
                             try { _Moneda = registro.moneda; } catch { _Moneda = string.Empty; }
-
                             try { _PrecioCompra = registro.puntas.precioCompra; } catch { _PrecioCompra = 0; }
-
                             try { _PrecioVenta = registro.puntas.precioVenta; } catch { _PrecioVenta = 0; }
-
                             try { _CantidadCompra = registro.puntas.cantidadCompra; } catch { _CantidadCompra = 0; }
-
                             try { _CantidadVenta = registro.puntas.cantidadVenta; } catch { _CantidadVenta = 0; }
-
                             try { _UltimoPrecio = registro.ultimoprecio; } catch { _UltimoPrecio = 0; }
 
-                            using (MySqlConnection cone = new MySqlConnection(conexion))
-                            {
-                                cone.Open();
-                                sentencia = $"Insert Into PanelPrincipal(IdRueda, Simbolo," +
-                                                          $"VariacionPorcentual, Apertura, Maximo, Minimo," +
-                                                          $"UltimoCierre, Volumen, CantidadDeOperaciones, Fecha," +
-                                                          $"mercado, Moneda," +
-                                                          $"PuntaCompradoraP, PuntaVendedoraP," +
-                                                          $"PuntaCompradoraC, PuntaVendedoraC, UltimoPrecio, IdPanel)" +
-                                                          $" Values ({idrueda}, '{simbolo}'," +
-                                                          $"{_VariacionPorcentual}, {_Apertura}, {_Maximo}, {_Minimo}," +
-                                                          $"{_UltimoCierre}, {_Volumen}, {_CantidadOperaciones},'{_Fecha}'," +
-                                                          $"'{_Mercado}', '{_Moneda}'," +
-                                                          $"{_PrecioCompra}, {_PrecioVenta}," +
-                                                          $"{_CantidadCompra}, {_CantidadVenta}, {_UltimoPrecio}, {nIdPanel})";
-                                MySqlCommand comando = new MySqlCommand(sentencia, cone);
-                                comando.CommandType = CommandType.Text;
-                                comando.ExecuteNonQuery();
-                                cone.Close();
-                            }
+                            PanelPrincipal panel = new PanelPrincipal();
+                            panel.IdRueda = idrueda;
+                            panel.Simbolo = simbolo;
+                            panel.VariacionPorcentual = _VariacionPorcentual.Value;
+                            panel.Apertura = _Apertura.Value;
+                            panel.Maximo = _Maximo.Value;
+                            panel.Minimo = _Minimo.Value;
+                            panel.UltimoCierre = _UltimoCierre.Value;
+                            panel.Volumen = _Volumen.Value;
+                            panel.CantidadDeOperaciones = _CantidadOperaciones.Value;
+                            panel.Fecha = _Fecha;
+                            panel.Mercado = _Mercado;
+                            panel.Moneda = _Moneda;
+                            panel.PuntaCompradoraP = _PrecioCompra.Value;
+                            panel.PuntaVendedoraP = _PrecioVenta.Value;
+                            panel.PuntaCompradoraC = _CantidadCompra.Value;
+                            panel.PuntaVendedoraC = _CantidadVenta.Value;
+                            panel.UltimoPrecio = _UltimoPrecio.Value;
+                            panel.IdPanel = nIdPanel;
 
+                            _servicePanelPrincipal.Register(panel);
                         }
                     }
                     ActualizarAcciones(); // Actualiza la grilla de acciones compradas
@@ -481,38 +358,29 @@ namespace IOL
             txtEstado.Text = _service.GetEstadoRueda(idrueda);
             this.Refresh();
         }
-
         private void OperarEstrategiaUno(int IdRueda, int Simulador, string Simbolo, int IdPanel, double PrecioActualCompra, double PrecioActualVenta)
         {
             // Verifico cual fue mi ultima Operacion
             // Si estoy comprado o ya vendi mis posiciones
 
             int iddetalle = 0;
-            string ultimaoperacion = string.Empty;
             double PrecioCompra = 0, CantidadComprada = 0, Importe = 0;
 
-            MySqlConnection coneUltimaOperacion = new MySqlConnection(conexion);
-            string sentencia = string.Format("Select * From RuedasDetalleSimulador Where IdRuedaActual = {0} ", IdRueda);
-            sentencia += string.Format(" And IdSimulacion = {0} And Estado = 'Comprado' And Simbolo = '{1}' ", Simulador, Simbolo);
-            MySqlDataAdapter daUltimaOperacion = new MySqlDataAdapter(sentencia, coneUltimaOperacion);
-            DataTable dsUltimoOperacion = new DataTable();
-            int regUltimaOperacion = daUltimaOperacion.Fill(dsUltimoOperacion);
-            coneUltimaOperacion.Close();
-            if (regUltimaOperacion > 0)
+            RuedasDetalleSimulador regUltimaCompra = _serviceRuedasDetalleSimulador.GetLastPurchase(IdRueda, Simulador, Simbolo);
+            if (regUltimaCompra  != null)
             {
-                ultimaoperacion = "Compra";
-                iddetalle = Convert.ToInt32(dsUltimoOperacion.Rows[0]["IdRuedaDetalle"]);
-                PrecioCompra = Convert.ToDouble(dsUltimoOperacion.Rows[0]["PrecioCompra"]);
-                CantidadComprada = Convert.ToDouble(dsUltimoOperacion.Rows[0]["Cantidad"]);
+                iddetalle = regUltimaCompra.IdRuedaDetalle;
+                PrecioCompra = (double) regUltimaCompra.PrecioCompra;
+                CantidadComprada = (double)regUltimaCompra.Cantidad;
             }
 
-            if (ultimaoperacion == "Compra") // Ultima operacion fue la compra de acciones
+            if (regUltimaCompra.Estado == "Compra") // Ultima operacion fue la compra de acciones
             {
                 // Calcular
                 // SI(PrecioCompra+(PrecioCompra*0,7%) < PrecioActual;"VENTA";"NEUTRO")
-                double resultado = 0, cantidadvendida = CantidadComprada;
+                double cantidadvendida = CantidadComprada;
 
-                resultado = PrecioCompra + (PrecioCompra * _serviceDatoSimulador.GetPorcVentaSimulador(IdRueda, Simulador) / 100);
+                double resultado = PrecioCompra + (PrecioCompra * _serviceDatoSimulador.GetPorcVentaSimulador(IdRueda, Simulador) / 100);
 
                 if (resultado < PrecioActualVenta)  // Vendemos
                 {
@@ -533,18 +401,7 @@ namespace IOL
 
                     if (cantidadvendida > 0)
                     {
-                        using (MySqlConnection cone = new MySqlConnection(conexion))
-                        {
-                            cone.Open();
-                            sentencia = $"Update RuedasDetalleSimulador Set " +
-                                        $" PrecioVenta = {precioventa}, ImporteVenta = {Importe}, FechaVenta = str_to_date('{DateTime.Now}','%d/%m/%Y %H:%i:%s') , Estado = 'Vendido'," +
-                                        $"UltimoPrecio = {precioventa}, FechaUltimoPrecio = str_to_date('{DateTime.Now}','%d/%m/%Y %H:%i:%s')," +
-                                        $"IdRuedaVenta = {IdRueda}  Where IdRuedaDetalle = {iddetalle}";
-                            MySqlCommand comando = new MySqlCommand(sentencia, cone);
-                            comando.CommandType = CommandType.Text;
-                            comando.ExecuteNonQuery();
-                            cone.Close();
-                        }
+                        _serviceRuedasDetalleSimulador.RegisterSale(iddetalle, IdRueda, precioventa, Importe);
                         _serviceTenenciaSimulador.SetActualizarTenenciaPorVenta(Simulador, Convert.ToDecimal(Importe));
                     }
                 }
@@ -557,22 +414,14 @@ namespace IOL
                     // =+SI(PROMEDIO(Ultimos tres precios)-(PROMEDIO(Ultimos tres precios)* SimuladorCompra%) > PrecioActual;"COMPRA";"NEUTRO")
                     double suma = 0, promedio1 = 0, promedio2 = 0, resultado = 0, precioactual = 0;
 
-                    MySqlConnection coneUltimosPrecios = new MySqlConnection(conexion);
-                    sentencia = string.Format("Select Distinct PuntaVendedoraP as PuntaVendedora From PanelPrincipal Where IdRueda = {0} And IdPanel < {1} And Simbolo = '{2}' Order By IdPanel Desc Limit 3 ", IdRueda, IdPanel, Simbolo);
-                    MySqlDataAdapter daUltimosPrecios = new MySqlDataAdapter(sentencia, coneUltimosPrecios);
-                    DataTable dsUltimosPrecios = new DataTable();
-                    int regUltimosPrecios = daUltimosPrecios.Fill(dsUltimosPrecios);
-                    coneUltimosPrecios.Close();
-                    if (regUltimosPrecios == 3)
+                    var regUltimosPrecios = _servicePanelPrincipal.GetLastThreeSeelingTip(IdRueda, Simbolo);
+                    if (regUltimosPrecios != null && regUltimosPrecios.Count == 3)
                     {
-                        foreach (DataRow Fila in dsUltimosPrecios.Rows)
+                        foreach (double precio in regUltimosPrecios)
                         {
-                            suma += Convert.ToDouble(Fila["PuntaVendedora"]);
+                            suma += precio;
                         }
-                    }
 
-                    if (regUltimosPrecios == 3)
-                    {
                         promedio1 = suma / 3;
                         promedio2 = (suma / 3) * _serviceDatoSimulador.GetPorcCompraSimulador(IdRueda, Simulador) / 100;
                         resultado = promedio1 - promedio2;
@@ -580,14 +429,7 @@ namespace IOL
                         if (resultado > precioactual)
                         {
                             // Obtener la cantidad de acciones compradas
-                            int cantCompradas = 0;
-
-                            MySqlConnection coneAccionesCompradas = new MySqlConnection(conexion);
-                            sentencia = string.Format("Select * From RuedasDetalleSimulador Where IdRuedaActual = {0} And Estado = 'Comprado'" +
-                                " And IdSimulacion = {1}", IdRueda, Simulador);
-                            MySqlDataAdapter daAccionesCompradas = new MySqlDataAdapter(sentencia, coneAccionesCompradas);
-                            DataTable dsAccionesCompradas = new DataTable();
-                            cantCompradas = daAccionesCompradas.Fill(dsAccionesCompradas);
+                            int cantCompradas = _serviceRuedasDetalleSimulador.GetPurchasedAmount(IdRueda, Simulador);
 
                             // Calcular las acciones que quedan por comprar
                             int CantRestantes = 20 - cantCompradas;
@@ -626,24 +468,23 @@ namespace IOL
 
                                 if (cantidadcomprada > 0)
                                 {
-                                    using (MySqlConnection cone = new MySqlConnection(conexion))
-                                    {
-                                        cone.Open();
-                                        sentencia = $"Insert Into RuedasDetalleSimulador(IdRuedaActual, IdRuedaCompra, IdSimulacion, " +
-                                                                  $"FechaCompra, Simbolo, Cantidad, " +
-                                                                  $"PrecioCompra, ImporteCompra, UltimoPrecio," +
-                                                                  $"FechaUltimoPrecio," +
-                                                                  $"Estado, PorcComisionIOL, ImporteComisionIOL, IdPanel) " +
-                                                                  $"Values({IdRueda}, {IdRueda}, {Simulador}, " +
-                                                                  $"str_to_date('{DateTime.Now}','%d/%m/%Y %H:%i:%s'),'{Simbolo}',{cantidadcomprada}, " +
-                                                                  $"{preciocompra},{importe},{precioactual}," +
-                                                                  $"str_to_date('{DateTime.Now}','%d/%m/%Y %H:%i:%s')," +
-                                                                  $"'Comprado',{txtPorcComisionIOL.Text.Trim()},{comisionIOL},{IdPanel})";
-                                        MySqlCommand comando = new MySqlCommand(sentencia, cone);
-                                        comando.CommandType = CommandType.Text;
-                                        comando.ExecuteNonQuery();
-                                        cone.Close();
-                                    }
+                                    RuedasDetalleSimulador rueda = new RuedasDetalleSimulador();
+                                    rueda.IdRuedaActual = IdRueda;
+                                    rueda.IdRuedaCompra = IdRueda;
+                                    rueda.IdSimulacion = Simulador;
+                                    rueda.FechaCompra = DateTime.Now;
+                                    rueda.Simbolo = Simbolo;
+                                    rueda.Cantidad = (decimal)cantidadcomprada;
+                                    rueda.PrecioCompra = (decimal)preciocompra;
+                                    rueda.ImporteCompra = (decimal)importe;
+                                    rueda.UltimoPrecio = (decimal)precioactual;
+                                    rueda.FechaUltimoPrecio = DateTime.Now;
+                                    rueda.Estado = "Comprado";
+                                    rueda.PorcComisionIOL = Convert.ToDecimal(txtPorcComisionIOL.Text.Trim());
+                                    rueda.ImporteComisionIOL = (decimal)comisionIOL;
+                                    rueda.IdPanel = IdPanel;
+
+                                    _serviceRuedasDetalleSimulador.Register(rueda);
                                     _serviceTenenciaSimulador.SetActualizarTenenciaPorCompra(Simulador, Convert.ToDecimal(Importe));
                                 }
                             }
@@ -652,7 +493,6 @@ namespace IOL
                 }
             }
         }
-
         private void OperarEstrategiaDos(int IdRueda, int Simulador, string Simbolo, int IdPanel, double PrecioActualCompra, double PrecioActualVenta)
         {
             // Verifico cual fue mi ultima Operacion
@@ -665,19 +505,12 @@ namespace IOL
             double precioanterior, precioanteriorA, precioanteriorAA, resultado1, resultado2, resultado3;
             double precioactual = 0;
 
-            MySqlConnection coneUltimaOperacion = new MySqlConnection(conexion);
-            string sentencia = string.Format("Select * From RuedasDetalleSimulador Where IdRuedaActual = {0} ", IdRueda);
-            sentencia += string.Format(" And IdSimulacion = {0} And Estado = 'Comprado' And Simbolo = '{1}' ", Simulador, Simbolo);
-            MySqlDataAdapter daUltimaOperacion = new MySqlDataAdapter(sentencia, coneUltimaOperacion);
-            DataTable dsUltimoOperacion = new DataTable();
-            int regUltimaOperacion = daUltimaOperacion.Fill(dsUltimoOperacion);
-            coneUltimaOperacion.Close();
-            if (regUltimaOperacion > 0)
+            RuedasDetalleSimulador regUltimaCompra = _serviceRuedasDetalleSimulador.GetLastPurchase(IdRueda, Simulador, Simbolo);
+            if (regUltimaCompra != null)
             {
-                ultimaoperacion = "Compra";
-                iddetalle = Convert.ToInt32(dsUltimoOperacion.Rows[0]["IdRuedaDetalle"]);
-                PrecioCompra = Convert.ToDouble(dsUltimoOperacion.Rows[0]["PrecioCompra"]);
-                CantidadVendida = Convert.ToDouble(dsUltimoOperacion.Rows[0]["Cantidad"]);
+                iddetalle = regUltimaCompra.IdRuedaDetalle;
+                PrecioCompra = (double)regUltimaCompra.PrecioCompra;
+                CantidadVendida = (double)regUltimaCompra.Cantidad;
             }
 
             if (ultimaoperacion == "Compra") // Ultima operacion fue la compra de acciones
@@ -688,22 +521,16 @@ namespace IOL
                 // SI (PrecioActual > PrecioCompra + (PrecioCompra * 0.7 %); PrecioActual < PrecioAnterior - (PrecioAnterior * 0.25 %); PrecioAnterior > PrecioAnteriorA) ENTONCES VENDER
                 // SINO SI (PrecioActual > PrecioCompra + (PrecioCompra *0.7%); PrecioActual < PrecioAnteriorA - (PrecioAnteriorA * 0.25%);PrecioAnteriorA > PrecioAnteriorAA)) ENTONCES VENDER
 
-                MySqlConnection coneUltimosPreciosVenta = new MySqlConnection(conexion);
-                sentencia = string.Format("Select Distinct PuntaCompradoraP as Precio From PanelPrincipal Where IdRueda = {0} And Simbolo = '{1}' Order By IdPanel Desc Limit 3", IdRueda, Simbolo);
-                MySqlDataAdapter daUltimosPreciosVenta = new MySqlDataAdapter(sentencia, coneUltimosPreciosVenta);
-                DataTable dsUltimosPreciosVenta = new DataTable();
-                int regUltimosPreciosVenta = daUltimosPreciosVenta.Fill(dsUltimosPreciosVenta);
-                coneUltimosPreciosVenta.Close();
-
-                if (regUltimosPreciosVenta == 3)
+                var ultimosPrecios = _servicePanelPrincipal.GetLastThreeBuyingTip(IdRueda, Simbolo);
+                if (ultimosPrecios != null && ultimosPrecios.Count == 3)
                 {
-                    try { precioanterior = Convert.ToDouble(dsUltimosPreciosVenta.Rows[2]["Precio"]); }
+                    try { precioanterior = ultimosPrecios[2]; }
                     catch { precioanterior = 0; }
 
-                    try { precioanteriorA = Convert.ToDouble(dsUltimosPreciosVenta.Rows[1]["Precio"]); }
+                    try { precioanteriorA = ultimosPrecios[1]; }
                     catch { precioanteriorA = 0; }
 
-                    try { precioanteriorAA = Convert.ToDouble(dsUltimosPreciosVenta.Rows[0]["Precio"]); }
+                    try { precioanteriorAA = ultimosPrecios[0]; }
                     catch { precioanteriorAA = 0; }
 
                     resultado1 = PrecioCompra + (PrecioCompra * 0.7 / 100);
@@ -732,20 +559,7 @@ namespace IOL
 
                         if (CantidadVendida > 0)
                         {
-                            using (MySqlConnection cone = new MySqlConnection(conexion))
-                            {
-                                cone.Open();
-                                sentencia = $"Update RuedasDetalleSimulador Set " +
-                                                    $" PrecioVenta = {precioventa}, ImporteVenta = {Importe}, FechaVenta = str_to_date('{DateTime.Now}','%d/%m/%Y %H:%i:%s') , Estado = 'Vendido'," +
-                                                    $"UltimoPrecio = {precioventa}, FechaUltimoPrecio = str_to_date('{DateTime.Now}','%d/%m/%Y %H:%i:%s')," +
-                                                    $"IdRuedaVenta = {IdRueda}  Where IdRuedaDetalle = {iddetalle}";
-
-                                MySqlCommand comando = new MySqlCommand(sentencia, cone);
-                                comando.CommandType = CommandType.Text;
-                                comando.ExecuteNonQuery();
-                                cone.Close();
-                            }
-
+                            _serviceRuedasDetalleSimulador.RegisterSale(iddetalle, IdRueda, precioventa, Importe);
                             _serviceTenenciaSimulador.SetActualizarTenenciaPorVenta(Simulador, Convert.ToDecimal(Importe));
                         }
                     }
@@ -760,22 +574,17 @@ namespace IOL
                     // SINO SI(PrecioActual > (PrecioAnteriorA + (PrecioAnteriorA * 0.05%)) Y (PrecioAnteriorA < PrecioAnteriorAA) Entonces COMPRAR
                     // =+SI(Y(B4>B3+(B3*0.05%);B3<B2);"COMPRA";+SI(Y(B4>B2+(B2*0.05%);B2<B1);"COMPRA";"NEUTRO"))
 
-                    MySqlConnection coneUltimosPrecios = new MySqlConnection(conexion);
-                    sentencia = string.Format("Select Distinct PuntaVendedoraP as Precio From PanelPrincipal Where IdRueda = {0} And Simbolo = '{1}' Order By IdPanel Desc Limit 3 ", IdRueda, Simbolo);
-                    MySqlDataAdapter daUltimosPrecios = new MySqlDataAdapter(sentencia, coneUltimosPrecios);
-                    DataTable dsUltimosPrecios = new DataTable();
-                    int regUltimosPrecios = daUltimosPrecios.Fill(dsUltimosPrecios);
-                    coneUltimosPrecios.Close();
-                    if (regUltimosPrecios == 3)
+                    var ultimosPrecios = _servicePanelPrincipal.GetLastThreeSeelingTip(IdRueda, Simbolo);
+                    if (ultimosPrecios != null && ultimosPrecios.Count == 3)
                     {
                         precioactual = PrecioActualCompra;
-                        try { precioanterior = Convert.ToDouble(dsUltimosPrecios.Rows[2]["Precio"]); }
+                        try { precioanterior = ultimosPrecios[2]; }
                         catch { precioanterior = 0; }
 
-                        try { precioanteriorA = Convert.ToDouble(dsUltimosPrecios.Rows[1]["Precio"]); }
+                        try { precioanteriorA = ultimosPrecios[1]; }
                         catch { precioanteriorA = 0; }
 
-                        try { precioanteriorAA = Convert.ToDouble(dsUltimosPrecios.Rows[0]["Precio"]); }
+                        try { precioanteriorAA = ultimosPrecios[0]; }
                         catch { precioanteriorAA = 0; }
 
                         resultado1 = precioanterior + (precioanterior * _serviceDatoSimulador.GetPorcCompraSimulador(IdRueda, Simulador) / 100);
@@ -787,14 +596,7 @@ namespace IOL
                         if (lComprar1 || lComprar2) // COMPRAMOS
                         {
                             // Obtener la cantidad de acciones compradas
-                            int cantCompradas = 0;
-
-                            MySqlConnection coneAccionesCompradas = new MySqlConnection(conexion);
-                            sentencia = string.Format("Select * From RuedasDetalleSimulador Where IdRuedaActual = {0} And Estado = 'Comprado'" +
-                                " And IdSimulacion = {1}", IdRueda, Simulador);
-                            MySqlDataAdapter daAccionesCompradas = new MySqlDataAdapter(sentencia, coneAccionesCompradas);
-                            DataTable dsAccionesCompradas = new DataTable();
-                            cantCompradas = daAccionesCompradas.Fill(dsAccionesCompradas);
+                            int cantCompradas = _serviceRuedasDetalleSimulador.GetPurchasedAmount(IdRueda, Simulador);
 
                             // Calcular las acciones que quedan por comprar
                             int CantRestantes = 20 - cantCompradas;
@@ -833,25 +635,23 @@ namespace IOL
 
                                 if (cantidadcomprada > 0)
                                 {
-                                    using (MySqlConnection cone = new MySqlConnection(conexion))
-                                    {
-                                        cone.Open();
-                                        sentencia = $"Insert Into RuedasDetalleSimulador(IdRuedaActual, IdRuedaCompra, IdSimulacion, " +
-                                                                  $"FechaCompra, Simbolo, Cantidad, " +
-                                                                  $"PrecioCompra, ImporteCompra, UltimoPrecio," +
-                                                                  $"FechaUltimoPrecio," +
-                                                                  $"Estado, PorcComisionIOL, ImporteComisionIOL, IdPanel) " +
-                                                                  $"Values({IdRueda}, {IdRueda}, {Simulador}, " +
-                                                                  $"str_to_date('{DateTime.Now}','%d/%m/%Y %H:%i:%s'),'{Simbolo}',{cantidadcomprada}, " +
-                                                                  $"{preciocompra},{importe},{precioactual}," +
-                                                                  $"str_to_date('{DateTime.Now}','%d/%m/%Y %H:%i:%s')," +
-                                                                  $"'Comprado',{txtPorcComisionIOL.Text.Trim()},{comisionIOL},{IdPanel})";
+                                    RuedasDetalleSimulador rueda = new RuedasDetalleSimulador();
+                                    rueda.IdRuedaActual = IdRueda;
+                                    rueda.IdRuedaCompra = IdRueda;
+                                    rueda.IdSimulacion = Simulador;
+                                    rueda.FechaCompra = DateTime.Now;
+                                    rueda.Simbolo = Simbolo;
+                                    rueda.Cantidad = (decimal)cantidadcomprada;
+                                    rueda.PrecioCompra = (decimal)preciocompra;
+                                    rueda.ImporteCompra = (decimal)importe;
+                                    rueda.UltimoPrecio = (decimal)precioactual;
+                                    rueda.FechaUltimoPrecio = DateTime.Now;
+                                    rueda.Estado = "Comprado";
+                                    rueda.PorcComisionIOL = Convert.ToDecimal(txtPorcComisionIOL.Text.Trim());
+                                    rueda.ImporteComisionIOL = (decimal)comisionIOL;
+                                    rueda.IdPanel = IdPanel;
 
-                                        MySqlCommand comando = new MySqlCommand(sentencia, cone);
-                                        comando.CommandType = CommandType.Text;
-                                        comando.ExecuteNonQuery();
-                                        cone.Close();
-                                    }
+                                    _serviceRuedasDetalleSimulador.Register(rueda);
                                     _serviceTenenciaSimulador.SetActualizarTenenciaPorCompra(Simulador, Convert.ToDecimal(Importe));
                                 }
                             }
@@ -860,12 +660,10 @@ namespace IOL
                 }
             }
         }
-
         private void txtInversionTotalSimulador_Click(object sender, EventArgs e)
         {
             SeleccionarTexto(sender);
         }
-
         private void txtInversionTotalSimulador_Leave(object sender, EventArgs e)
         {
             TextBox control = (TextBox)sender;
@@ -882,126 +680,6 @@ namespace IOL
             control.SelectionStart = 0;
             control.SelectionLength = control.MaxLength;
         }
-        private void txtPorcCompra1_Click(object sender, EventArgs e)
-        {
-            SeleccionarTexto(sender);
-        }
-        private void txtPorcVenta1_Click(object sender, EventArgs e)
-        {
-            SeleccionarTexto(sender);
-        }
-        private void txtPorcCompra2_Click(object sender, EventArgs e)
-        {
-            SeleccionarTexto(sender);
-        }
-        private void txtPorcVenta2_Click(object sender, EventArgs e)
-        {
-            SeleccionarTexto(sender);
-        }
-        private void txtPorcCompra3_Click(object sender, EventArgs e)
-        {
-            SeleccionarTexto(sender);
-        }
-        private void txtPorcVenta3_Click(object sender, EventArgs e)
-        {
-            SeleccionarTexto(sender);
-        }
-        private void txtPorcCompra4_Click(object sender, EventArgs e)
-        {
-            SeleccionarTexto(sender);
-        }
-        private void txtPorcVenta4_Click(object sender, EventArgs e)
-        {
-            SeleccionarTexto(sender);
-        }
-        private void txtPorcCompra5_Click(object sender, EventArgs e)
-        {
-            SeleccionarTexto(sender);
-        }
-        private void txtPorcVenta5_Click(object sender, EventArgs e)
-        {
-            SeleccionarTexto(sender);
-        }
-        private void txtPorcCompra1_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            ValidacionNumerica(e);
-        }
-        private void txtPorcVenta1_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            ValidacionNumerica(e);
-        }
-        private void txtPorcCompra2_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            ValidacionNumerica(e);
-        }
-        private void txtPorcVenta2_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            ValidacionNumerica(e);
-        }
-        private void txtPorcCompra3_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            ValidacionNumerica(e);
-        }
-        private void txtPorcVenta3_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            ValidacionNumerica(e);
-        }
-        private void txtPorcCompra4_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            ValidacionNumerica(e);
-        }
-        private void txtPorcVenta4_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            ValidacionNumerica(e);
-        }
-        private void txtPorcCompra5_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            ValidacionNumerica(e);
-        }
-        private void txtPorcVenta5_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            ValidacionNumerica(e);
-        }
-        private void txtPorcCompra1_Leave(object sender, EventArgs e)
-        {
-            FormatoPorcentaje(sender);
-        }
-        private void txtPorcVenta1_Leave(object sender, EventArgs e)
-        {
-            FormatoPorcentaje(sender);
-        }
-        private void txtPorcCompra2_Leave(object sender, EventArgs e)
-        {
-            FormatoPorcentaje(sender);
-        }
-        private void txtPorcVenta2_Leave(object sender, EventArgs e)
-        {
-            FormatoPorcentaje(sender);
-        }
-        private void txtPorcCompra3_Leave(object sender, EventArgs e)
-        {
-            FormatoPorcentaje(sender);
-        }
-        private void txtPorcVenta3_Leave(object sender, EventArgs e)
-        {
-            FormatoPorcentaje(sender);
-        }
-        private void txtPorcCompra4_Leave(object sender, EventArgs e)
-        {
-            FormatoPorcentaje(sender);
-        }
-        private void txtPorcVenta4_Leave(object sender, EventArgs e)
-        {
-            FormatoPorcentaje(sender);
-        }
-        private void txtPorcCompra5_Leave(object sender, EventArgs e)
-        {
-            FormatoPorcentaje(sender);
-        }
-        private void txtPorcVenta5_Leave(object sender, EventArgs e)
-        {
-            FormatoPorcentaje(sender);
-        }
         private void dgvAccionesCompradas_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
         {
             dgvAcciones.Columns["IdRuedaActual"].Visible = false;
@@ -1014,126 +692,6 @@ namespace IOL
             dgvAcciones.Columns["IdSimulacion"].Visible = false;
             dgvAcciones.Columns["FechaVenta"].Visible = false;
             dgvAcciones.Columns["PorcComisionIOL"].Visible = false;
-        }
-        private void txtPorcCompra6_Click(object sender, EventArgs e)
-        {
-            SeleccionarTexto(sender);
-        }
-        private void txtPorcCompra7_Click(object sender, EventArgs e)
-        {
-            SeleccionarTexto(sender);
-        }
-        private void txtPorcCompra8_Click(object sender, EventArgs e)
-        {
-            SeleccionarTexto(sender);
-        }
-        private void txtPorcCompra9_Click(object sender, EventArgs e)
-        {
-            SeleccionarTexto(sender);
-        }
-        private void txtPorcCompra10_Click(object sender, EventArgs e)
-        {
-            SeleccionarTexto(sender);
-        }
-        private void txtPorcVenta6_Click(object sender, EventArgs e)
-        {
-            SeleccionarTexto(sender);
-        }
-        private void txtPorcVenta7_Click(object sender, EventArgs e)
-        {
-            SeleccionarTexto(sender);
-        }
-        private void txtPorcVenta8_Click(object sender, EventArgs e)
-        {
-            SeleccionarTexto(sender);
-        }
-        private void txtPorcVenta9_Click(object sender, EventArgs e)
-        {
-            SeleccionarTexto(sender);
-        }
-        private void txtPorcVenta10_Click(object sender, EventArgs e)
-        {
-            SeleccionarTexto(sender);
-        }
-        private void txtPorcCompra6_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            ValidacionNumerica(e);
-        }
-        private void txtPorcCompra7_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            ValidacionNumerica(e);
-        }
-        private void txtPorcCompra8_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            ValidacionNumerica(e);
-        }
-        private void txtPorcCompra9_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            ValidacionNumerica(e);
-        }
-        private void txtPorcCompra10_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            ValidacionNumerica(e);
-        }
-        private void txtPorcVenta6_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            ValidacionNumerica(e);
-        }
-        private void txtPorcVenta7_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            ValidacionNumerica(e);
-        }
-        private void txtPorcVenta8_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            ValidacionNumerica(e);
-        }
-        private void txtPorcVenta9_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            ValidacionNumerica(e);
-        }
-        private void txtPorcVenta10_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            ValidacionNumerica(e);
-        }
-        private void txtPorcCompra6_Leave(object sender, EventArgs e)
-        {
-            FormatoPorcentaje(sender);
-        }
-        private void txtPorcCompra7_Leave(object sender, EventArgs e)
-        {
-            FormatoPorcentaje(sender);
-        }
-        private void txtPorcCompra8_Leave(object sender, EventArgs e)
-        {
-            FormatoPorcentaje(sender);
-        }
-        private void txtPorcCompra9_Leave(object sender, EventArgs e)
-        {
-            FormatoPorcentaje(sender);
-        }
-        private void txtPorcCompra10_Leave(object sender, EventArgs e)
-        {
-            FormatoPorcentaje(sender);
-        }
-        private void txtPorcVenta6_Leave(object sender, EventArgs e)
-        {
-            FormatoPorcentaje(sender);
-        }
-        private void txtPorcVenta7_Leave(object sender, EventArgs e)
-        {
-            FormatoPorcentaje(sender);
-        }
-        private void txtPorcVenta8_Leave(object sender, EventArgs e)
-        {
-            FormatoPorcentaje(sender);
-        }
-        private void txtPorcVenta9_Leave(object sender, EventArgs e)
-        {
-            FormatoPorcentaje(sender);
-        }
-        private void txtPorcVenta10_Leave(object sender, EventArgs e)
-        {
-            FormatoPorcentaje(sender);
         }
         private void FormatoPorcentaje(object sender)
         {
@@ -1162,186 +720,57 @@ namespace IOL
             bool lValidado = true;
             string Mensaje = string.Empty;
 
-            string sentencia = string.Empty;
+            int idRueda = 0;
+            try { idRueda = Convert.ToInt32(txtIdRueda.Text.Trim()); }
+            catch { idRueda = 0; }
 
-            decimal porccompra1, porccompra2, porccompra3, porccompra4, porccompra5, porccompra6, porccompra7,
-                    porccompra8, porccompra9, porccompra10, porcventa1, porcventa2, porcventa3, porcventa4,
-                    porcventa5, porcventa6, porcventa7, porcventa8, porcventa9, porcventa10;
+            int idSimulador = 0;
+            try { idSimulador = Convert.ToInt32(txtIdSimulador.Text.Trim()); }
+            catch { idSimulador = 0; }
 
-            int IdRueda = 0;
-            try { IdRueda = Convert.ToInt32(txtIdRueda.Text.Trim()); }
-            catch { IdRueda = 0; }
+            decimal porccompra;
+            try { porccompra = Convert.ToDecimal(txtPorcCompra.Text.Trim()); }
+            catch { porccompra = 0; }
 
-            if (IdRueda > 0)
+            decimal porcventa;
+            try { porcventa = Convert.ToDecimal(txtPorcVenta.Text.Trim()); }
+            catch { porcventa = 0; }
+
+            if (idRueda > 0)
             {
-
-                try { porccompra1 = Convert.ToDecimal(txtPorcCompra1.Text.Trim()); }
-                catch { porccompra1 = 0; }
-
-                try { porccompra2 = Convert.ToDecimal(txtPorcCompra2.Text.Trim()); }
-                catch { porccompra2 = 0; }
-
-                try { porccompra3 = Convert.ToDecimal(txtPorcCompra3.Text.Trim()); }
-                catch { porccompra3 = 0; }
-
-                try { porccompra4 = Convert.ToDecimal(txtPorcCompra4.Text.Trim()); }
-                catch { porccompra4 = 0; }
-
-                try { porccompra5 = Convert.ToDecimal(txtPorcCompra5.Text.Trim()); }
-                catch { porccompra5 = 0; }
-
-                try { porccompra6 = Convert.ToDecimal(txtPorcCompra6.Text.Trim()); }
-                catch { porccompra6 = 0; }
-
-                try { porccompra7 = Convert.ToDecimal(txtPorcCompra7.Text.Trim()); }
-                catch { porccompra7 = 0; }
-
-                try { porccompra8 = Convert.ToDecimal(txtPorcCompra8.Text.Trim()); }
-                catch { porccompra8 = 0; }
-
-                try { porccompra9 = Convert.ToDecimal(txtPorcCompra9.Text.Trim()); }
-                catch { porccompra9 = 0; }
-
-                try { porccompra10 = Convert.ToDecimal(txtPorcCompra10.Text.Trim()); }
-                catch { porccompra10 = 0; }
-
-                try { porcventa1 = Convert.ToDecimal(txtPorcVenta1.Text.Trim()); }
-                catch { porcventa1 = 0; }
-
-                try { porcventa2 = Convert.ToDecimal(txtPorcVenta2.Text.Trim()); }
-                catch { porcventa2 = 0; }
-
-                try { porcventa3 = Convert.ToDecimal(txtPorcVenta3.Text.Trim()); }
-                catch { porcventa3 = 0; }
-
-                try { porcventa4 = Convert.ToDecimal(txtPorcVenta4.Text.Trim()); }
-                catch { porcventa4 = 0; }
-
-                try { porcventa5 = Convert.ToDecimal(txtPorcVenta5.Text.Trim()); }
-                catch { porcventa5 = 0; }
-
-                try { porcventa6 = Convert.ToDecimal(txtPorcVenta6.Text.Trim()); }
-                catch { porcventa6 = 0; }
-
-                try { porcventa7 = Convert.ToDecimal(txtPorcVenta7.Text.Trim()); }
-                catch { porcventa7 = 0; }
-
-                try { porcventa8 = Convert.ToDecimal(txtPorcVenta8.Text.Trim()); }
-                catch { porcventa8 = 0; }
-
-                try { porcventa9 = Convert.ToDecimal(txtPorcVenta9.Text.Trim()); }
-                catch { porcventa9 = 0; }
-
-                try { porcventa10 = Convert.ToDecimal(txtPorcVenta10.Text.Trim()); }
-                catch { porcventa10 = 0; }
-
-                if (porccompra1 <= 0)
+                if (porccompra <= 0)
                 {
-                    Mensaje += String.Format("Ingrese Porcentaje de Compra 1 \r");
+                    Mensaje += String.Format("Ingrese Porcentaje de Compra \r");
                     lValidado = false;
                 }
-
-                if (porcventa1 <= 0)
+                if (porcventa <= 0)
                 {
-                    Mensaje += String.Format("Ingrese Porcentaje de Venta 1 \r");
+                    Mensaje += String.Format("Ingrese Porcentaje de Venta \r");
                     lValidado = false;
                 }
-
-                if (porccompra2 > 0)
-                    if (porcventa2 <= 0)
-                    {
-                        Mensaje += String.Format("Ingrese Porcentaje de Venta 2 \r");
-                        lValidado = false;
-                    }
-
-                if (porccompra3 > 0)
-                    if (porcventa3 <= 0)
-                    {
-                        Mensaje += String.Format("Ingrese Porcentaje de Venta 3 \r");
-                        lValidado = false;
-                    }
-
-                if (porccompra4 > 0)
-                    if (porcventa4 <= 0)
-                    {
-                        Mensaje += String.Format("Ingrese Porcentaje de Venta 4 \r");
-                        lValidado = false;
-                    }
-
-                if (porccompra5 > 0)
-                    if (porcventa5 <= 0)
-                    {
-                        Mensaje += String.Format("Ingrese Porcentaje de Venta 5 \r");
-                        lValidado = false;
-                    }
-
-                if (porccompra6 > 0)
-                    if (porcventa6 <= 0)
-                    {
-                        Mensaje += String.Format("Ingrese Porcentaje de Venta 6 \r");
-                        lValidado = false;
-                    }
-
-                if (porccompra7 > 0)
-                    if (porcventa7 <= 0)
-                    {
-                        Mensaje += String.Format("Ingrese Porcentaje de Venta 7 \r");
-                        lValidado = false;
-                    }
-
-                if (porccompra8 > 0)
-                    if (porcventa8 <= 0)
-                    {
-                        Mensaje += String.Format("Ingrese Porcentaje de Venta 8 \r");
-                        lValidado = false;
-                    }
-
-                if (porccompra9 > 0)
-                    if (porcventa9 <= 0)
-                    {
-                        Mensaje += String.Format("Ingrese Porcentaje de Venta 9 \r");
-                        lValidado = false;
-                    }
-
-                if (porccompra10 > 0)
-                    if (porcventa10 <= 0)
-                    {
-                        Mensaje += String.Format("Ingrese Porcentaje de Venta 10 \r");
-                        lValidado = false;
-                    }
-
                 if (lValidado == false)
                 {
                     MessageBox.Show(Mensaje, "Solicitud del Sistema", MessageBoxButtons.OK, MessageBoxIcon.Stop);
                     return;
                 }
-
                 if (MessageBox.Show("Datos Correctos ?", "Solicitud del Sistema", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == System.Windows.Forms.DialogResult.No)
-                {
                     return;
-                }
+
                 try
                 {
-                    using (MySqlConnection cone = new MySqlConnection(conexion))
-                    {
-                        cone.Open();
-                        sentencia = $"Update Ruedas Set PorcCompra1 =  {porccompra1}, PorcVenta1 =   {porcventa1}, PorcCompra2 =  {porccompra2}," +
-                                                                    $"PorcVenta2 =   {porcventa2}, PorcCompra3 =  {porccompra3}, PorcVenta3 =   {porcventa3}," +
-                                                                    $"PorcCompra4 =  {porccompra4}, PorcVenta4 =  {porcventa4}, PorcCompra5 =  {porccompra5}," +
-                                                                    $"PorcVenta5 =   {porcventa5}, PorcCompra6 =  {porccompra6}, PorcVenta6 =   {porcventa6}, " +
-                                                                    $"PorcCompra7 =  {porccompra7}, PorcVenta7 =   {porcventa7}, PorcCompra8 =  {porccompra8}," +
-                                                                    $"PorcVenta8 =   {porcventa8}, PorcCompra9 =  {porccompra9}, PorcVenta9 =  {porcventa9}," +
-                                                                    $"PorcCompra10 = {porccompra10}, PorcVenta10 =  {porcventa10} " +
-                                                                    $" Where IdRueda = {IdRueda}";
-                        MySqlCommand comando = new MySqlCommand(sentencia, cone);
-                        comando.ExecuteNonQuery();
-                        cone.Close();
-                        MessageBox.Show("Simulador Actualizado con Exito", "Información del Sistema", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    }
+                    RuedasDatosSimulador ruedasDatosSimulador = new RuedasDatosSimulador();
+                    ruedasDatosSimulador.IdRuedaSimulador = _serviceDatoSimulador.GetByIdSimulador(idRueda, idSimulador).IdRuedaSimulador;
+                    ruedasDatosSimulador.IdRueda = idRueda;
+                    ruedasDatosSimulador.IdSimulador = idSimulador;
+                    ruedasDatosSimulador.PorcCompra = porccompra;
+                    ruedasDatosSimulador.PorcVenta = porcventa;
+                    _serviceDatoSimulador.Register(ruedasDatosSimulador);
+                    Databases.SaveChanges();
+                    MessageBox.Show("Simulador Actualizado con Exito", "Información del Sistema", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
-                catch (MySqlException ex)
+                catch (Exception ex)
                 {
-                    MessageBox.Show(ex.Message + " - " + ex.ErrorCode.ToString(), "Informe de Errores", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                    MessageBox.Show(ex.Message + " - " + ex.ToString(), "Informe de Errores", MessageBoxButtons.OK, MessageBoxIcon.Stop);
                 }
             }
         }
@@ -1354,23 +783,17 @@ namespace IOL
             {
                 if (MessageBox.Show("Desea Realizar el Cierre de la Rueda", "Pregunta del Sistema", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) == DialogResult.Yes)
                 {
-                    MySqlConnection coneRuedaFinalizada = new MySqlConnection(conexion);
-                    string sentencia = string.Format("Select * From Ruedas Where IdRueda = {0} And Estado = 'Abierto'", txtIdRueda.Text.Trim());
-                    MySqlDataAdapter daRuedaFinalizada = new MySqlDataAdapter(sentencia, coneRuedaFinalizada);
-                    DataTable dsRuedaFinalizada = new DataTable();
-                    int regRuedaFinalizada = daRuedaFinalizada.Fill(dsRuedaFinalizada);
-                    coneRuedaFinalizada.Close();
-                    if (regRuedaFinalizada == 1)
+                    string Estado = _service.GetEstadoRueda(IdRueda);
+                    if (Estado  == "Abierto")
                     {
-
                         _service.SetCerrarRueda(IdRueda);
 
                         // Agregar Informe Final
-                        sentencia = "InformeFinalAgregar";
+//                        sentencia = "InformeFinalAgregar";
                         using (MySqlConnection coneAcciones = new MySqlConnection(conexion))
                         {
                             coneAcciones.Open();
-                            var comandoAcciones = new MySqlCommand(sentencia, coneAcciones);
+  //                          var comandoAcciones = new MySqlCommand(sentencia, coneAcciones);
                             comandoAcciones.CommandType = CommandType.StoredProcedure;
                             comandoAcciones.Parameters.AddWithValue("Rueda", IdRueda);
                             comandoAcciones.ExecuteNonQuery();
@@ -1740,8 +1163,32 @@ namespace IOL
         private bool SeguirComprando(int rueda)
         {
             int horaActual = DateTime.Now.Hour;
-            int horaHasta = Bd.Ruedas.Where(x => x.IdRueda == rueda).SingleOrDefault().ComprarHasta;
+            int horaHasta = Databases.Ruedas.Where(x => x.IdRueda == rueda).SingleOrDefault().ComprarHasta;
             return horaActual >= 11 && horaActual < horaHasta;
+        }
+        private void txtPorcCompraSimulador_Click(object sender, EventArgs e)
+        {
+            SeleccionarTexto(sender);
+        }
+        private void txtPorcVentaSimulador_Click(object sender, EventArgs e)
+        {
+            SeleccionarTexto(sender);
+        }
+        private void txtPorcCompraSimulador_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            ValidacionNumerica(e);
+        }
+        private void txtPorcVentaSimulador_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            ValidacionNumerica(e);
+        }
+        private void txtPorcCompraSimulador_Leave(object sender, EventArgs e)
+        {
+            FormatoPorcentaje(sender);
+        }
+        private void txtPorcVentaSimulador_Leave(object sender, EventArgs e)
+        {
+            FormatoPorcentaje(sender);
         }
     }
 }

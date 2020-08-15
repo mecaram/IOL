@@ -26,6 +26,18 @@ namespace IOL.Servicios
             }
             catch { return false; }
         }
+        public int InsertAccess(int IdRueda)
+        {
+            int result = -1;
+            var rueda = GetById(IdRueda);
+            if (rueda != null)
+            {
+                 result = ++rueda.AccesosIOL;
+                _context.Ruedas.AddOrUpdate(rueda);
+                _context.SaveChanges();
+            }
+            return result;
+        }
 
         public void SetAbrirRueda(int idRueda)
         {
