@@ -126,6 +126,15 @@ namespace IOL.Servicios
             return _context.RuedasDetalleSimulador.Where(x => x.IdRuedaActual == IdRueda && x.IdSimulacion == idSimulacion && x.Estado == "Comprado").Count();
         }
 
+        public decimal GetDailyVariationMoney(int idRueda, int idSimulacion, string simbolo)
+        {
+            return _context.RuedasDetalleSimulador.Where(x => x.IdRuedaVenta == idRueda && x.IdSimulacion == idSimulacion && x.Simbolo == simbolo && x.Estado == "Vendido").Sum(x=> x.Variacionenpesos);
+        }
+        public decimal GetDailyVariationPercentage(int idRueda, int idSimulacion, string simbolo)
+        {
+            return _context.RuedasDetalleSimulador.Where(x => x.IdRuedaVenta == idRueda && x.IdSimulacion == idSimulacion && x.Simbolo == simbolo && x.Estado == "Vendido").Sum(x => x.Variacionenporcentajes);
+        }
+
         public void Delete(int id)
         {
             var ruedasDetalleSimulador = _context.RuedasDetalleSimulador.Where(x => x.IdRuedaDetalle == id).SingleOrDefault();

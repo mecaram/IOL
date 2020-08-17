@@ -17,6 +17,8 @@ namespace IOL
         private readonly ServiciosTenenciaSimulador _serviceTenenciaSimulador = new ServiciosTenenciaSimulador();
         private readonly ServiciosRuedasDetalleSimulador _serviceRuedasDetalleSimulador = new ServiciosRuedasDetalleSimulador();
         private readonly ServiciosPanelPrincipal _servicePanelPrincipal = new ServiciosPanelPrincipal();
+        private readonly ServiciosAccion _serviceAcciones = new ServiciosAccion();
+        private readonly ServiciosInformeFinal _serviceInformeFinal = new ServiciosInformeFinal();
         BD Databases = new BD();
 
         string conexion = ConfigurationManager.ConnectionStrings["conexion"].ToString();
@@ -367,10 +369,10 @@ namespace IOL
             double PrecioCompra = 0, CantidadComprada = 0, Importe = 0;
 
             RuedasDetalleSimulador regUltimaCompra = _serviceRuedasDetalleSimulador.GetLastPurchase(IdRueda, Simulador, Simbolo);
-            if (regUltimaCompra  != null)
+            if (regUltimaCompra != null)
             {
                 iddetalle = regUltimaCompra.IdRuedaDetalle;
-                PrecioCompra = (double) regUltimaCompra.PrecioCompra;
+                PrecioCompra = (double)regUltimaCompra.PrecioCompra;
                 CantidadComprada = (double)regUltimaCompra.Cantidad;
             }
 
@@ -699,7 +701,7 @@ namespace IOL
 
             decimal Porcentaje = 0;
             try { Porcentaje = Convert.ToDecimal(control.Text.Trim()); }
-            catch { Porcentaje = 0;}
+            catch { Porcentaje = 0; }
 
             control.Text = string.Format("{0:00.00}", Porcentaje);
         }
@@ -784,204 +786,35 @@ namespace IOL
                 if (MessageBox.Show("Desea Realizar el Cierre de la Rueda", "Pregunta del Sistema", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) == DialogResult.Yes)
                 {
                     string Estado = _service.GetEstadoRueda(IdRueda);
-                    if (Estado  == "Abierto")
+                    if (Estado == "Abierto")
                     {
                         _service.SetCerrarRueda(IdRueda);
 
-                        // Agregar Informe Final
-//                        sentencia = "InformeFinalAgregar";
-                        using (MySqlConnection coneAcciones = new MySqlConnection(conexion))
-                        {
-                            coneAcciones.Open();
-  //                          var comandoAcciones = new MySqlCommand(sentencia, coneAcciones);
-                            comandoAcciones.CommandType = CommandType.StoredProcedure;
-                            comandoAcciones.Parameters.AddWithValue("Rueda", IdRueda);
-                            comandoAcciones.ExecuteNonQuery();
-                            coneAcciones.Close();
-                        }
-
                         // Calcular Variacion diaria
-                        MySqlConnection coneVariacionDiaria = new MySqlConnection(conexion);
-                        sentencia = string.Format("Select * From InformeFinal Where IdRueda = {0}", txtIdRueda.Text.Trim());
-                        MySqlDataAdapter daVariacionDiaria = new MySqlDataAdapter(sentencia, coneVariacionDiaria);
-                        DataTable dsVariacionDiaria = new DataTable();
-                        int regVariacionDiaria = daVariacionDiaria.Fill(dsVariacionDiaria);
-                        coneVariacionDiaria.Close();
-                        if (regVariacionDiaria > 1)
-                        {
-                            foreach (DataRow filaInforme in dsVariacionDiaria.Rows)
+                        var acciones = _serviceAcciones.GetAll();
+                        for (int simul = 1; simul < 11; simul++)
+                            foreach (EntityFrameWork.Acciones regAcciones in acciones)
                             {
-                                for (int sim = 1; sim < 11; sim++)
-                                {
-                                    sentencia = $"Update InformeFinal Set Variacion{sim}Diaria = (Select Sum(variacionenporcentajes) " +
-                                                $" From RuedasDetalleSimulador " +
-                                                $" Where RuedasDetalleSimulador.IdRuedaVenta = {Convert.ToInt32(filaInforme["IdRueda"])} " +
-                                                $" And RuedasDetalleSimulador.Simbolo = '{filaInforme["Simbolo"].ToString()}'" +
-                                                $" And RuedasDetalleSimulador.IdRuedaVenta = {Convert.ToInt32(filaInforme["IdRueda"])} " +
-                                                $" And RuedasDetalleSimulador.Estado = 'Vendido' " +
-                                                $" And RuedasDetalleSimulador.IdSimulacion = {sim}) " +
-                                                $" Where InformeFinal.IdRueda = {Convert.ToInt32(filaInforme["IdRueda"])} And InformeFinal.Simbolo = '{filaInforme["Simbolo"].ToString()}'";
-
-                                    using (MySqlConnection coneActualizarInforme = new MySqlConnection(conexion))
-                                    {
-                                        coneActualizarInforme.Open();
-                                        var comandoActualizarInforme = new MySqlCommand(sentencia, coneActualizarInforme);
-                                        comandoActualizarInforme.CommandType = CommandType.Text;
-                                        comandoActualizarInforme.ExecuteNonQuery();
-                                        coneActualizarInforme.Close();
-                                    }
-                                }
-                            }
-                        }
-                        //
-                        // Eliminar Ruedas
-                        using (MySqlConnection coneMostrarRuedas = new MySqlConnection(conexion))
-                        {
-                            sentencia = "Select IdRueda From Ruedas Order By IdRueda Desc";
-                            MySqlDataAdapter daMostrarRuedas = new MySqlDataAdapter(sentencia, coneMostrarRuedas);
-                            DataTable dsMostrarRuedas = new DataTable();
-                            int regUltimasRuedas = daMostrarRuedas.Fill(dsMostrarRuedas);
-                            coneMostrarRuedas.Close();
-                            if (regUltimasRuedas > 5)
-                            {
-                                for (int x = 5; x < dsMostrarRuedas.Rows.Count; x++)
-                                {
-                                    DataRow fila = dsMostrarRuedas.Rows[x];
-                                    sentencia = "EliminarRuedas";
-                                    using (MySqlConnection coneEliminarRuedas = new MySqlConnection(conexion))
-                                    {
-                                        coneEliminarRuedas.Open();
-                                        var comandoEliminarRuedas = new MySqlCommand(sentencia, coneEliminarRuedas);
-                                        comandoEliminarRuedas.CommandType = CommandType.StoredProcedure;
-                                        comandoEliminarRuedas.Parameters.AddWithValue("Rueda", Convert.ToInt32(fila["IdRueda"]));
-                                        comandoEliminarRuedas.ExecuteNonQuery();
-                                        coneEliminarRuedas.Close();
-                                    }
-                                }
+                                EntityFrameWork.InformeFinal informeFinal = new EntityFrameWork.InformeFinal();
+                                informeFinal.IdFormeFinal = 0;
+                                informeFinal.IdRueda = IdRueda;
+                                informeFinal.Simulador = simul;
+                                informeFinal.Simbolo = regAcciones.Simbolo;
+                                informeFinal.VariacionDiaria = _serviceRuedasDetalleSimulador.GetDailyVariationPercentage(IdRueda, simul, regAcciones.Simbolo);
+                                _serviceInformeFinal.Register(informeFinal);
                             }
 
-                            // Cerrar Informe Final
-                            using (MySqlConnection coneMostrarInforme = new MySqlConnection(conexion))
-                            {
-                                sentencia = $"Select IdRueda, Variacion1Diaria, Variacion2Diaria, Variacion3Diaria," +
-                                    $" Variacion4Diaria,Variacion5Diaria,Variacion6Diaria," +
-                                    $"Variacion7Diaria,Variacion8Diaria,Variacion9Diaria," +
-                                    $"Variacion10Diaria, Simbolo From InformeFinal Where IdRueda = {IdRueda}";
-                                MySqlDataAdapter daMostrarInforme = new MySqlDataAdapter(sentencia, coneMostrarInforme);
-                                DataTable dsMostrarInforme = new DataTable();
-                                int regInformes = daMostrarInforme.Fill(dsMostrarInforme);
-                                coneMostrarInforme.Close();
-                                foreach (DataRow fila in dsMostrarInforme.Rows)
-                                {
-                                    string simbolo = fila["Simbolo"].ToString();
-                                    
-                                    decimal var1;
-                                    try { var1 = Convert.ToDecimal(fila[1]);}
-                                    catch { var1 = 0; }
+                        // Eliminar Ruedas posteriores a las ultimas cinco
+                        var regRuedas = _service.GetAll();
+                        for (int x = 0; x < regRuedas.Count; x++)
+                            if (x > 4)
+                                _service.Delete(regRuedas[x].IdRueda);
 
-                                    decimal var2;
-                                    try { var2 = Convert.ToDecimal(fila[2]); }
-                                    catch { var2 = 0; }
-
-                                    decimal var3;
-                                    try { var3 = Convert.ToDecimal(fila[3]); }
-                                    catch { var3 = 0; }
-
-                                    decimal var4;
-                                    try { var4 = Convert.ToDecimal(fila[4]); }
-                                    catch { var4 = 0; }
-
-                                    decimal var5;
-                                    try { var5 = Convert.ToDecimal(fila[5]); }
-                                    catch { var5 = 0; }
-
-                                    decimal var6;
-                                    try { var6 = Convert.ToDecimal(fila[6]); }
-                                    catch { var6 = 0; }
-
-                                    decimal var7;
-                                    try { var7 = Convert.ToDecimal(fila[7]); }
-                                    catch { var7 = 0; }
-
-                                    decimal var8;
-                                    try { var8 = Convert.ToDecimal(fila[8]); }
-                                    catch { var8 = 0; }
-
-                                    decimal var9;
-                                    try { var9 = Convert.ToDecimal(fila[9]); }
-                                    catch { var9 = 0; }
-
-                                    decimal var10;
-                                    try { var10 = Convert.ToDecimal(fila[10]); }
-                                    catch { var10 = 0; }
-
-                                    decimal[] Variacion = { 0 , var1, var2, var3,
-                                                                var4, var5, var6,
-                                                                var7, var8, var9, var10 };
-                                    decimal maxVariacion = Variacion[1];
-                                    int maxSimulador = 1;
-                                    for (int x = 2; x < Variacion.Length; x++)
-                                    {
-                                        if (Variacion[x] > maxVariacion)
-                                        {
-                                            maxVariacion = Variacion[x];
-                                            maxSimulador = x;
-                                        }
-                                    }
-
-                                    sentencia = $"Update InformeFinal Set MejorVariacionDiaria = {maxVariacion}, MejorVariacionDiariaSimulador = {maxSimulador} " +
-                                                $" Where IdRueda = {IdRueda} And Simbolo = '{simbolo}'";
-                                    using (MySqlConnection coneCerrarInformeFinal = new MySqlConnection(conexion))
-                                    {
-                                        coneCerrarInformeFinal.Open();
-                                        var comandoCerrarInformeFinal = new MySqlCommand(sentencia, coneCerrarInformeFinal);
-                                        comandoCerrarInformeFinal.ExecuteNonQuery();
-                                        coneCerrarInformeFinal.Close();
-                                    }
-                                }
-
-                                // Cerrar Informe Final
-                                using (MySqlConnection coneCerrarInforme = new MySqlConnection(conexion))
-                                {
-                                    sentencia = "Select* From" +
-                                                " (Select simbolo," +
-                                                " MejorVariacionDiariaSimulador as Simulador," +
-                                                " ROW_NUMBER() Over(Partition By Simbolo Order By MejorVariacionDiariaSimulador desc) as orden," +
-                                                " Count(MejorVariacionDiariaSimulador) as MejorVariacionSemanalSimulador," +
-                                                " Sum(MejorVariacionDiaria) / Count(MejorVariacionDiariaSimulador) as MejorVariacionSimuladorPromedio" +
-                                                " From bdiol.informefinal" +
-                                                " group by Simbolo, MejorVariacionDiariaSimulador) T1" +
-                                                " Where orden = 1";
-
-                                    MySqlDataAdapter daCerrarInforme = new MySqlDataAdapter(sentencia, coneCerrarInforme);
-                                    DataTable dsCerrarInforme = new DataTable();
-                                    int regCerrarInformes = daCerrarInforme.Fill(dsCerrarInforme);
-                                    coneCerrarInforme.Close();
-
-                                    if (regCerrarInformes > 0)
-                                    {
-                                        foreach (DataRow fila in dsCerrarInforme.Rows)
-                                        {
-                                            string simbolo = fila["Simbolo"].ToString().Trim();
-                                            int simulacion = Convert.ToInt32(fila["Simulador"]);
-                                            decimal variacion = Convert.ToInt32(fila["MejorVariacionSemanalSimulador"]);
-
-                                            sentencia = $"Update InformeFinal Set MejorVariacionSemanal = {variacion}, MejorVariacionSemanalSimulador = {simulacion} " +
-                                                        $" Where IdRueda = {IdRueda} And Simbolo = '{simbolo}'";
-                                            using (MySqlConnection coneCerrar = new MySqlConnection(conexion))
-                                            {
-                                                coneCerrar.Open();
-                                                var comandoCerrarInformeFinal = new MySqlCommand(sentencia, coneCerrar);
-                                                comandoCerrarInformeFinal.ExecuteNonQuery();
-                                                coneCerrar.Close();
-                                            }
-                                        }
-                                    }
-                                }
-                                MessageBox.Show("Rueda cerrada Exitosamente", "Información del Sistema", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                                Close();
-                            }
-                        }
+                        // Cerrar Informe Final
+                        _serviceInformeFinal.SetBestDailyVariation(IdRueda);
+                        _serviceInformeFinal.SetBestweeklyVariation();
+                        MessageBox.Show("Rueda cerrada Exitosamente", "Información del Sistema", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        Close();
                     }
                 }
             }

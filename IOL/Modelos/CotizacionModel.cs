@@ -4,12 +4,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using WinHttp;
 using System.Windows.Forms;
 using RestSharp;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
-using System.Web.Script.Serialization;
 
 namespace IOL.Clases
 {

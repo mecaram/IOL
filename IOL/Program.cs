@@ -16,7 +16,7 @@ namespace IOL
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Feriados());
+            Application.Run(new InicioSesion());
         }
     }
 }

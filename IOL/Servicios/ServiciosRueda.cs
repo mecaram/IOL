@@ -61,7 +61,7 @@ namespace IOL.Servicios
 
         public List<EntityFrameWork.Ruedas> GetAll()
         {
-            return _context.Ruedas.ToList();
+            return _context.Ruedas.ToList().OrderByDescending(x=>x.IdRueda).ToList();
         }
         public EntityFrameWork.Ruedas GetById(int id)
         {

@@ -95,34 +95,6 @@ namespace IOL
                     {
                         conexionModificar.Close();
                     }
-
-                    MySqlConnection conexionSesion = null;
-                    try
-                    {
-                        conexionSesion = new MySqlConnection(conexion);
-                        conexionSesion.Open();
-
-                        using (var comandoSesion = new MySqlCommand("ObtenerIdSesion", conexionSesion))
-                        {
-                            comandoSesion.Parameters.AddWithValue("NroComitente", comitente);
-                            comandoSesion.Parameters.AddWithValue("idsesion", MySqlDbType.Int32);
-                            comandoSesion.Parameters["idsesion"].Direction = ParameterDirection.ReturnValue;
-                            comandoSesion.CommandType = CommandType.StoredProcedure;
-                            int nRegistros = comandoSesion.ExecuteNonQuery();
-                            idsesion = (int)comandoSesion.Parameters["idsesion"].Value;
-                            conexionSesion.Close();
-                        }
-                    }
-                    catch (Exception error)
-                    {
-                        MessageBox.Show("Error: " + error.Message);
-                        conexionSesion.Close();
-                    }
-                    finally
-                    {
-                        conexionSesion.Close();
-                    }
-
                     MessageBox.Show("Bienvenido " + usuario + " a nuestro simulador y...\r\nBuenas Inversiones", "Información del Sistema", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     Menuppal menu = new Menuppal();
                     menu.Location = Screen.PrimaryScreen.WorkingArea.Location;

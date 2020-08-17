@@ -2,13 +2,10 @@
 using System.Drawing;
 using System.Windows.Forms;
 using System.Configuration;
-using MySql.Data.MySqlClient;
 using System.Data;
 using IOL.Servicios;
-using DocumentFormat.OpenXml.Office2010.ExcelAc;
 using System.Collections.Generic;
-using IOL.Clases;
-using IOL.EntityFrameWork;
+using MySql.Data.MySqlClient;
 
 namespace IOL
 {

@@ -45,10 +45,6 @@
         public string Tipo { get; set; }
         public string Plazo { get; set; }
         public string Moneda { get; set; }
-        public virtual InformeFinal informeFinal { get; set; }
-        public virtual PanelPrincipal panelPrincipal { get; set; }
-        public virtual RuedasDetalle ruedasDetalle { get; set; }
-        public virtual RuedasDetalleSimulador ruedasDetalleSimulador { get; set; }
     }
     public class Comitentes
     {
@@ -57,12 +53,10 @@
         public string Apellido { get; set; }
         public string Nombres { get; set; }
         public string Usuario { get; set; }
+        public byte[] Contrasenia { get; set; }
         public string CorreoPrincipal { get; set; }
         public string CorreoAlternativo { get; set; }
         public string TelefonoCelular { get; set; }
-        public virtual TenenciaComitentes tenenciaComitentes { get; set; }
-        public virtual TenenciaSimuladores tenenciaSimuladores { get; set; }
-        public virtual Ruedas ruedas { get; set; }
     }
     public class Feriados
     {
@@ -81,9 +75,6 @@
         public decimal VariacionDiaria { get; set; }
         public bool MejorVariacionDiaria { get; set; }
         public bool MejorVariacionSemanal { get; set; }
-        public virtual ICollection<Acciones> acciones { get; set; }
-        public virtual ICollection<Ruedas> ruedas { get; set; }
-
     }
     public class PanelPrincipal
     {
@@ -110,10 +101,6 @@
         public double PuntaVendedoraP { get; set; }
         public double PuntaCompradoraC { get; set; }
         public double PuntaVendedoraC { get; set; }
-        public virtual ICollection<Acciones> acciones { get; set; }
-        public virtual ICollection<Ruedas> ruedas { get; set; }
-        public virtual RuedasDetalle ruedasDetalle { get; set; }
-        public virtual RuedasDetalleSimulador ruedasDetalleSimulador { get; set; }
     }
     public class Ruedas
     {
@@ -133,12 +120,6 @@
         public int ComprarHasta { get; set; }
         public int AccesosIOL { get; set; }
         public string Estado { get; set; }
-        public virtual InformeFinal informeFinal { get; set; }
-        public virtual PanelPrincipal panelPrincipal { get; set; }
-        public virtual ICollection<Comitentes> comitentes { get; set; }
-        public virtual RuedasDetalle ruedasDetalle { get; set; }
-        public virtual RuedasDetalleSimulador ruedasDetalleSimulador { get; set; }
-        public virtual RuedasDatosSimulador ruedasDatosSimulador { get; set; }
     }
     public class RuedasDatosSimulador
     {
@@ -146,9 +127,9 @@
         public int IdRuedaSimulador { get; set; }
         public int IdRueda { get; set; }
         public int IdSimulador { get; set; }
+        public decimal InversionTotalSimulador { get; set; }
         public decimal PorcCompra { get; set; }
         public decimal PorcVenta { get; set; }
-        public virtual ICollection<Ruedas> ruedas { get; set; }
     }
     public class RuedasDetalle
     {
@@ -169,9 +150,6 @@
         public decimal Variacionenpesos { get; set; }
         public decimal Variacionenporcentajes { get; set; }
         public string Estado { get; set; }
-        public virtual ICollection<Acciones> acciones { get; set; }
-        public virtual ICollection<Ruedas> ruedas { get; set; }
-        public virtual ICollection<PanelPrincipal> panelPrincipal { get; set; }
     }
     public class RuedasDetalleSimulador
     {
@@ -197,9 +175,6 @@
         public decimal Variacionenpesos { get; set; }
         public decimal Variacionenporcentajes { get; set; }
         public string Estado { get; set; }
-        public virtual ICollection<Acciones> acciones { get; set; }
-        public virtual ICollection<Ruedas> ruedas { get; set; }
-        public virtual ICollection<PanelPrincipal> panelPrincipal { get; set; }
     }
     public class TenenciaComitentes
     {
@@ -210,16 +185,16 @@
         public decimal ActivosValorizados { get; set; }
         public decimal BonificacionPorComisiones { get; set; }
         public decimal TotalTenencia { get; set; }
-        public virtual ICollection<Comitentes> comitentes { get; set; }
     }
     public class TenenciaSimuladores
     {
         [Key]
         public int IdSimulador { get; set; }
+        public int Comitente { get; set; }
         public DateTime Fecha { get; set; }
         public decimal DisponibleParaOperar { get; set; }
         public decimal ActivosValorizados { get; set; }
+        public decimal BonificacionPorComisiones { get; set; }
         public decimal TotalTenencia { get; set; }
-        public virtual ICollection<Comitentes> comitentes { get; set; }
     }
 }
