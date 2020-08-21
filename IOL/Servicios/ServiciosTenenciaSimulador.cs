@@ -31,11 +31,11 @@ namespace IOL.Servicios
         }
         public TenenciaSimuladores GetById(int id)
         {
-            return _context.TenenciaSimuladores.Where(x => x.IdSimulador == id).SingleOrDefault();
+            return _context.TenenciaSimuladores.Where(x => x.IdSimulacion == id).SingleOrDefault();
         }
         public double GetDisponibleParaOperar(int idSimulacion)
         {
-            return Convert.ToDouble(_context.TenenciaSimuladores.Where(x => x.IdSimulador == idSimulacion).SingleOrDefault().DisponibleParaOperar);
+            return Convert.ToDouble(_context.TenenciaSimuladores.Where(x => x.IdSimulacion == idSimulacion).SingleOrDefault().DisponibleParaOperar);
         }
 
         public double GetActivosValorizados(int idSimulacion)
@@ -44,7 +44,7 @@ namespace IOL.Servicios
         }
         public double GetTotalTenencia(int idSimulacion)
         {
-            return Convert.ToDouble(_context.TenenciaSimuladores.Where(x => x.IdSimulador == idSimulacion ).SingleOrDefault().TotalTenencia);
+            return Convert.ToDouble(_context.TenenciaSimuladores.Where(x => x.IdSimulacion == idSimulacion ).SingleOrDefault().TotalTenencia);
         }
 
         public void SetActualizarTenenciaPorVenta(int idSimulacion, decimal importe)
@@ -75,7 +75,7 @@ namespace IOL.Servicios
 
         public void Delete(int id)
         {
-            var tenencia = _context.TenenciaSimuladores.Where(x => x.IdSimulador == id).SingleOrDefault();
+            var tenencia = _context.TenenciaSimuladores.Where(x => x.IdSimulacion == id).SingleOrDefault();
             if (tenencia != null)
             {
                 _context.TenenciaSimuladores.Remove(tenencia);

@@ -183,7 +183,7 @@ namespace IOL
                         switch (tipobusqueda)
                         {
                             case "Símbolo":
-                                lstAcciones.Add(_service.GetById(cBuscar.ToUpper()));
+                                lstAcciones = _service.GetByDescription(cBuscar);
                                 break;
                             case "Descripción":
                                 lstAcciones = _service.GetByDescription(cBuscar);

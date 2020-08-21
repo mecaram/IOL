@@ -156,7 +156,8 @@ namespace IOL
             Correo CorreoAlternativo = new Correo(txtCorreoAlternativo.Text.Trim());
             bool lValidado = true;
             string Mensaje = string.Empty;
-            Comitentes comitente = null;
+
+            Comitentes comitente;
 
             int id;
             try { id = Convert.ToInt32(txtComitente.Text.Trim()); }
@@ -171,6 +172,8 @@ namespace IOL
                     lValidado = false;
                 }
             }
+
+            comitente = new Comitentes();
             if (txtApellido.Text.Trim().Length == 0)
             {
                 Mensaje += String.Format("Ingrese Apellido \r");

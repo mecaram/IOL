@@ -20,7 +20,7 @@ namespace IOL
             formulario.StartPosition = FormStartPosition.CenterScreen;
             formulario.operacion = 1;
             formulario.ShowDialog();
-            tsbVerTodos_Click(sender, e);
+            frmCuentas_Load(sender, e);
         }
 
         private void tsbModificar_Click(object sender, EventArgs e)
@@ -41,7 +41,7 @@ namespace IOL
                     formulario.txtComitente.Text = lstComitentes.Comitente.ToString();
                 }
                 formulario.ShowDialog();
-                tsbVerTodos_Click(sender, e);
+                frmCuentas_Load(sender, e);
                 if (fila < dgvListado.Rows.Count)
                     dgvListado.CurrentCell = dgvListado[0, fila];
             }
@@ -64,7 +64,7 @@ namespace IOL
                 {
                     formulario.txtComitente.Text = lstComitentes.Comitente.ToString();
                     formulario.ShowDialog();
-                    tsbVerTodos_Click(sender, e);
+                    frmCuentas_Load(sender, e);
                     if (fila < dgvListado.Rows.Count)
                         dgvListado.CurrentCell = dgvListado[0, fila];
                 }
@@ -86,10 +86,10 @@ namespace IOL
 
                 if (lstComitentes != null)
                 {
-                    formulario.txtComitente.Text = lstComitentes.ToString();
+                    formulario.txtComitente.Text = lstComitentes.Comitente.ToString();
 
                     formulario.ShowDialog();
-                    tsbVerTodos_Click(sender, e);
+                    frmCuentas_Load(sender, e);
                     if (fila < dgvListado.Rows.Count)
                         dgvListado.CurrentCell = dgvListado[0, fila];
                 }
@@ -251,6 +251,14 @@ namespace IOL
                 lblTotalCuentas.Text = "Total listado: 0";
             }
 
+        }
+
+        private void dgvListado_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
+        {
+            dgvListado.Columns["Contrasenia"].Visible = false;
+            dgvListado.Columns["CorreoPrincipal"].Visible = false;
+            dgvListado.Columns["CorreoAlternativo"].Visible = false;
+            dgvListado.Columns["TelefonoCelular"].Visible = false;
         }
     }
 }

@@ -73,6 +73,7 @@
             this.dgvListado.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dgvListado.Size = new System.Drawing.Size(561, 292);
             this.dgvListado.TabIndex = 34;
+            this.dgvListado.DataBindingComplete += new System.Windows.Forms.DataGridViewBindingCompleteEventHandler(this.dgvListado_DataBindingComplete);
             // 
             // lblTotalCuentas
             // 

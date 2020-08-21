@@ -53,7 +53,7 @@ namespace IOL
                     }
                     else
                     {
-                        txtSaldoARetirar.Text = string.Format("$ {0:00.00}", 10000);
+                        txtSaldoARetirar.Text = string.Format("{0:00.00}", 0);
                         nupCantAcciones.Value = 5;
 
                         txtPorcComisionIOL.Text = string.Format("{0:00.00}", 0.70m);
@@ -218,7 +218,7 @@ namespace IOL
 
             if (operar)
             {
-                try { saldoaretirar = Convert.ToDecimal(txtSaldoARetirar.Text.Trim().Replace("$", "")); }
+                try { saldoaretirar = Convert.ToDecimal(txtSaldoARetirar.Text); }
                 catch { saldoaretirar = 0; }
 
                 try { cantacciones = Convert.ToDecimal(nupCantAcciones.Value); }
@@ -333,8 +333,8 @@ namespace IOL
 
             for (int x = 0; x < dgvListado.Rows.Count; x++)
             {
-                int idSimulador = Convert.ToInt32(dgvListado.Rows[x].Cells["IdSimulador"].Value);
-                ruedasDatosSimulador.IdSimulador = idSimulador;
+                int idSimulacion = Convert.ToInt32(dgvListado.Rows[x].Cells["IdSimulador"].Value);
+                ruedasDatosSimulador.IdSimulador = idSimulacion;
                 ruedasDatosSimulador.IdRueda = idRueda;
                 ruedasDatosSimulador.PorcCompra = Convert.ToDecimal(dgvListado.Rows[x].Cells["PorcCompra"].Value);
                 ruedasDatosSimulador.PorcVenta = Convert.ToDecimal(dgvListado.Rows[x].Cells["PorcVenta"].Value);
@@ -347,12 +347,12 @@ namespace IOL
             {
                 TenenciaSimuladores tenenciaSimulador = new TenenciaSimuladores();
 
-                int idSimulador = x;
-                tenenciaSimulador = _serviceTenenciaSimulador.GetById(idSimulador);
+                int idSimulacion = x;
+                tenenciaSimulador = _serviceTenenciaSimulador.GetById(idSimulacion);
                 if (tenenciaSimulador != null)
                 {
                     tenenciaSimulador.Fecha = DateTime.Now.Date;
-                    tenenciaSimulador.ActivosValorizados = Convert.ToDecimal(_serviceTenenciaSimulador.GetActivosValorizados(idSimulador));
+                    tenenciaSimulador.ActivosValorizados = Convert.ToDecimal(_serviceTenenciaSimulador.GetActivosValorizados(idSimulacion));
                     tenenciaSimulador.DisponibleParaOperar = tenenciaSimulador.TotalTenencia - tenenciaSimulador.ActivosValorizados;
                     if (tenenciaSimulador.DisponibleParaOperar < 0)
                     {
@@ -362,7 +362,7 @@ namespace IOL
                 }
                 else
                 {
-                    tenenciaSimulador.IdSimulador = idSimulador;
+                    tenenciaSimulador.IdSimulacion = idSimulacion;
                     tenenciaSimulador.Fecha = DateTime.Now.Date;
                     tenenciaSimulador.DisponibleParaOperar = 100000;
                     tenenciaSimulador.ActivosValorizados = 0;
@@ -408,7 +408,7 @@ namespace IOL
 
             if (rueda != null)
             {
-                txtSaldoARetirar.Text = string.Format("$ {0:00.00}", rueda.SaldoARetirar);
+                txtSaldoARetirar.Text = string.Format("{0:00.00}", rueda.SaldoARetirar);
                 nupCantAcciones.Value = rueda.CantAcciones;
                 txtPorcComisionIOL.Text = string.Format("{0:00.00}", rueda.PorcComisionIOL);
                 txtPorcCompra.Text = string.Format("{0:00.00}", rueda.PorcCompra);
@@ -528,12 +528,6 @@ namespace IOL
         private void nupCantAcciones_KeyPress(object sender, KeyPressEventArgs e)
         {
             ValidarFormatoNumerico(sender, e);
-        }
-
-        private void txtSaldoARetirar_Leave(object sender, EventArgs e)
-        {
-            decimal SaldoARetirar = Convert.ToDecimal(txtSaldoARetirar.Text.Replace("$", ""));
-            txtSaldoARetirar.Text = string.Format("$ {0:00.00}", SaldoARetirar);
         }
 
         private void txtSaldoARetirar_KeyPress(object sender, KeyPressEventArgs e)
@@ -733,6 +727,11 @@ namespace IOL
             txtEstrategia.Text = idSimulador < 6 ? "Uno" : "Dos";
             txtPorcCompraSimulador.Text = string.Format("{0:00.00}", porcCompra);
             txtPorcVentaSimulador.Text = string.Format("{0:00.00}", porcVenta);
+        }
+
+        private void txtSaldoARetirar_Click(object sender, EventArgs e)
+        {
+            SeleccionarTexto(sender);
         }
     }
 }

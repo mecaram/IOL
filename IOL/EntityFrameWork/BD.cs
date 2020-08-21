@@ -180,7 +180,7 @@
     {
         [Key]
         public int Comitente { get; set; }
-        public DateTime Fecha { get; set; }
+        public DateTime? Fecha { get; set; }
         public decimal DisponibleParaOperar { get; set; }
         public decimal ActivosValorizados { get; set; }
         public decimal BonificacionPorComisiones { get; set; }
@@ -189,7 +189,7 @@
     public class TenenciaSimuladores
     {
         [Key]
-        public int IdSimulador { get; set; }
+        public int IdSimulacion { get; set; }
         public int Comitente { get; set; }
         public DateTime Fecha { get; set; }
         public decimal DisponibleParaOperar { get; set; }

@@ -70,12 +70,12 @@ namespace IOL.Servicios
 
         public EntityFrameWork.Ruedas GetLast()
         {
-            return _context.Ruedas.LastOrDefault();
+            return _context.Ruedas.OrderByDescending(x=> x.IdRueda).FirstOrDefault();
         }
 
         public EntityFrameWork.Ruedas GetByDate(DateTime fecha, int comitente)
         {
-            return _context.Ruedas.Where(x => x.FechaRueda.Date == fecha.Date && x.Comitente == comitente).SingleOrDefault();
+            return _context.Ruedas.Where(x => x.FechaRueda == fecha && x.Comitente == comitente).SingleOrDefault();
         }
 
         public string GetEstadoRueda(int id)

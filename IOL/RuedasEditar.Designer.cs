@@ -66,6 +66,10 @@
             this.chkNo = new System.Windows.Forms.CheckBox();
             this.chkSi = new System.Windows.Forms.CheckBox();
             this.tbpSimulador = new System.Windows.Forms.TabPage();
+            this.btnGuardarSimulador = new System.Windows.Forms.Button();
+            this.txtEstrategia = new System.Windows.Forms.TextBox();
+            this.label46 = new System.Windows.Forms.Label();
+            this.label45 = new System.Windows.Forms.Label();
             this.label16 = new System.Windows.Forms.Label();
             this.label13 = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
@@ -74,11 +78,8 @@
             this.txtIdSimulador = new System.Windows.Forms.TextBox();
             this.txtPorcVentaSimulador = new System.Windows.Forms.TextBox();
             this.label44 = new System.Windows.Forms.Label();
-            this.label45 = new System.Windows.Forms.Label();
-            this.label46 = new System.Windows.Forms.Label();
-            this.txtEstrategia = new System.Windows.Forms.TextBox();
             this.dgvListado = new System.Windows.Forms.DataGridView();
-            this.btnGuardarSimulador = new System.Windows.Forms.Button();
+            this.label2 = new System.Windows.Forms.Label();
             this.toolStrip1.SuspendLayout();
             this.tbcDatosRueda.SuspendLayout();
             this.tbpDatosRueda.SuspendLayout();
@@ -151,6 +152,7 @@
             // tbpDatosRueda
             // 
             this.tbpDatosRueda.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.tbpDatosRueda.Controls.Add(this.label2);
             this.tbpDatosRueda.Controls.Add(this.label28);
             this.tbpDatosRueda.Controls.Add(this.nudComprarHasta);
             this.tbpDatosRueda.Controls.Add(this.label27);
@@ -182,7 +184,7 @@
             this.tbpDatosRueda.Location = new System.Drawing.Point(4, 22);
             this.tbpDatosRueda.Name = "tbpDatosRueda";
             this.tbpDatosRueda.Padding = new System.Windows.Forms.Padding(3);
-            this.tbpDatosRueda.Size = new System.Drawing.Size(537, 401);
+            this.tbpDatosRueda.Size = new System.Drawing.Size(706, 401);
             this.tbpDatosRueda.TabIndex = 0;
             this.tbpDatosRueda.Text = "Datos de la Rueda";
             this.tbpDatosRueda.UseVisualStyleBackColor = true;
@@ -447,9 +449,8 @@
             this.txtSaldoARetirar.Name = "txtSaldoARetirar";
             this.txtSaldoARetirar.Size = new System.Drawing.Size(115, 29);
             this.txtSaldoARetirar.TabIndex = 2;
-            this.txtSaldoARetirar.Click += new System.EventHandler(this.txtInversionTotal_Click);
+            this.txtSaldoARetirar.Click += new System.EventHandler(this.txtSaldoARetirar_Click);
             this.txtSaldoARetirar.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtSaldoARetirar_KeyPress);
-            this.txtSaldoARetirar.Leave += new System.EventHandler(this.txtSaldoARetirar_Leave);
             // 
             // txtFecha
             // 
@@ -536,6 +537,46 @@
             this.tbpSimulador.Text = "Datos Simulador";
             this.tbpSimulador.UseVisualStyleBackColor = true;
             // 
+            // btnGuardarSimulador
+            // 
+            this.btnGuardarSimulador.Font = new System.Drawing.Font("Times New Roman", 14.25F, System.Drawing.FontStyle.Bold);
+            this.btnGuardarSimulador.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.btnGuardarSimulador.Location = new System.Drawing.Point(524, 255);
+            this.btnGuardarSimulador.Name = "btnGuardarSimulador";
+            this.btnGuardarSimulador.Size = new System.Drawing.Size(122, 46);
+            this.btnGuardarSimulador.TabIndex = 251;
+            this.btnGuardarSimulador.Text = "Guardar";
+            this.btnGuardarSimulador.UseVisualStyleBackColor = true;
+            this.btnGuardarSimulador.Click += new System.EventHandler(this.btnGuardarSimulador_Click);
+            // 
+            // txtEstrategia
+            // 
+            this.txtEstrategia.Font = new System.Drawing.Font("Times New Roman", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtEstrategia.Location = new System.Drawing.Point(565, 124);
+            this.txtEstrategia.Name = "txtEstrategia";
+            this.txtEstrategia.Size = new System.Drawing.Size(46, 29);
+            this.txtEstrategia.TabIndex = 250;
+            // 
+            // label46
+            // 
+            this.label46.AutoSize = true;
+            this.label46.Font = new System.Drawing.Font("Times New Roman", 14.25F, System.Drawing.FontStyle.Bold);
+            this.label46.Location = new System.Drawing.Point(460, 131);
+            this.label46.Name = "label46";
+            this.label46.Size = new System.Drawing.Size(100, 22);
+            this.label46.TabIndex = 249;
+            this.label46.Text = "Estrategia:";
+            // 
+            // label45
+            // 
+            this.label45.AutoSize = true;
+            this.label45.Font = new System.Drawing.Font("Times New Roman", 14.25F, System.Drawing.FontStyle.Bold);
+            this.label45.Location = new System.Drawing.Point(461, 90);
+            this.label45.Name = "label45";
+            this.label45.Size = new System.Drawing.Size(99, 22);
+            this.label45.TabIndex = 248;
+            this.label45.Text = "Simulador:";
+            // 
             // label16
             // 
             this.label16.AutoSize = true;
@@ -621,34 +662,6 @@
             this.label44.TabIndex = 247;
             this.label44.Text = "Simuladores";
             // 
-            // label45
-            // 
-            this.label45.AutoSize = true;
-            this.label45.Font = new System.Drawing.Font("Times New Roman", 14.25F, System.Drawing.FontStyle.Bold);
-            this.label45.Location = new System.Drawing.Point(461, 90);
-            this.label45.Name = "label45";
-            this.label45.Size = new System.Drawing.Size(99, 22);
-            this.label45.TabIndex = 248;
-            this.label45.Text = "Simulador:";
-            // 
-            // label46
-            // 
-            this.label46.AutoSize = true;
-            this.label46.Font = new System.Drawing.Font("Times New Roman", 14.25F, System.Drawing.FontStyle.Bold);
-            this.label46.Location = new System.Drawing.Point(460, 131);
-            this.label46.Name = "label46";
-            this.label46.Size = new System.Drawing.Size(100, 22);
-            this.label46.TabIndex = 249;
-            this.label46.Text = "Estrategia:";
-            // 
-            // txtEstrategia
-            // 
-            this.txtEstrategia.Font = new System.Drawing.Font("Times New Roman", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtEstrategia.Location = new System.Drawing.Point(565, 124);
-            this.txtEstrategia.Name = "txtEstrategia";
-            this.txtEstrategia.Size = new System.Drawing.Size(46, 29);
-            this.txtEstrategia.TabIndex = 250;
-            // 
             // dgvListado
             // 
             this.dgvListado.AllowUserToAddRows = false;
@@ -663,17 +676,15 @@
             this.dgvListado.TabIndex = 246;
             this.dgvListado.SelectionChanged += new System.EventHandler(this.dgvListado_SelectionChanged);
             // 
-            // btnGuardarSimulador
+            // label2
             // 
-            this.btnGuardarSimulador.Font = new System.Drawing.Font("Times New Roman", 14.25F, System.Drawing.FontStyle.Bold);
-            this.btnGuardarSimulador.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.btnGuardarSimulador.Location = new System.Drawing.Point(524, 255);
-            this.btnGuardarSimulador.Name = "btnGuardarSimulador";
-            this.btnGuardarSimulador.Size = new System.Drawing.Size(122, 46);
-            this.btnGuardarSimulador.TabIndex = 251;
-            this.btnGuardarSimulador.Text = "Guardar";
-            this.btnGuardarSimulador.UseVisualStyleBackColor = true;
-            this.btnGuardarSimulador.Click += new System.EventHandler(this.btnGuardarSimulador_Click);
+            this.label2.AutoSize = true;
+            this.label2.Font = new System.Drawing.Font("Times New Roman", 14.25F);
+            this.label2.Location = new System.Drawing.Point(258, 113);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(19, 21);
+            this.label2.TabIndex = 173;
+            this.label2.Text = "$";
             // 
             // RuedasEditar
             // 
@@ -759,5 +770,6 @@
         private System.Windows.Forms.Label label44;
         private System.Windows.Forms.DataGridView dgvListado;
         private System.Windows.Forms.Button btnGuardarSimulador;
+        public System.Windows.Forms.Label label2;
     }
 }
