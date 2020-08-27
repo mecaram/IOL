@@ -30,9 +30,9 @@ namespace IOL.Servicios
         {
             return _context.RuedasDatosSimulador.ToList();
         }
-        public RuedasDatosSimulador GetByIdRueda(int idRueda)
+        public List<RuedasDatosSimulador> GetByIdRueda(int idRueda)
         {
-            return _context.RuedasDatosSimulador.Where(x => x.IdRueda == idRueda).SingleOrDefault();
+            return _context.RuedasDatosSimulador.Where(x => x.IdRueda == idRueda).ToList();
         }
 
         public RuedasDatosSimulador GetByIdSimulador(int idRueda, int idSimulador)

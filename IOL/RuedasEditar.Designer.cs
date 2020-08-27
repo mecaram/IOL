@@ -35,6 +35,7 @@
             this.tsbCancelar = new System.Windows.Forms.ToolStripButton();
             this.tbcDatosRueda = new System.Windows.Forms.TabControl();
             this.tbpDatosRueda = new System.Windows.Forms.TabPage();
+            this.label2 = new System.Windows.Forms.Label();
             this.label28 = new System.Windows.Forms.Label();
             this.nudComprarHasta = new System.Windows.Forms.NumericUpDown();
             this.label27 = new System.Windows.Forms.Label();
@@ -79,7 +80,6 @@
             this.txtPorcVentaSimulador = new System.Windows.Forms.TextBox();
             this.label44 = new System.Windows.Forms.Label();
             this.dgvListado = new System.Windows.Forms.DataGridView();
-            this.label2 = new System.Windows.Forms.Label();
             this.toolStrip1.SuspendLayout();
             this.tbcDatosRueda.SuspendLayout();
             this.tbpDatosRueda.SuspendLayout();
@@ -188,6 +188,16 @@
             this.tbpDatosRueda.TabIndex = 0;
             this.tbpDatosRueda.Text = "Datos de la Rueda";
             this.tbpDatosRueda.UseVisualStyleBackColor = true;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Font = new System.Drawing.Font("Times New Roman", 14.25F);
+            this.label2.Location = new System.Drawing.Point(258, 113);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(19, 21);
+            this.label2.TabIndex = 173;
+            this.label2.Text = "$";
             // 
             // label28
             // 
@@ -674,17 +684,8 @@
             this.dgvListado.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dgvListado.Size = new System.Drawing.Size(430, 292);
             this.dgvListado.TabIndex = 246;
+            this.dgvListado.DataBindingComplete += new System.Windows.Forms.DataGridViewBindingCompleteEventHandler(this.dgvListado_DataBindingComplete);
             this.dgvListado.SelectionChanged += new System.EventHandler(this.dgvListado_SelectionChanged);
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Font = new System.Drawing.Font("Times New Roman", 14.25F);
-            this.label2.Location = new System.Drawing.Point(258, 113);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(19, 21);
-            this.label2.TabIndex = 173;
-            this.label2.Text = "$";
             // 
             // RuedasEditar
             // 

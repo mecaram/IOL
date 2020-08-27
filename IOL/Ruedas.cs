@@ -245,7 +245,7 @@ namespace IOL
         private void ActualizarFeriados()
         {
             var lstFeriados = _serviceFeriado.GetByMonth(Calendario.SelectionStart.Date);
-            if (lstFeriados != null)
+            if (lstFeriados != null && lstFeriados.Count > 0)
             {
                 dgvFeriados.DataSource = lstFeriados;
 
@@ -284,10 +284,10 @@ namespace IOL
 
         private void ActualizarRuedas()
         {
-            var lstFeriados = _serviceFeriado.GetByMonth(Calendario.SelectionStart.Date);
-            if (lstFeriados != null)
+            var lstRuedas = _service.GetAll();
+            if (lstRuedas != null && lstRuedas.Count > 0)
             {
-                dgvFeriados.DataSource = lstFeriados;
+                dgvListado.DataSource = lstRuedas;
 
                 DataGridViewCellStyle EstiloEncabezadoColumna = new DataGridViewCellStyle();
 

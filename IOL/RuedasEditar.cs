@@ -56,32 +56,13 @@ namespace IOL
                     {
                         txtSaldoARetirar.Text = string.Format("{0:00.00}", 0);
                         nupCantAcciones.Value = 5;
-
                         txtPorcComisionIOL.Text = string.Format("{0:00.00}", 0.70m);
                         txtPorcCompra.Text = string.Format("{0:00.00}", 0.55m);
                         txtPorcVenta.Text = string.Format("{0:00.00}", 0.70m);
                         txtPorcPuntaCompradora.Text = string.Format("{0:00.00}", 0m);
                         txtPorcPuntaVendedora.Text = string.Format("{0:00.00}", 0m);
                         nudComprarHasta.Value = 16;
-
                         chkSi.Checked = true;
-
-                        List<IOL.EntityFrameWork.RuedasDatosSimulador> lstDatosSimulador = new List<RuedasDatosSimulador>();
-                        RuedasDatosSimulador datosSimulador = new RuedasDatosSimulador();
-
-                        decimal[] porcCompra = {0, 0.58m, 0.55m, 0.60m, 0.59m, 0.60m, 0.01m, 0.05m, 0.01m, 0.01m, 0.05m};
-                        decimal[] porcVenta = { 0, 1.00m, 0.70m, 0.75m, 1.00m, 1.00m, 0.15m, 0.20m, 0.25m, 0.30m, 0.05m};
-
-                        for (int idSimulador = 1; idSimulador < 11; idSimulador++)
-                        {
-                            datosSimulador.IdRuedaSimulador = 0;
-                            datosSimulador.IdSimulador = idSimulador;
-                            datosSimulador.IdRueda = int.Parse(txtIdRueda.Text);
-                            datosSimulador.InversionTotalSimulador = 100000m;
-                            datosSimulador.PorcCompra = porcCompra[idSimulador];
-                            datosSimulador.PorcVenta = porcVenta[idSimulador];
-                            lstDatosSimulador.Add(datosSimulador);
-                        }
                     }
 
                     txtSaldoARetirar.Focus();
@@ -152,6 +133,7 @@ namespace IOL
                     tsbCancelar.Image = tsbGuardar.Image;
                     break;
             }
+            ActualizarDatosSimulador();
         }
 
 
@@ -289,8 +271,10 @@ namespace IOL
             for (int x = 0; x < dgvListado.Rows.Count; x++)
             {
                 int idSimulacion = Convert.ToInt32(dgvListado.Rows[x].Cells["IdSimulador"].Value);
+                ruedasDatosSimulador.IdRuedaSimulador = Convert.ToInt32(dgvListado.Rows[x].Cells["IdRuedaSimulador"].Value);
                 ruedasDatosSimulador.IdSimulador = idSimulacion;
                 ruedasDatosSimulador.IdRueda = idRueda;
+                ruedasDatosSimulador.InversionTotalSimulador = Convert.ToDecimal(dgvListado.Rows[x].Cells["InversionTotalSimulador"].Value);
                 ruedasDatosSimulador.PorcCompra = Convert.ToDecimal(dgvListado.Rows[x].Cells["PorcCompra"].Value);
                 ruedasDatosSimulador.PorcVenta = Convert.ToDecimal(dgvListado.Rows[x].Cells["PorcVenta"].Value);
                 _serviceDatoSimulador.Register(ruedasDatosSimulador);
@@ -376,6 +360,73 @@ namespace IOL
                 chkNo.Checked = !chkSi.Checked;
             }
         }
+
+        private void ActualizarDatosSimulador()
+        {
+            RuedasDatosSimulador datosSimulador = new RuedasDatosSimulador();
+            List<IOL.EntityFrameWork.RuedasDatosSimulador> lstDatosSimulador = new List<RuedasDatosSimulador>();
+
+            decimal[] porcCompra = { 0, 0.58m, 0.55m, 0.60m, 0.59m, 0.60m, 0.01m, 0.05m, 0.01m, 0.01m, 0.05m };
+            decimal[] porcVenta = { 0, 1.00m, 0.70m, 0.75m, 1.00m, 1.00m, 0.15m, 0.20m, 0.25m, 0.30m, 0.05m };
+
+            int idRueda;
+            try { idRueda = Convert.ToInt32(txtIdRueda.Text); }
+            catch { idRueda = 0; }
+
+            if (idRueda == 0)
+                for (int idSimulador = 1; idSimulador < 11; idSimulador++)
+                {
+                    datosSimulador.IdRuedaSimulador = 0;
+                    datosSimulador.IdSimulador = idSimulador;
+                    datosSimulador.InversionTotalSimulador = 100000m;
+                    datosSimulador.PorcCompra = porcCompra[idSimulador];
+                    datosSimulador.PorcVenta = porcVenta[idSimulador];
+                    lstDatosSimulador.Add(datosSimulador);
+                }
+            else
+                lstDatosSimulador = _serviceDatoSimulador.GetByIdRueda(idRueda);
+
+            if (lstDatosSimulador != null && lstDatosSimulador.Count > 0)
+            {
+                dgvListado.DataSource = lstDatosSimulador;
+
+                DataGridViewCellStyle EstiloEncabezadoColumna = new DataGridViewCellStyle();
+
+                EstiloEncabezadoColumna.BackColor = Color.Green;
+                EstiloEncabezadoColumna.Font = new Font("Times New Roman", 12, FontStyle.Bold);
+                dgvListado.ColumnHeadersDefaultCellStyle = EstiloEncabezadoColumna;
+
+                DataGridViewCellStyle EstiloColumnas = new DataGridViewCellStyle();
+                EstiloColumnas.BackColor = Color.AliceBlue;
+                EstiloColumnas.Font = new Font("Times New Roman", 12);
+                dgvListado.RowsDefaultCellStyle = EstiloColumnas;
+
+                dgvListado.Columns["IdSimulador"].HeaderText = "Simulador";
+                dgvListado.Columns["PorcCompra"].HeaderText = "Porc.Compra";
+                dgvListado.Columns["PorcVenta"].HeaderText = "Porc.Venta";
+
+                dgvListado.Columns["IdSimulador"].Width = 80;
+                dgvListado.Columns["PorcCompra"].Width = 110;
+                dgvListado.Columns["PorcVenta"].Width = 110;
+
+                dgvListado.Columns["IdSimulador"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                dgvListado.Columns["PorcCompra"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                dgvListado.Columns["PorcVenta"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+
+                dgvListado.Columns["IdSimulador"].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                dgvListado.Columns["PorcCompra"].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                dgvListado.Columns["PorcVenta"].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
+
+                dgvListado.RefreshEdit();
+                dgvListado.Enabled = true;
+            }
+            else
+            {
+                dgvListado.DataSource = null;
+                dgvListado.RefreshEdit();
+            }
+        }
+
         private void txtInversionTotal_Click(object sender, EventArgs e)
         {
             SeleccionarTexto(sender);
@@ -638,14 +689,20 @@ namespace IOL
         private void btnGuardarSimulador_Click(object sender, EventArgs e)
         {
 
-            int idRueda, idSimulador;
-            decimal porcCompra, porcVenta;
+            int idRueda, idSimulador, idRuedaSimulador;
+            decimal porcCompra, porcVenta, inversionTotalSimulador;
+
+            try { idRuedaSimulador = Convert.ToInt32(dgvListado.CurrentRow.Cells["IdRuedaSimulador"].Value); }
+            catch { idRuedaSimulador = 0; }
 
             try { idRueda = Convert.ToInt32(txtIdRueda.Text); }
             catch { idRueda = 0; }
 
             try { idSimulador = Convert.ToInt32(txtIdSimulador.Text); }
             catch { idSimulador = 0; }
+
+            try { inversionTotalSimulador = Convert.ToDecimal(dgvListado.CurrentRow.Cells["InversionTotalSimulador"].Value); }
+            catch { inversionTotalSimulador = 0; }
 
             try { porcCompra = Convert.ToDecimal(txtPorcCompra.Text); }
             catch { porcCompra = 0; }
@@ -657,8 +714,10 @@ namespace IOL
             {
                 RuedasDatosSimulador datosSimulador = null;
 
+                datosSimulador.IdRuedaSimulador = idRuedaSimulador;
                 datosSimulador.IdRueda = idRueda;
                 datosSimulador.IdSimulador = idSimulador;
+                datosSimulador.InversionTotalSimulador = inversionTotalSimulador;
                 datosSimulador.PorcCompra = porcCompra;
                 datosSimulador.PorcVenta = porcVenta;
             }
@@ -687,6 +746,13 @@ namespace IOL
         private void txtSaldoARetirar_Click(object sender, EventArgs e)
         {
             SeleccionarTexto(sender);
+        }
+
+        private void dgvListado_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
+        {
+            dgvListado.Columns["IdRueda"].Visible = false;
+            dgvListado.Columns["IdRuedaSimulador"].Visible = false;
+            dgvListado.Columns["InversionTotalSimulador"].Visible = false;
         }
     }
 }

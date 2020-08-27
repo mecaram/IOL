@@ -193,7 +193,6 @@
         public DateTime Fecha { get; set; }
         public decimal DisponibleParaOperar { get; set; }
         public decimal ActivosValorizados { get; set; }
-        public decimal BonificacionPorComisiones { get; set; }
         public decimal TotalTenencia { get; set; }
     }
 }
