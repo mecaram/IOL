@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using IOL.EntityFrameWork;
 using IOL.Servicios;
+using System.Runtime.Serialization;
 
 namespace IOL
 {
@@ -65,68 +66,22 @@ namespace IOL
 
                         chkSi.Checked = true;
 
-                        List<IOL.EntityFrameWork.RuedasDatosSimulador> lstDatosSimulador = null;
-                        RuedasDatosSimulador datosSimulador = null;
-                        
-                        int idSimulador = 1;
-                        datosSimulador.IdSimulador = idSimulador;
-                        datosSimulador.PorcCompra = 0.58m;
-                        datosSimulador.PorcVenta = 1.0m;
-                        lstDatosSimulador.Add(datosSimulador);
+                        List<IOL.EntityFrameWork.RuedasDatosSimulador> lstDatosSimulador = new List<RuedasDatosSimulador>();
+                        RuedasDatosSimulador datosSimulador = new RuedasDatosSimulador();
 
-                        idSimulador = 2;
-                        datosSimulador.IdSimulador = idSimulador;
-                        datosSimulador.PorcCompra = 0.55m;
-                        datosSimulador.PorcVenta = 0.70m;
-                        lstDatosSimulador.Add(datosSimulador);
+                        decimal[] porcCompra = {0, 0.58m, 0.55m, 0.60m, 0.59m, 0.60m, 0.01m, 0.05m, 0.01m, 0.01m, 0.05m};
+                        decimal[] porcVenta = { 0, 1.00m, 0.70m, 0.75m, 1.00m, 1.00m, 0.15m, 0.20m, 0.25m, 0.30m, 0.05m};
 
-                        idSimulador = 3;
-                        datosSimulador.IdSimulador = idSimulador;
-                        datosSimulador.PorcCompra = 0.60m;
-                        datosSimulador.PorcVenta = 0.75m;
-                        lstDatosSimulador.Add(datosSimulador);
-
-                        idSimulador = 4;
-                        datosSimulador.IdSimulador = idSimulador;
-                        datosSimulador.PorcCompra = 0.59m;
-                        datosSimulador.PorcVenta = 1.00m;
-                        lstDatosSimulador.Add(datosSimulador);
-
-                        idSimulador = 5;
-                        datosSimulador.IdSimulador = idSimulador;
-                        datosSimulador.PorcCompra = 0.60m;
-                        datosSimulador.PorcVenta = 1.00m;
-                        lstDatosSimulador.Add(datosSimulador);
-
-                        idSimulador = 6;
-                        datosSimulador.IdSimulador = idSimulador;
-                        datosSimulador.PorcCompra = 0.01m;
-                        datosSimulador.PorcVenta = 0.15m;
-                        lstDatosSimulador.Add(datosSimulador);
-
-                        idSimulador = 7;
-                        datosSimulador.IdSimulador = idSimulador;
-                        datosSimulador.PorcCompra = 0.05m;
-                        datosSimulador.PorcVenta = 0.20m;
-                        lstDatosSimulador.Add(datosSimulador);
-
-                        idSimulador = 8;
-                        datosSimulador.IdSimulador = idSimulador;
-                        datosSimulador.PorcCompra = 0.01m;
-                        datosSimulador.PorcVenta = 0.25m;
-                        lstDatosSimulador.Add(datosSimulador);
-
-                        idSimulador = 9;
-                        datosSimulador.IdSimulador = idSimulador;
-                        datosSimulador.PorcCompra = 0.01m;
-                        datosSimulador.PorcVenta = 0.30m;
-                        lstDatosSimulador.Add(datosSimulador);
-
-                        idSimulador = 10;
-                        datosSimulador.IdSimulador = idSimulador;
-                        datosSimulador.PorcCompra = 0.05m;
-                        datosSimulador.PorcVenta = 0.05m;
-                        lstDatosSimulador.Add(datosSimulador);
+                        for (int idSimulador = 1; idSimulador < 11; idSimulador++)
+                        {
+                            datosSimulador.IdRuedaSimulador = 0;
+                            datosSimulador.IdSimulador = idSimulador;
+                            datosSimulador.IdRueda = int.Parse(txtIdRueda.Text);
+                            datosSimulador.InversionTotalSimulador = 100000m;
+                            datosSimulador.PorcCompra = porcCompra[idSimulador];
+                            datosSimulador.PorcVenta = porcVenta[idSimulador];
+                            lstDatosSimulador.Add(datosSimulador);
+                        }
                     }
 
                     txtSaldoARetirar.Focus();

@@ -127,9 +127,9 @@
         public int IdRuedaSimulador { get; set; }
         public int IdRueda { get; set; }
         public int IdSimulador { get; set; }
-        public decimal InversionTotalSimulador { get; set; }
-        public decimal PorcCompra { get; set; }
-        public decimal PorcVenta { get; set; }
+        public decimal? InversionTotalSimulador { get; set; }
+        public decimal? PorcCompra { get; set; }
+        public decimal? PorcVenta { get; set; }
     }
     public class RuedasDetalle
     {
@@ -190,7 +190,6 @@
     {
         [Key]
         public int IdSimulacion { get; set; }
-        public int Comitente { get; set; }
         public DateTime Fecha { get; set; }
         public decimal DisponibleParaOperar { get; set; }
         public decimal ActivosValorizados { get; set; }

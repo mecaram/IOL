@@ -42,18 +42,15 @@
             this.sslFechaActual = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolTip = new System.Windows.Forms.ToolTip(this.components);
             this.tbcMenuppal = new System.Windows.Forms.TabControl();
-            this.tbpArchivos = new System.Windows.Forms.TabPage();
+            this.tbpProcesoDiario = new System.Windows.Forms.TabPage();
             this.toolStrip = new System.Windows.Forms.ToolStrip();
+            this.tsbSimulador = new System.Windows.Forms.ToolStripButton();
+            this.tsbRuedas = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.tsbCuentas = new System.Windows.Forms.ToolStripButton();
             this.tsbAcciones = new System.Windows.Forms.ToolStripButton();
             this.tsbFeriados = new System.Windows.Forms.ToolStripButton();
-            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.lblEmpresa = new System.Windows.Forms.Label();
-            this.tbpProcesoDiario = new System.Windows.Forms.TabPage();
-            this.toolStrip2 = new System.Windows.Forms.ToolStrip();
-            this.tsbRuedas = new System.Windows.Forms.ToolStripButton();
-            this.tsbSimulador = new System.Windows.Forms.ToolStripButton();
-            this.toolStripSeparator10 = new System.Windows.Forms.ToolStripSeparator();
             this.tbpConsultaseInformes = new System.Windows.Forms.TabPage();
             this.tspConsultasEInformes = new System.Windows.Forms.ToolStrip();
             this.tsbInformeFinal = new System.Windows.Forms.ToolStripButton();
@@ -68,10 +65,8 @@
             this.menuStrip.SuspendLayout();
             this.statusStrip.SuspendLayout();
             this.tbcMenuppal.SuspendLayout();
-            this.tbpArchivos.SuspendLayout();
-            this.toolStrip.SuspendLayout();
             this.tbpProcesoDiario.SuspendLayout();
-            this.toolStrip2.SuspendLayout();
+            this.toolStrip.SuspendLayout();
             this.tbpConsultaseInformes.SuspendLayout();
             this.tspConsultasEInformes.SuspendLayout();
             this.tbpMantenimiento.SuspendLayout();
@@ -162,7 +157,6 @@
             // 
             // tbcMenuppal
             // 
-            this.tbcMenuppal.Controls.Add(this.tbpArchivos);
             this.tbcMenuppal.Controls.Add(this.tbpProcesoDiario);
             this.tbcMenuppal.Controls.Add(this.tbpConsultaseInformes);
             this.tbcMenuppal.Controls.Add(this.tbpMantenimiento);
@@ -173,33 +167,63 @@
             this.tbcMenuppal.SizeMode = System.Windows.Forms.TabSizeMode.FillToRight;
             this.tbcMenuppal.TabIndex = 4;
             // 
-            // tbpArchivos
+            // tbpProcesoDiario
             // 
-            this.tbpArchivos.Controls.Add(this.toolStrip);
-            this.tbpArchivos.Controls.Add(this.lblEmpresa);
-            this.tbpArchivos.Location = new System.Drawing.Point(4, 22);
-            this.tbpArchivos.Name = "tbpArchivos";
-            this.tbpArchivos.Padding = new System.Windows.Forms.Padding(3);
-            this.tbpArchivos.Size = new System.Drawing.Size(1191, 70);
-            this.tbpArchivos.TabIndex = 0;
-            this.tbpArchivos.Text = "Archivos";
-            this.tbpArchivos.UseVisualStyleBackColor = true;
+            this.tbpProcesoDiario.Controls.Add(this.toolStrip);
+            this.tbpProcesoDiario.Controls.Add(this.lblEmpresa);
+            this.tbpProcesoDiario.Location = new System.Drawing.Point(4, 22);
+            this.tbpProcesoDiario.Name = "tbpProcesoDiario";
+            this.tbpProcesoDiario.Padding = new System.Windows.Forms.Padding(3);
+            this.tbpProcesoDiario.Size = new System.Drawing.Size(1191, 70);
+            this.tbpProcesoDiario.TabIndex = 0;
+            this.tbpProcesoDiario.Text = "Archivos";
+            this.tbpProcesoDiario.UseVisualStyleBackColor = true;
             // 
             // toolStrip
             // 
             this.toolStrip.AutoSize = false;
             this.toolStrip.BackColor = System.Drawing.Color.Linen;
             this.toolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.tsbSimulador,
+            this.tsbRuedas,
+            this.toolStripSeparator1,
             this.tsbCuentas,
             this.tsbAcciones,
-            this.tsbFeriados,
-            this.toolStripSeparator1});
+            this.tsbFeriados});
             this.toolStrip.Location = new System.Drawing.Point(3, 3);
             this.toolStrip.Name = "toolStrip";
-            this.toolStrip.Size = new System.Drawing.Size(1185, 82);
+            this.toolStrip.Size = new System.Drawing.Size(1185, 64);
             this.toolStrip.Stretch = true;
             this.toolStrip.TabIndex = 2;
             this.toolStrip.Text = "ToolStrip";
+            // 
+            // tsbSimulador
+            // 
+            this.tsbSimulador.Image = ((System.Drawing.Image)(resources.GetObject("tsbSimulador.Image")));
+            this.tsbSimulador.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.tsbSimulador.ImageTransparentColor = System.Drawing.Color.Black;
+            this.tsbSimulador.Name = "tsbSimulador";
+            this.tsbSimulador.Size = new System.Drawing.Size(65, 61);
+            this.tsbSimulador.Text = "Simulador";
+            this.tsbSimulador.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
+            this.tsbSimulador.Click += new System.EventHandler(this.tsbSimulador_Click);
+            // 
+            // tsbRuedas
+            // 
+            this.tsbRuedas.AutoSize = false;
+            this.tsbRuedas.Image = ((System.Drawing.Image)(resources.GetObject("tsbRuedas.Image")));
+            this.tsbRuedas.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.tsbRuedas.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsbRuedas.Name = "tsbRuedas";
+            this.tsbRuedas.Size = new System.Drawing.Size(80, 60);
+            this.tsbRuedas.Text = "Ruedas";
+            this.tsbRuedas.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
+            this.tsbRuedas.Click += new System.EventHandler(this.tsbRuedas_Click);
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 64);
             // 
             // tsbCuentas
             // 
@@ -237,11 +261,6 @@
             this.tsbFeriados.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
             this.tsbFeriados.Click += new System.EventHandler(this.tsbFeriados_Click);
             // 
-            // toolStripSeparator1
-            // 
-            this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 82);
-            // 
             // lblEmpresa
             // 
             this.lblEmpresa.AutoSize = true;
@@ -253,61 +272,6 @@
             this.lblEmpresa.TabIndex = 101;
             this.lblEmpresa.Text = "Empresa:";
             this.lblEmpresa.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // tbpProcesoDiario
-            // 
-            this.tbpProcesoDiario.Controls.Add(this.toolStrip2);
-            this.tbpProcesoDiario.Location = new System.Drawing.Point(4, 22);
-            this.tbpProcesoDiario.Name = "tbpProcesoDiario";
-            this.tbpProcesoDiario.Size = new System.Drawing.Size(1191, 70);
-            this.tbpProcesoDiario.TabIndex = 5;
-            this.tbpProcesoDiario.Text = "Proceso Diario";
-            this.tbpProcesoDiario.UseVisualStyleBackColor = true;
-            // 
-            // toolStrip2
-            // 
-            this.toolStrip2.AutoSize = false;
-            this.toolStrip2.BackColor = System.Drawing.Color.Linen;
-            this.toolStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.tsbRuedas,
-            this.tsbSimulador,
-            this.toolStripSeparator10});
-            this.toolStrip2.Location = new System.Drawing.Point(0, 0);
-            this.toolStrip2.Name = "toolStrip2";
-            this.toolStrip2.Size = new System.Drawing.Size(1191, 70);
-            this.toolStrip2.Stretch = true;
-            this.toolStrip2.TabIndex = 3;
-            this.toolStrip2.Text = "ToolStrip";
-            // 
-            // tsbRuedas
-            // 
-            this.tsbRuedas.AutoSize = false;
-            this.tsbRuedas.Enabled = false;
-            this.tsbRuedas.Image = ((System.Drawing.Image)(resources.GetObject("tsbRuedas.Image")));
-            this.tsbRuedas.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.tsbRuedas.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tsbRuedas.Name = "tsbRuedas";
-            this.tsbRuedas.Size = new System.Drawing.Size(80, 60);
-            this.tsbRuedas.Text = "Ruedas";
-            this.tsbRuedas.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
-            this.tsbRuedas.Visible = false;
-            this.tsbRuedas.Click += new System.EventHandler(this.tsbRuedas_Click);
-            // 
-            // tsbSimulador
-            // 
-            this.tsbSimulador.Image = ((System.Drawing.Image)(resources.GetObject("tsbSimulador.Image")));
-            this.tsbSimulador.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.tsbSimulador.ImageTransparentColor = System.Drawing.Color.Black;
-            this.tsbSimulador.Name = "tsbSimulador";
-            this.tsbSimulador.Size = new System.Drawing.Size(65, 67);
-            this.tsbSimulador.Text = "Simulador";
-            this.tsbSimulador.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
-            this.tsbSimulador.Click += new System.EventHandler(this.tsbSimulador_Click);
-            // 
-            // toolStripSeparator10
-            // 
-            this.toolStripSeparator10.Name = "toolStripSeparator10";
-            this.toolStripSeparator10.Size = new System.Drawing.Size(6, 70);
             // 
             // tbpConsultaseInformes
             // 
@@ -446,13 +410,10 @@
             this.statusStrip.ResumeLayout(false);
             this.statusStrip.PerformLayout();
             this.tbcMenuppal.ResumeLayout(false);
-            this.tbpArchivos.ResumeLayout(false);
-            this.tbpArchivos.PerformLayout();
+            this.tbpProcesoDiario.ResumeLayout(false);
+            this.tbpProcesoDiario.PerformLayout();
             this.toolStrip.ResumeLayout(false);
             this.toolStrip.PerformLayout();
-            this.tbpProcesoDiario.ResumeLayout(false);
-            this.toolStrip2.ResumeLayout(false);
-            this.toolStrip2.PerformLayout();
             this.tbpConsultaseInformes.ResumeLayout(false);
             this.tspConsultasEInformes.ResumeLayout(false);
             this.tspConsultasEInformes.PerformLayout();
@@ -478,29 +439,26 @@
         private System.Windows.Forms.ToolStripMenuItem arrangeIconsToolStripMenuItem;
         private System.Windows.Forms.ToolTip toolTip;
         private System.Windows.Forms.TabControl tbcMenuppal;
-        private System.Windows.Forms.TabPage tbpArchivos;
         private System.Windows.Forms.Label lblEmpresa;
         private System.Windows.Forms.TabPage tbpConsultaseInformes;
         private System.Windows.Forms.TabPage tbpMantenimiento;
         private System.Windows.Forms.TabPage tbpProcesoDiario;
-        private System.Windows.Forms.ToolStrip toolStrip2;
-        private System.Windows.Forms.ToolStripButton tsbSimulador;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator10;
         private System.Windows.Forms.ToolStrip toolStrip1;
         private System.Windows.Forms.ToolStripButton tsbAcercaDe;
         private System.Windows.Forms.ToolStripButton tsbCopiaDeSeguridad;
-        private System.Windows.Forms.ToolStrip toolStrip;
-        private System.Windows.Forms.ToolStripButton tsbCuentas;
-        private System.Windows.Forms.ToolStripButton tsbAcciones;
-        private System.Windows.Forms.ToolStripButton tsbFeriados;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
-        private System.Windows.Forms.ToolStripButton tsbRuedas;
         private System.Windows.Forms.ToolStrip tspConsultasEInformes;
         private System.Windows.Forms.ToolStripButton tsbConsultaDeRuedas;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
         private System.Windows.Forms.ToolStripButton tsbConsultaDePaneles;
         private System.Windows.Forms.ToolStripButton tsbInformeFinal;
+        private System.Windows.Forms.ToolStrip toolStrip;
+        private System.Windows.Forms.ToolStripButton tsbSimulador;
+        private System.Windows.Forms.ToolStripButton tsbRuedas;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.ToolStripButton tsbCuentas;
+        private System.Windows.Forms.ToolStripButton tsbAcciones;
+        private System.Windows.Forms.ToolStripButton tsbFeriados;
     }
 }
 
